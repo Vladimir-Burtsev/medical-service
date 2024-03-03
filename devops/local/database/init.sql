@@ -1,0 +1,1 @@
+create database mis_medical_service with owner = postgres;

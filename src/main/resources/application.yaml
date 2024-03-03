@@ -1,0 +1,54 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: medical-service
+  cloud:
+    config:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        order_inserts: true
+        enable_lazy_load_no_trans: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+          batch_size: 20
+        generate_statistics: false
+    show-sql: true
+    database: postgresql
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5443/mis_medical_service
+    username: postgres
+    password: 123
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/changelog-master.xml
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+#feign:
+#  circuitbreaker:
+#    enabled: true
+
+#  instance:
+#    instance-id: ${spring.application.name}:${random.value}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8762/eureka
+
+jwt:
+  access:
+    secret: 9CeoZ+XP0l4Bc+nHo9zZEM2Fv6vXby2WtptPE6XZVEoEQAieZK0r+ns3eiho7uu9j3mUv3gSeW+pCXKvBcq5ng==
+

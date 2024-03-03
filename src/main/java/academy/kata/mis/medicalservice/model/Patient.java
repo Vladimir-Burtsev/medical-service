@@ -1,12 +1,16 @@
 package academy.kata.mis.medicalservice.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * пациент
  */
 @Entity
+@Getter
 @Table(name = "patients")
 public class Patient {
 
@@ -25,17 +29,21 @@ public class Patient {
      * Соответсвует id Пользователя из микросервиса mis-auth-service
      */
     @Column(name = "user_id")
-    private Long userId;
+    private UUID userId;
 
-    /**
-     * талоны на которые записан пациент
-     */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
-    private Set<Talon> talons;
+//    /**
+//     * талоны на которые записан пациент
+//     */
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+//    private Set<Talon> talons;
+//
+//    /**
+//     * обращения пациента
+//     */
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+//    private Set<Appeal> appeals;
 
-    /**
-     * обращения пациента
-     */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
-    private Set<Appeal> appeals;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
 }
