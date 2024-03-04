@@ -1,13 +1,11 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.dto.GetCurrentPatientPersonalInformation;
-import academy.kata.mis.medicalservice.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
