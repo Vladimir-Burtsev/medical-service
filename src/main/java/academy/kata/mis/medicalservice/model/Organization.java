@@ -1,8 +1,8 @@
 package academy.kata.mis.medicalservice.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 
-import javax.persistence.*;
 import java.util.Set;
 
 /**
