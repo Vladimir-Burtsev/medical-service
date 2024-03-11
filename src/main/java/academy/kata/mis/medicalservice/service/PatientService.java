@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.service;
 
-import academy.kata.mis.medicalservice.model.Patient;
+import academy.kata.mis.medicalservice.model.entity.Patient;
 
 import java.util.List;
 import java.util.UUID;

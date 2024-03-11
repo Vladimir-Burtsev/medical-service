@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.repository;
 
-import academy.kata.mis.medicalservice.model.Patient;
+import academy.kata.mis.medicalservice.model.entity.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

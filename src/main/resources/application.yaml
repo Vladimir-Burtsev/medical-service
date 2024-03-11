@@ -22,23 +22,24 @@ spring:
         generate_statistics: false
     show-sql: true
     database: postgresql
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5443/mis_medical_service}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:123}
-
   liquibase:
     enabled: true
     change-log: db/changelog/changelog-master.xml
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    mode: 'PLAINTEXT'
+    producer:
+      topic: ${KAFKA_PRODUCER_TOPIC:mis_audit_local}
+    consumer:
+      group-id: ${KAFKA_GROUP:mis_audit_group_id}
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
-#feign:
-#  circuitbreaker:
-#    enabled: true
 
 #  instance:
 #    instance-id: ${spring.application.name}:${random.value}

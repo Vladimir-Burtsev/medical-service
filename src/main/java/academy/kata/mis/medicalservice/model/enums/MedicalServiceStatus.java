@@ -1,4 +1,4 @@
-package academy.kata.mis.medicalservice.enums;
+package academy.kata.mis.medicalservice.model.enums;
 
 /**
  * статус - заведующий отделением может блокировать для врачей использование услуги

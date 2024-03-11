@@ -1,4 +1,4 @@
-package academy.kata.mis.medicalservice.model;
+package academy.kata.mis.medicalservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

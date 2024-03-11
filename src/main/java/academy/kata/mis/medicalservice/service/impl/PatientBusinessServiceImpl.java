@@ -6,7 +6,7 @@ import academy.kata.mis.medicalservice.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.OrganizationFeignClient;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.Patient;
+import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     @Override
     public GetCurrentPatientPersonalInformation getPatientPersonalInformationByUser(UUID userId) {
         var patients = patientService.findAllByUserId(userId);
-        //todo не эффективно
+        //todo не эффективно - много лишних запросов
         long personId = patients.stream()
                 .findFirst()
                 .get()
