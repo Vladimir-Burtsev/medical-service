@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
-import academy.kata.mis.medicalservice.dto.GetCurrentPatientPersonalInformation;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInformation;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import lombok.RequiredArgsConstructor;

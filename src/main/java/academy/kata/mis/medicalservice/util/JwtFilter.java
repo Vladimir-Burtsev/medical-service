@@ -1,8 +1,9 @@
 package academy.kata.mis.medicalservice.util;
 
-import academy.kata.mis.medicalservice.dto.auth.JwtAuthentication;
-import academy.kata.mis.medicalservice.dto.auth.JwtAuthenticationDto;
 import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthenticationDto;
+import academy.kata.mis.medicalservice.service.AccessTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,6 +29,7 @@ public class JwtFilter extends GenericFilterBean {
     private static final String AUTHORIZATION = "Authorization";
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
+    private final AccessTokenService accessTokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
@@ -35,7 +37,7 @@ public class JwtFilter extends GenericFilterBean {
 
         final String token = getTokenFromRequest((HttpServletRequest) request);
 
-        if (token != null && jwtProvider.validateAccessToken(token)) {
+        if (token != null && !accessTokenService.isBlocked(token) && jwtProvider.validateAccessToken(token)) {
             String[] chunks = token.split("\\.");
             Base64.Decoder decoder = Base64.getUrlDecoder();
             String payload = new String(decoder.decode(chunks[1]), StandardCharsets.UTF_8);
@@ -44,8 +46,12 @@ public class JwtFilter extends GenericFilterBean {
             JwtAuthentication jwtInfoToken = JwtUtils.generate(requestDto);
             jwtInfoToken.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
+            fc.doFilter(request, response);
+        } else {
+            SecurityContextHolder.clearContext();
+            throw new AuthException("123");
         }
-        fc.doFilter(request, response);
+
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

@@ -1,4 +1,4 @@
-package academy.kata.mis.medicalservice.dto.auth;
+package academy.kata.mis.medicalservice.model.dto.auth;
 
 import java.util.Date;
 import java.util.List;

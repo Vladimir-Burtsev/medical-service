@@ -34,17 +34,20 @@ spring:
     bootstrap-servers: 127.0.0.1:9092
     mode: 'PLAINTEXT'
     producer:
-      topic: ${KAFKA_PRODUCER_TOPIC:mis_audit_local}
+      topic:
+        save-audit: ${KAFKA_PRODUCER_SAVE_AUDIT_TOPIC:mis_audit_local}
     consumer:
-      group-id: ${KAFKA_GROUP:mis_audit_group_id}
+      group-id: medical_service_group
+      topic:
+        block-token: ${KAFKA_CONSUMER_BLOCK_TOKEN:mis_block_token_local}
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-#  instance:
-#    instance-id: ${spring.application.name}:${random.value}
-
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
   client:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8762/eureka}
@@ -52,4 +55,5 @@ eureka:
 jwt:
   access:
     secret: ${JWT_ACCESS_SECRET:9CeoZ+XP0l4Bc+nHo9zZEM2Fv6vXby2WtptPE6XZVEoEQAieZK0r+ns3eiho7uu9j3mUv3gSeW+pCXKvBcq5ng==}
+    expiration: ${JWT_ACCESS_EXPIRATION:300}
 

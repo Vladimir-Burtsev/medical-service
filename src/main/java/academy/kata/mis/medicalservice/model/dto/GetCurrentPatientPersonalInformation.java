@@ -1,6 +1,6 @@
-package academy.kata.mis.medicalservice.dto;
+package academy.kata.mis.medicalservice.model.dto;
 
-import academy.kata.mis.medicalservice.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import lombok.Builder;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package academy.kata.mis.medicalservice.dto;
+package academy.kata.mis.medicalservice.model.dto;
 
-import academy.kata.mis.medicalservice.dto.feign.OrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import lombok.Builder;
 
 @Builder

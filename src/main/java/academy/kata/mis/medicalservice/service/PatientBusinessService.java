@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.service;
 
-import academy.kata.mis.medicalservice.dto.GetCurrentPatientPersonalInformation;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInformation;
 
 import java.util.UUID;
 

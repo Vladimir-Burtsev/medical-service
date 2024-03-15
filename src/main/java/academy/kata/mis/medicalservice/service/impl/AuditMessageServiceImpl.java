@@ -1,8 +1,8 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.model.dto.kafka.audit.AuditEventMessage;
+import academy.kata.mis.medicalservice.model.dto.kafka.audit.SaveAuditEvent;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
-import academy.kata.mis.medicalservice.dto.kafka.audit.AuditEventMessage;
-import academy.kata.mis.medicalservice.dto.kafka.audit.SaveAuditEvent;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class AuditMessageServiceImpl implements AuditMessageService {
     private final KafkaSenderService kafkaSenderService;
 
-    @Value("${spring.kafka.producer.topic}")
+    @Value("${spring.kafka.producer.topic.save-audit}")
     private String topic;
 
     @Value("${spring.application.name}")

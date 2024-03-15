@@ -1,9 +1,9 @@
 package academy.kata.mis.medicalservice.service.impl;
 
-import academy.kata.mis.medicalservice.dto.GetCurrentPatientPersonalInformation;
-import academy.kata.mis.medicalservice.dto.PatientPersonalInformation;
-import academy.kata.mis.medicalservice.dto.feign.OrganizationDto;
-import academy.kata.mis.medicalservice.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInformation;
+import academy.kata.mis.medicalservice.model.dto.PatientPersonalInformation;
+import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.OrganizationFeignClient;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.entity.Patient;

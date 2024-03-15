@@ -1,8 +1,8 @@
 package academy.kata.mis.medicalservice.util;
 
-import academy.kata.mis.medicalservice.dto.auth.JwtAuthentication;
-import academy.kata.mis.medicalservice.dto.auth.JwtAuthenticationDto;
-import academy.kata.mis.medicalservice.dto.auth.Role;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthenticationDto;
+import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.enums.RoleNameEnum;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

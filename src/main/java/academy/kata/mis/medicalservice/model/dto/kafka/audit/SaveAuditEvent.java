@@ -1,5 +1,6 @@
-package academy.kata.mis.medicalservice.dto.kafka.audit;
+package academy.kata.mis.medicalservice.model.dto.kafka.audit;
 
+import academy.kata.mis.medicalservice.model.dto.kafka.Command;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

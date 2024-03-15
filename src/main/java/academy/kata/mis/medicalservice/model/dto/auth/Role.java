@@ -1,4 +1,4 @@
-package academy.kata.mis.medicalservice.dto.auth;
+package academy.kata.mis.medicalservice.model.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
