@@ -31,7 +31,6 @@ public class PatientOuterRestController {
         GetCurrentPatientPersonalInformation response =
                 patientBusinessService.getPatientPersonalInformationByUser(UUID.fromString(principal.getName()));
 
-        //todo удалить пример аудита когда появятся примеры модификации БД
         auditMessageService.sendAudit(principal.getName(), operation, "успешное получение информации пациента о себе");
         log.debug("{}; Успешно; principal {}", operation, principal);
         return ResponseEntity.ok(response);

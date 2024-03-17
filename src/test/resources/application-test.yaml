@@ -12,7 +12,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        default_schema: ${APP_POSTGRESQL_SCHEMA:public}
+        default_schema: test
         order_inserts: true
         enable_lazy_load_no_trans: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -21,40 +21,38 @@ spring:
             non_contextual_creation: true
           batch_size: 20
         generate_statistics: false
-    show-sql: false
+    show-sql: true
     database: postgresql
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5443/mis_medical_service?currentSchema=public}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5443/mis_medical_service?currentSchema=test}
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD:123}
   liquibase:
     enabled: true
-    change-log: db/changelog/changelog-master.xml
-    default-schema: ${APP_POSTGRESQL_SCHEMA:public}
+    change-log: db/changelog/changelog-test.xml
+    default-schema: test
   kafka:
     bootstrap-servers: 127.0.0.1:9092
     mode: 'PLAINTEXT'
     producer:
       topic:
-        save-audit: ${KAFKA_PRODUCER_SAVE_AUDIT_TOPIC:mis_audit_local}
+        save-audit: ${KAFKA_PRODUCER_SAVE_AUDIT_TOPIC:mis_audit_local_test}
     consumer:
       group-id: medical_service_group
       topic:
-        block-token: ${KAFKA_CONSUMER_BLOCK_TOKEN:mis_block_token_local}
-
+        block-token: ${KAFKA_CONSUMER_BLOCK_TOKEN:mis_block_token_local_test}
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
 eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
   client:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8762/eureka}
-
 jwt:
   access:
     secret: ${JWT_ACCESS_SECRET:9CeoZ+XP0l4Bc+nHo9zZEM2Fv6vXby2WtptPE6XZVEoEQAieZK0r+ns3eiho7uu9j3mUv3gSeW+pCXKvBcq5ng==}
     expiration: ${JWT_ACCESS_EXPIRATION:300}
+

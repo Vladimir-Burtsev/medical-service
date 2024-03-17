@@ -1,11 +1,11 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
-import academy.kata.mis.medicalservice.feign.OrganizationFeignClient;
-import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.PatientService;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class PatientBusinessServiceImpl implements PatientBusinessService {
     private final PatientService patientService;
     private final PersonFeignClient personFeignClient;
-    private final OrganizationFeignClient organizationFeignClient;
+    private final StructureFeignClient structureFeignClient;
 
     @Override
     public GetCurrentPatientPersonalInformation getPatientPersonalInformationByUser(UUID userId) {
@@ -53,7 +53,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     }
 
     private OrganizationDto createOrganization(long organizationId) {
-        return organizationFeignClient.getOrganizationById(organizationId);
+        return structureFeignClient.getOrganizationById(organizationId);
     }
 
 }

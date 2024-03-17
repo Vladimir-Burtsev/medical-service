@@ -11,13 +11,11 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
     @Override
     public void addToBlock(String accessToken) {
-        System.out.println("add to cache " + accessToken.substring(7));
         blockedTokenCache.put(accessToken.substring(7), new Object());
     }
 
     @Override
     public boolean isBlocked(String accessToken) {
-        var r = blockedTokenCache.containsKey(accessToken);
-        return r;
+        return blockedTokenCache.containsKey(accessToken);
     }
 }

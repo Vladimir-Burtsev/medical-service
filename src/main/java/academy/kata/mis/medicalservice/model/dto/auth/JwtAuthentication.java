@@ -1,7 +1,6 @@
 package academy.kata.mis.medicalservice.model.dto.auth;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -11,6 +10,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class JwtAuthentication implements Authentication {
 
     private boolean authenticated;

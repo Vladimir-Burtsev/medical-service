@@ -1,0 +1,24 @@
+package academy.kata.mis.medicalservice.controller;
+
+import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.exceptions.TokenException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+@RestControllerAdvice
+public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(AuthException.class)
+    protected ResponseEntity<String> handleAuthExc(AuthException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(TokenException.class)
+    protected ResponseEntity<String> handleTokenExc(TokenException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+}
