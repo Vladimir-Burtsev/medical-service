@@ -1,8 +1,18 @@
 package academy.kata.mis.medicalservice.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -30,17 +40,17 @@ public class Patient {
     @Column(name = "user_id")
     private UUID userId;
 
-//    /**
-//     * талоны на которые записан пациент
-//     */
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
-//    private Set<Talon> talons;
-//
-//    /**
-//     * обращения пациента
-//     */
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
-//    private Set<Appeal> appeals;
+    /**
+     * талоны на которые записан пациент
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+    private Set<Talon> talons;
+
+    /**
+     * обращения пациента
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+    private Set<Appeal> appeals;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id", nullable = false)
