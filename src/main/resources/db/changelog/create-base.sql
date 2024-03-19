@@ -2,7 +2,8 @@ CREATE TABLE departments
 (
     id              SERIAL PRIMARY KEY,
     organization_id BIGINT NOT NULL,
-    FOREIGN KEY (organization_id) REFERENCES organizations (id)
+
+    constraint fk_departments_organization_id_on_organizations foreign key (organization_id) references organizations (id)
 );
 
 CREATE TABLE diseases
@@ -25,6 +26,7 @@ CREATE TABLE medical_services_dep
     status             VARCHAR(45) NOT NULL,
     department_id      BIGINT      NOT NULL,
     medical_service_id BIGINT      NOT NULL,
+
     FOREIGN KEY (department_id) REFERENCES departments (id),
     FOREIGN KEY (medical_service_id) REFERENCES medical_service (id)
 );
@@ -35,6 +37,7 @@ CREATE TABLE diseases_dep
     status        VARCHAR(45) NOT NULL,
     department_id BIGINT      NOT NULL,
     disease_id    BIGINT      NOT NULL,
+
     FOREIGN KEY (department_id) REFERENCES departments (id),
     FOREIGN KEY (disease_id) REFERENCES diseases (id)
 );
