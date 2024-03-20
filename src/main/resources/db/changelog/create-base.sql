@@ -1,9 +1,7 @@
 CREATE TABLE departments
 (
     id              SERIAL PRIMARY KEY,
-    organization_id BIGINT NOT NULL,
-
-    constraint fk_departments_organization_id_on_organizations foreign key (organization_id) references organizations (id)
+    organization_id BIGINT NOT NULL
 );
 
 CREATE TABLE diseases
@@ -25,10 +23,7 @@ CREATE TABLE medical_services_dep
     id                 SERIAL PRIMARY KEY,
     status             VARCHAR(45) NOT NULL,
     department_id      BIGINT      NOT NULL,
-    medical_service_id BIGINT      NOT NULL,
-
-    FOREIGN KEY (department_id) REFERENCES departments (id),
-    FOREIGN KEY (medical_service_id) REFERENCES medical_service (id)
+    medical_service_id BIGINT      NOT NULL
 );
 
 CREATE TABLE diseases_dep
@@ -36,10 +31,7 @@ CREATE TABLE diseases_dep
     id            SERIAL PRIMARY KEY,
     status        VARCHAR(45) NOT NULL,
     department_id BIGINT      NOT NULL,
-    disease_id    BIGINT      NOT NULL,
-
-    FOREIGN KEY (department_id) REFERENCES departments (id),
-    FOREIGN KEY (disease_id) REFERENCES diseases (id)
+    disease_id    BIGINT      NOT NULL
 );
 
 CREATE TABLE doctors
@@ -47,8 +39,7 @@ CREATE TABLE doctors
     id            SERIAL PRIMARY KEY,
     person_id     BIGINT NOT NULL,
     user_id       BIGINT NOT NULL,
-    department_id BIGINT NOT NULL,
-    FOREIGN KEY (department_id) REFERENCES departments (id)
+    department_id BIGINT NOT NULL
 );
 
 CREATE TABLE appeals
@@ -60,9 +51,7 @@ CREATE TABLE appeals
     open_date      DATE         NOT NULL,
     closed_date    DATE,
     patient_id     BIGINT       NOT NULL,
-    disease_dep_id BIGINT       NOT NULL,
-    FOREIGN KEY (patient_id) REFERENCES patients (id),
-    FOREIGN KEY (disease_dep_id) REFERENCES diseases_dep (id)
+    disease_dep_id BIGINT       NOT NULL
 );
 
 CREATE TABLE talons
@@ -70,9 +59,7 @@ CREATE TABLE talons
     id         SERIAL PRIMARY KEY,
     time       TIMESTAMP NOT NULL,
     patient_id BIGINT    NOT NULL,
-    doctor_id  BIGINT    NOT NULL,
-    FOREIGN KEY (patient_id) REFERENCES patients (id),
-    FOREIGN KEY (doctor_id) REFERENCES doctors (id)
+    doctor_id  BIGINT    NOT NULL
 );
 
 CREATE TABLE visits
@@ -80,9 +67,7 @@ CREATE TABLE visits
     id         SERIAL PRIMARY KEY,
     time       TIMESTAMP NOT NULL,
     patient_id BIGINT    NOT NULL,
-    doctor_id  BIGINT    NOT NULL,
-    FOREIGN KEY (patient_id) REFERENCES patients (id),
-    FOREIGN KEY (doctor_id) REFERENCES doctors (id)
+    doctor_id  BIGINT    NOT NULL
 );
 
 CREATE TABLE x_ray
@@ -90,7 +75,5 @@ CREATE TABLE x_ray
     id         SERIAL PRIMARY KEY,
     time       TIMESTAMP NOT NULL,
     patient_id BIGINT    NOT NULL,
-    doctor_id  BIGINT    NOT NULL,
-    FOREIGN KEY (patient_id) REFERENCES patients (id),
-    FOREIGN KEY (doctor_id) REFERENCES doctors (id)
+    doctor_id  BIGINT    NOT NULL
 );
