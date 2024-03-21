@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * доктор
@@ -35,7 +36,7 @@ public class Doctor {
      * Соответсвует id Пользователя из микросервиса mis-auth-service
      */
     @Column(name = "user_id", nullable = false)
-    private long userId;
+    private UUID userId;
 
     /**
      * ид отделения доктора.

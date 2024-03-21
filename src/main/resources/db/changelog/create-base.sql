@@ -51,7 +51,7 @@ CREATE TABLE doctors
 (
     id            SERIAL PRIMARY KEY,
     person_id     BIGINT NOT NULL,
-    user_id       BIGINT NOT NULL,
+    user_id       uuid   NOT NULL,
     department_id BIGINT NOT NULL,
 
     CONSTRAINT fk_doctors_department_id_on_departments
