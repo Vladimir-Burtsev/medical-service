@@ -1,6 +1,10 @@
 package academy.kata.mis.medicalservice.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 import java.util.Set;
@@ -19,8 +23,8 @@ public class Organization {
     @Id
     private long id;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")
-//    private Set<Department> departments;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")
+    private Set<Department> departments;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "organization")
     private Set<Patient> patients;

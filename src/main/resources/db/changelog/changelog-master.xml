@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
     <include file="db/changelog/init.sql"/>
     <include file="db/changelog/data/init_data.sql"/>
+    <include file="db/changelog/create-base.sql"/>
 
 </databaseChangeLog>
