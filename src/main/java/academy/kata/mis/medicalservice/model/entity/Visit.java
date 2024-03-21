@@ -1,18 +1,8 @@
 package academy.kata.mis.medicalservice.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,8 +20,8 @@ public class Visit {
     /**
      * дата посещения
      */
-    @Column(name = "day_of_visit", nullable = false)
-    private LocalDate dayOfVisit;
+    @Column(name = "visit_time", nullable = false)
+    private LocalDateTime visitTime;
 
     /**
      * доктор, который принял пациента

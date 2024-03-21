@@ -20,7 +20,7 @@ import java.util.UUID;
  * Рентген снимок
  */
 @Entity
-@Table(name = "x_ray")
+@Table(name = "x_rays")
 public class XRay {
 
     @Id

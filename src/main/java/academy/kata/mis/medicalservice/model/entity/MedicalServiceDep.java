@@ -44,7 +44,7 @@ public class MedicalServiceDep {
      * связь услуги со справочником
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medical_service", nullable = false)
+    @JoinColumn(name = "medical_service_id", nullable = false)
     private MedicalService medicalService;
 
     /**
