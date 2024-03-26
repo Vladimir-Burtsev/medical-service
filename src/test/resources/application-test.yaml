@@ -45,6 +45,12 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+hazelcast:
+  embedded: true
+  cache:
+    block-access-token: access-token-block-map-test
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}

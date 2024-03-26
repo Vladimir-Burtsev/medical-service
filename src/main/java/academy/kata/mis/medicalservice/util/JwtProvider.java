@@ -1,6 +1,5 @@
 package academy.kata.mis.medicalservice.util;
 
-import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthenticationDto;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
@@ -57,10 +56,10 @@ public class JwtProvider {
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String payload = new String(decoder.decode(chunks[1]), StandardCharsets.UTF_8);
         JwtAuthenticationDto requestDto = objectMapper.readValue(payload, JwtAuthenticationDto.class);
-        validateRequest(requestDto);
-        JwtAuthentication jwtInfoToken = generate(requestDto);
-        jwtInfoToken.setAuthenticated(true);
-        return jwtInfoToken;
+        JwtAuthentication jwtInfoToken = JwtAuthentication.builder()
+                .authenticated(validateRequest(requestDto))
+                .build();
+        return generate(jwtInfoToken, requestDto);
     }
 
     public String getTokenFromRequest(String bearer) {
@@ -70,22 +69,24 @@ public class JwtProvider {
         return null;
     }
 
-    private void validateRequest(JwtAuthenticationDto requestDto) {
+    private boolean validateRequest(JwtAuthenticationDto requestDto) {
         if (requestDto == null) {
-            throw new AuthException("Request data is empty");
+            return false;
         }
         if (requestDto.user() == null) {
-            throw new AuthException("User is empty");
+            return false;
         }
         if (new Date().after(requestDto.expirationDate())) {
-            throw new AuthException("Token is expired");
+            return false;
         }
+        return true;
     }
 
-    private JwtAuthentication generate(JwtAuthenticationDto requestDto) {
-        final JwtAuthentication jwtInfoToken = new JwtAuthentication();
-        jwtInfoToken.setUserId(requestDto.user());
-        jwtInfoToken.setRoles(getRoles(requestDto.claims()));
+    private JwtAuthentication generate(JwtAuthentication jwtInfoToken, JwtAuthenticationDto requestDto) {
+        if (jwtInfoToken.isAuthenticated()) {
+            jwtInfoToken.setUserId(requestDto.user());
+            jwtInfoToken.setRoles(getRoles(requestDto.claims()));
+        }
         return jwtInfoToken;
     }
 

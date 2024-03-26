@@ -1,9 +1,12 @@
 package academy.kata.mis.medicalservice.exceptions;
 
-public class AuthException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public AuthException(String message) {
-        super(message);
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+public class AuthException extends AuthenticationException {
+    public AuthException(String msg) {
+        super(msg);
     }
-
 }

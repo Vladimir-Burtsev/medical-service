@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.model.dto.kafka;
 
-import academy.kata.mis.medicalservice.model.dto.kafka.token.BlockAccessToken;
+import academy.kata.mis.medicalservice.model.dto.kafka.audit.SaveAuditEvent;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,8 +19,7 @@ import java.util.UUID;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(name = "SAVE_AUDIT_EVENT", value = BlockAccessToken.class),
-        @JsonSubTypes.Type(name = "BLOCK_ACCESS_TOKEN", value = BlockAccessToken.class)
+        @JsonSubTypes.Type(name = "SAVE_AUDIT_EVENT", value = SaveAuditEvent.class)
 })
 @Getter
 @ToString

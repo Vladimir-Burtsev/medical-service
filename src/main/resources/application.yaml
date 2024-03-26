@@ -42,10 +42,14 @@ spring:
       group-id: medical_service_group
       topic:
         block-token: ${KAFKA_CONSUMER_BLOCK_TOKEN:mis_block_token_local}
-
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+hazelcast:
+  embedded: false
+  cache:
+    block-access-token: access-token-block-map
 
 eureka:
   instance:
@@ -57,4 +61,3 @@ eureka:
 jwt:
   access:
     secret: ${JWT_ACCESS_SECRET:9CeoZ+XP0l4Bc+nHo9zZEM2Fv6vXby2WtptPE6XZVEoEQAieZK0r+ns3eiho7uu9j3mUv3gSeW+pCXKvBcq5ng==}
-    expiration: ${JWT_ACCESS_EXPIRATION:300}

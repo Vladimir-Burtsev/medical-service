@@ -14,8 +14,9 @@ import java.io.IOException;
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public  void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
-            throws IOException {
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException exception) throws IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().print(exception.getMessage());

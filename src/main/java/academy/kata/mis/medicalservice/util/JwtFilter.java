@@ -1,38 +1,57 @@
 package academy.kata.mis.medicalservice.util;
 
-import academy.kata.mis.medicalservice.exceptions.TokenException;
+import academy.kata.mis.medicalservice.config.SecurityAuthenticationEntryPoint;
+import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION = "Authorization";
     private final JwtProvider jwtProvider;
+    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
-            throws IOException, ServletException {
-        String bearer = ((HttpServletRequest) request).getHeader(AUTHORIZATION);
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+        String bearer = request.getHeader(AUTHORIZATION);
         String token = jwtProvider.getTokenFromRequest(bearer);
         if (token != null && jwtProvider.validateAccessToken(token)) {
-            SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(token));
-            fc.doFilter(request, response);
+
+            JwtAuthentication authentication = jwtProvider.getAuthentication(token);
+            if (authentication.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                chain.doFilter(request, response);
+            } else {
+                invalidRequest(request, response, HttpStatus.FORBIDDEN.value(),"Access token forbidden.");
+            }
         } else {
-            SecurityContextHolder.clearContext();
-            throw new TokenException("AccessToken is not valid");
+            invalidRequest(request, response, HttpStatus.UNAUTHORIZED.value(),"Access token invalid.");
         }
+    }
+
+    private void invalidRequest(HttpServletRequest request,
+                                HttpServletResponse response,
+                                int status,
+                                String message) throws IOException {
+        SecurityContextHolder.clearContext();
+        response.setStatus(status);
+        securityAuthenticationEntryPoint.commence(request, response,
+                new AuthException(message));
     }
 
 }
