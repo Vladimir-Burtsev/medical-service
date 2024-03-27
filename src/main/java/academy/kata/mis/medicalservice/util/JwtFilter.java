@@ -30,17 +30,20 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
         String bearer = request.getHeader(AUTHORIZATION);
         String token = jwtProvider.getTokenFromRequest(bearer);
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-
-            JwtAuthentication authentication = jwtProvider.getAuthentication(token);
-            if (authentication.isAuthenticated()) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                chain.doFilter(request, response);
+        if (token != null) {
+            if (jwtProvider.validateAccessToken(token)) {
+                JwtAuthentication authentication = jwtProvider.getAuthentication(token);
+                if (authentication.isAuthenticated()) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    chain.doFilter(request, response);
+                } else {
+                    invalidRequest(request, response, HttpStatus.FORBIDDEN.value(), "Access token forbidden.");
+                }
             } else {
-                invalidRequest(request, response, HttpStatus.FORBIDDEN.value(),"Access token forbidden.");
+                invalidRequest(request, response, HttpStatus.UNAUTHORIZED.value(),"Access token invalid.");
             }
         } else {
-            invalidRequest(request, response, HttpStatus.UNAUTHORIZED.value(),"Access token invalid.");
+            chain.doFilter(request, response);
         }
     }
 
