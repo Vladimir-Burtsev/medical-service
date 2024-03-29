@@ -1,16 +1,14 @@
 package academy.kata.mis.medicalservice.controller.internal;
 
-import academy.kata.mis.medicalservice.model.dto.patient.PatientDto;
-import academy.kata.mis.medicalservice.service.PatientBusinessService;
+import academy.kata.mis.medicalservice.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -18,16 +16,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/internal/medical/patient")
 public class PatientInternalController {
-    private final PatientBusinessService patientBusinessService;
+    private final PatientService patientService;
 
-    @PostMapping
-    public ResponseEntity<List<PatientDto>> getCurrentPatientInformation(@RequestParam String userId) {
-        String operation = "Получение инфо о пациенте";
-        log.info("{}; principal {}", operation, userId);
+    @GetMapping
+    public ResponseEntity<Boolean> isUserPatientOfOrganization
+            (@RequestParam String userId, @RequestParam long organizationId) {
+        String operation = "Проверка, является пользователь - пациентом организации";
+        log.info("{}; principal {}; organizationId {}", operation, userId, organizationId);
 
-        List<PatientDto> response = patientBusinessService.findPatientInformationByUserId(UUID.fromString(userId));
+        Boolean response = patientService
+                .existsPatientByUserIdAndOrganizationId(UUID.fromString(userId), organizationId);
 
-        log.debug("{}; Успешно; principal {}", operation, userId);
+        log.debug("{}; Успешно; principal {}; organizationId {}; {}", operation, userId, organizationId, response);
         return ResponseEntity.ok(response);
     }
 }

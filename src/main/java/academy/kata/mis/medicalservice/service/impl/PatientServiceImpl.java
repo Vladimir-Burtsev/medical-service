@@ -18,4 +18,9 @@ public class PatientServiceImpl implements PatientService {
     public List<Patient> findAllByUserId(UUID userId) {
         return patientRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public Boolean existsPatientByUserIdAndOrganizationId(UUID userId, long organizationId) {
+        return patientRepository.existsPatientByUserIdAndOrganizationId(userId,organizationId);
+    }
 }
