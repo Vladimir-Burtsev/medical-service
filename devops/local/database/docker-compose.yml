@@ -1,9 +1,0 @@
-version: '3.1'
-services:
-  mis-medical-service-v3-db:
-    build: .
-    container_name: mis-medical-service-db
-    environment:
-      POSTGRES_PASSWORD: 123
-    ports:
-      - "5443:5432"
