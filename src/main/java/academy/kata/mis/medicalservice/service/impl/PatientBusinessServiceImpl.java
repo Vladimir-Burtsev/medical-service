@@ -6,6 +6,8 @@ import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInform
 import academy.kata.mis.medicalservice.model.dto.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientDto;
+import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.PatientService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     private final PatientService patientService;
     private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
+    private final PatientConvertor patientConvertor;
 
     @Override
     public GetCurrentPatientPersonalInformation getPatientPersonalInformationByUser(UUID userId) {
@@ -39,7 +43,13 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
                 .build();
     }
 
-    private List<PatientPersonalInformation> createPatients (List<Patient> patients) {
+    @Override
+    public List<PatientDto> findPatientInformationByUserId(UUID userId) {
+        return patientService.findAllByUserId(userId).stream().
+                map(patientConvertor::entityToPatientDto).collect(Collectors.toList());
+    }
+
+    private List<PatientPersonalInformation> createPatients(List<Patient> patients) {
         return patients.stream()
                 .map(this::create)
                 .toList();
@@ -55,5 +65,4 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     private OrganizationDto createOrganization(long organizationId) {
         return structureFeignClient.getOrganizationById(organizationId);
     }
-
 }
