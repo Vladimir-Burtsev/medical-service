@@ -19,8 +19,9 @@ public class PatientInternalController {
     private final PatientService patientService;
 
     @GetMapping
-    public ResponseEntity<Boolean> isUserPatientOfOrganization
-            (@RequestParam String userId, @RequestParam long organizationId) {
+    public ResponseEntity<Boolean>  isUserPatientOfOrganization(
+            @RequestParam(name = "user_id") String userId,
+            @RequestParam(name = "organization_id") long organizationId) {
         String operation = "Проверка, является пользователь - пациентом организации";
         log.info("{}; principal {}; organizationId {}", operation, userId, organizationId);
 
