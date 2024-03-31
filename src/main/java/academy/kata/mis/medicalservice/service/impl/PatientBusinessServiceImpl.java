@@ -39,7 +39,8 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
                 .build();
     }
 
-    private List<PatientPersonalInformation> createPatients (List<Patient> patients) {
+
+    private List<PatientPersonalInformation> createPatients(List<Patient> patients) {
         return patients.stream()
                 .map(this::create)
                 .toList();
@@ -55,5 +56,4 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     private OrganizationDto createOrganization(long organizationId) {
         return structureFeignClient.getOrganizationById(organizationId);
     }
-
 }

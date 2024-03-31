@@ -1,11 +1,15 @@
 package academy.kata.mis.medicalservice.controller;
 
 import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.exceptions.TokenException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
@@ -21,4 +25,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(LogicException.class)
+    protected ResponseEntity<Object> handleConflict(LogicException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
+        return new ResponseEntity<>(
+                "Доступ запрещен, недостаточно прав", new HttpHeaders(), HttpStatus.FORBIDDEN);
+    }
 }
