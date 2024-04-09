@@ -2,20 +2,12 @@ package academy.kata.mis.medicalservice.model.entity;
 
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.model.enums.InsuranceType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -34,6 +26,11 @@ import java.util.Set;
  * Закрытое обращение нельзя модифицировать
  */
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "appeals")
 public class Appeal {
 
@@ -52,6 +49,7 @@ public class Appeal {
     /**
      * статус
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private AppealStatus status;
 
@@ -100,4 +98,19 @@ public class Appeal {
     @JoinColumn(name = "disease_dep_id", nullable = false)
     private DiseaseDep diseaseDep;
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Appeal appeal = (Appeal) o;
+        return getId() != null && Objects.equals(getId(), appeal.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }

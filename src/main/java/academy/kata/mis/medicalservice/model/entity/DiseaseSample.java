@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * Посещение
+ * Черновик заболеваний доктора.
+ * Доктор создает черновик для заболеваний которые он может лечить в отделении
+ * и связывает с ним услуги которые может оказывать его отделение
  */
 @Entity
 @Getter
@@ -18,8 +18,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "visits")
-public class Visit {
+@Table(name = "disease_samples")
+public class DiseaseSample {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,34 +27,40 @@ public class Visit {
     private Long id;
 
     /**
-     * дата посещения
+     * название шаблона
      */
-    @Column(name = "visit_time", nullable = false)
-    private LocalDateTime visitTime;
+    @Column(name = "name", unique = true)
+    private String name;
 
     /**
-     * доктор, который принял пациента
+     * описание шаблона
+     */
+    @Column(name = "description")
+    private String description;
+
+    /**
+     * ссылка на доктора
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
     /**
-     * связь с обращением по заболеванию
+     * ссылка на заболевание которое лечит отделение доктора
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appeal_id", nullable = false)
-    private Appeal appeal;
+    @JoinColumn(name = "disease_dep_id", nullable = false)
+    private DiseaseDep diseaseDep;
 
     /**
-     * услуги, которые были оказаны пациенту в рамках этого посещения
+     * медицинские услуги отделения которые доктор использует как шаблон для лечения заболевания
      */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "visit_medical_services_dep",
-            joinColumns = @JoinColumn(name = "visit_id"),
+            name = "disease_samples_medical_services_dep",
+            joinColumns = @JoinColumn(name = "disease_sample_id"),
             inverseJoinColumns = @JoinColumn(name = "medical_service_dep_id"))
-    private List<MedicalServiceDep> medicalServicesDep;
+    private Set<MedicalServiceDep> servicesDep;
 
     @Override
     public final boolean equals(Object o) {
@@ -63,8 +69,8 @@ public class Visit {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Visit visit = (Visit) o;
-        return getId() != null && Objects.equals(getId(), visit.getId());
+        DiseaseSample that = (DiseaseSample) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override

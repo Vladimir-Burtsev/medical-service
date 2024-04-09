@@ -1,2 +1,13 @@
+truncate talons cascade;
+truncate visits cascade;
+truncate x_rays cascade;
+truncate appeals cascade;
+truncate medical_services_dep cascade;
+truncate diseases_dep cascade;
+truncate disease_samples cascade;
+truncate doctors cascade;
 truncate patients cascade;
+truncate departments cascade;
 truncate organizations cascade;
+truncate diseases cascade;
+truncate medical_services cascade;

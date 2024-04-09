@@ -1,23 +1,22 @@
 package academy.kata.mis.medicalservice.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * доктор
  */
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "doctors")
 public class Doctor {
 
@@ -31,6 +30,12 @@ public class Doctor {
      */
     @Column(name = "person_id", nullable = false)
     private long personId;
+
+    /**
+     * соответствует id Позиции из микросервиса mis-structure-service
+     */
+    @Column(name = "position_id", nullable = false)
+    private long positionId;
 
     /**
      * Соответсвует id Пользователя из микросервиса mis-auth-service
@@ -50,11 +55,33 @@ public class Doctor {
      * все талоны доктора
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "doctor")
-    private List<Talon> talons;
+    private Set<Talon> talons;
 
     /**
      * все посещения на которых лечил доктор
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "doctor")
-    private List<Visit> visits;
+    private Set<Visit> visits;
+
+    /**
+     * все шаблоны доктора
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "doctor")
+    private Set<DiseaseSample> diseaseSamples;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Doctor doctor = (Doctor) o;
+        return getId() != null && Objects.equals(getId(), doctor.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }
