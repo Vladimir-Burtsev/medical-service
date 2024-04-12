@@ -1,10 +1,10 @@
 package academy.kata.mis.medicalservice.model.dto;
 
-import academy.kata.mis.medicalservice.model.dto.doctor.DoctorForDepartmentShortDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 
 import java.util.List;
 
 public record GetDoctorsForDepartmentResponse(long departmentId,
                                               String departmentName,
-                                              List<DoctorForDepartmentShortDto> doctors) {
+                                              List<DoctorShortDto> doctors) {
 }

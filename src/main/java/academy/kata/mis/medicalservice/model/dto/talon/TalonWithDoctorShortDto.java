@@ -8,5 +8,6 @@ public record TalonWithDoctorShortDto(long talonId,
                                       String doctorFirstName,
                                       String doctorLastName,
                                       String doctorPatronymic,
-                                      String doctorPositionName) {
+                                      String doctorPositionName,
+                                      String cabinet) {
 }

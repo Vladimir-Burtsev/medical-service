@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.model.dto.GetActivePatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetActiveTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,17 @@ public class PatientTalonOuterController {
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент
+
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping
+    public ResponseEntity<GetActivePatientTalonsByDepartmentsResponse> getActiveTalonsByPatientFull(
+            @RequestParam(name = "patient_id") long patientId) {
+        //todo
+        // проверить что пациент существует
+        // проверить что авторизованный пользователь является этим пациентом
+        // вернуть все талоны на которые записан пациент в разрезе отделений организации пациента
 
         return ResponseEntity.ok(null);
     }
@@ -65,7 +77,7 @@ public class PatientTalonOuterController {
         // проверить что талон свободен
         // проверить что пациент и доктор - разные люди (что бы доктор не записался сам к себе)
         // проверить что до приема более 10 минут (использовать проперти)
-        // записать пациента на указанный талон к врачу
+        // записать пациента на указанный талон к врачу с пессимистичной блокировкой (может быть конкуренция)
         // отправить сообщение на почту пациенту о успешной записи к врачу
     }
 }
