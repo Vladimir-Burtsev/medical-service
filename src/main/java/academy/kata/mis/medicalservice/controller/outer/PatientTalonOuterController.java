@@ -1,7 +1,7 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
-import academy.kata.mis.medicalservice.model.dto.GetActivePatientTalonsByDepartmentsResponse;
-import academy.kata.mis.medicalservice.model.dto.GetActiveTalonsByPatientResponse;
+import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
+import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
 
-    @GetMapping
-    public ResponseEntity<GetActiveTalonsByPatientResponse> getActiveTalonsByPatient(
+    @GetMapping("/assigned")
+    public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
         //todo
         // проверить что пациент существует
@@ -27,8 +27,8 @@ public class PatientTalonOuterController {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping
-    public ResponseEntity<GetActivePatientTalonsByDepartmentsResponse> getActiveTalonsByPatientFull(
+    @GetMapping("/assigned/full")
+    public ResponseEntity<GetAssignedPatientTalonsByDepartmentsResponse> getAssignedTalonsByPatientFull(
             @RequestParam(name = "patient_id") long patientId) {
         //todo
         // проверить что пациент существует
@@ -65,7 +65,7 @@ public class PatientTalonOuterController {
         // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
     }
 
-    @PatchMapping("/sign")
+    @PatchMapping("/assign")
     public void signUpForTalon(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "talon_id") long talonId) {

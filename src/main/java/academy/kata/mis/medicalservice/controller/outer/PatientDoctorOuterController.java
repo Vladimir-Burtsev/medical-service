@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/medical/patient/doctor")
 public class PatientDoctorOuterController {
 
-    @GetMapping("/department")
+    @GetMapping("/all")
     public ResponseEntity<GetDoctorsForDepartmentResponse> getDoctors(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "department_id") long departmentId,

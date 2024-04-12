@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/medical/patient/appeal")
 public class PatientAppealsController {
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<GetPatientAppealsResponse> getAppeals(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "count", required = false, defaultValue = "10") long count,
@@ -47,7 +47,7 @@ public class PatientAppealsController {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping
+    @GetMapping("/report")
     public ResponseEntity<RedirectUrlResponse> downloadAppealReport(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId,

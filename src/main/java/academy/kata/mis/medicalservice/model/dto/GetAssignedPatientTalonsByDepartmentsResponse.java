@@ -4,5 +4,5 @@ import academy.kata.mis.medicalservice.model.dto.department.DepartmentWithTalons
 
 import java.util.List;
 
-public record GetActivePatientTalonsByDepartmentsResponse(List<DepartmentWithTalonsDto> departments) {
+public record GetAssignedPatientTalonsByDepartmentsResponse(List<DepartmentWithTalonsDto> departments) {
 }
