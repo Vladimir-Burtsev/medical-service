@@ -9,5 +9,4 @@ public enum RoleNameEnum {
     HR_MANAGER,
     CHIEF_DOCTOR,
     DIRECTOR,
-
 }

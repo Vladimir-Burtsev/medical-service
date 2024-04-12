@@ -2,8 +2,8 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
-import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInformation;
-import academy.kata.mis.medicalservice.model.dto.PatientPersonalInformation;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.entity.Patient;
@@ -23,7 +23,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     private final StructureFeignClient structureFeignClient;
 
     @Override
-    public GetCurrentPatientPersonalInformation getPatientPersonalInformationByUser(UUID userId) {
+    public GetCurrentPatientPersonalInfoResponse getPatientPersonalInformationByUser(UUID userId) {
         var patients = patientService.findAllByUserId(userId);
         //todo не эффективно - много лишних запросов
         long personId = patients.stream()
@@ -32,7 +32,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
                 .getPersonId();
         PersonDto personDto = personFeignClient.getPersonById(personId);
 
-        return GetCurrentPatientPersonalInformation.builder()
+        return GetCurrentPatientPersonalInfoResponse.builder()
                 .userId(userId)
                 .person(personDto)
                 .patients(createPatients(patients))
