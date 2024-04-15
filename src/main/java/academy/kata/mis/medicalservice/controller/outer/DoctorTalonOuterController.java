@@ -51,7 +51,7 @@ public class DoctorTalonOuterController {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/full")
     public ResponseEntity<GetAllDoctorTalonsResponse> getFullTalonInfo(
             @RequestParam(name = "doctor_id") long doctorId,
             @RequestParam(name = "date_start", required = false) LocalDate dateStart,
