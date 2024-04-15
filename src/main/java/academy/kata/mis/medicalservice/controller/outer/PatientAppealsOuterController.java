@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/appeal")
-public class PatientAppealsController {
+public class PatientAppealsOuterController {
 
     @GetMapping("/all")
     public ResponseEntity<GetPatientAppealsResponse> getAppeals(

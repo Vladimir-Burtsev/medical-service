@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.model.dto;
 
-import academy.kata.mis.medicalservice.model.dto.talon.TalonShortDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithPatientDto;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public record GetDoctorTalonsResponse(long doctorId,
                                       String doctorLastName,
                                       String doctorPatronymic,
                                       String doctorPositionName,
-                                      List<TalonShortDto> talons) {
+                                      List<TalonWithPatientDto> talons) {
 }
 
 

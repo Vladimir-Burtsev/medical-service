@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/department")
-public class PatientDepartmentController {
+public class PatientDepartmentOuterController {
 
     @GetMapping
     public ResponseEntity<GetDepartmentsResponse> getDepartments(

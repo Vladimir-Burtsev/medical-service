@@ -1,12 +1,11 @@
 package academy.kata.mis.medicalservice.model.dto;
 
-import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortInfoInOrganizationDto;
-import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 
-import java.util.List;
-import java.util.UUID;
-
-public record GetCurrentDoctorPersonalInfoResponse(UUID userId,
-                                                   PersonDto person,
-                                                   List<DoctorShortInfoInOrganizationDto> doctors) {
+public record GetCurrentDoctorPersonalInfoResponse(DoctorShortDto doctor,
+                                                   OrganizationShortDto organization,
+                                                   DepartmentShortDto department,
+                                                   String cabinetNumber) {
 }
