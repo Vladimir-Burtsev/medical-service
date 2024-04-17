@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface PatientService {
     List<Patient> findAllByUserId(UUID userId);
     Boolean existsPatientByUserIdAndOrganizationId(UUID userId,long organizationId);
+
+    Patient getPatientById(long patientId);
 }
