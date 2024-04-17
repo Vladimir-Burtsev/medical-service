@@ -1,8 +1,10 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -52,23 +54,19 @@ public class PatientTalonOuterController {
         return ResponseEntity.ok(null);
     }
 
-    @PatchMapping("/cancel")
+    @PatchMapping("/unassign")
     public void cancelReservation(
-            @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "talon_id") long talonId) {
         //todo
-        // проверить что пациент существует
-        // проверить что авторизованный пользователь является этим пациентом
         // проверить что талон существует
-        // проверить что талон принадлежит этому пациенту
+        // проверить что талон принадлежит авторизованному пациенту
         // отменить запись к врачу (талон должен остаться без ссылки на пациента)
         // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
     }
 
     @PatchMapping("/assign")
     public void signUpForTalon(
-            @RequestParam(name = "patient_id") long patientId,
-            @RequestParam(name = "talon_id") long talonId) {
+            @RequestBody @NotNull AssignPatientToTalonRequest request) {
         //todo
         // создать переменную в проперти - минуты до блокировки записи до приема
         // проверить что пациент существует

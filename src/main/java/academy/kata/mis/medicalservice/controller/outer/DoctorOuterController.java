@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.Principal;
 
 @Slf4j
-@PreAuthorize("hasAuthority('DOCTOR')")
+@PreAuthorize("hasAnyAuthority('DOCTOR', 'CHIEF_DOCTOR', 'DIRECTOR')")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/doctor")
@@ -24,7 +24,7 @@ public class DoctorOuterController {
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
 
         //todo
-        // вернуть всех докторов( + заведующих и главных) которыми является авторизованный пользователь
+        // вернуть всех докторов которыми является авторизованный пользователь
 
         return ResponseEntity.ok(null);
     }

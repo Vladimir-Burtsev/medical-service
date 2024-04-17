@@ -13,6 +13,5 @@ public record GetFullTalonInformationResponse(long talonId,
                                               DepartmentShortDto department,
                                               String cabinetNumber,
                                               DoctorShortDto doctor,
-                                              PatientShortDto patient
-                                              ) {
+                                              PatientShortDto patient) {
 }
