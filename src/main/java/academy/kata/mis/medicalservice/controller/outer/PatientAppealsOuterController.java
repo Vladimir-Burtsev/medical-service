@@ -3,15 +3,22 @@ package academy.kata.mis.medicalservice.controller.outer;
 import academy.kata.mis.medicalservice.model.dto.RedirectUrlResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealFullInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealsResponse;
+import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+import java.util.UUID;
 
 @Slf4j
 @PreAuthorize("hasAuthority('PATIENT')")
@@ -19,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/appeal")
 public class PatientAppealsOuterController {
+    private final ReportServiceSender reportServiceSender;
 
     @GetMapping("/all")
     public ResponseEntity<GetPatientAppealsResponse> getAppeals(
@@ -50,8 +58,19 @@ public class PatientAppealsOuterController {
     @GetMapping("/report")
     public ResponseEntity<RedirectUrlResponse> downloadAppealReport(
             @RequestParam(name = "patient_id") long patientId,
-            @RequestParam(name = "appeal_id") long appealId,
-            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail) {
+            @RequestParam(name = "appeal_id", required = false) long appealId,
+            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail, Principal principal) {
+
+
+        reportServiceSender.sendInReportService(
+                UUID.fromString(principal.getName()),
+                "mailAddress3@email.com",
+                """
+                      Hello motherfucker!
+                      I'm whatching you!"""
+        );
+
+
         //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
