@@ -8,6 +8,7 @@ import academy.kata.mis.medicalservice.model.entity.Appeal;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.AppealService;
 import academy.kata.mis.medicalservice.service.PatientService;
+import academy.kata.mis.medicalservice.service.RandomGenerator;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class PatientAppealsOuterController {
     private final AppealService appealService;
     private final ReportServiceSender reportServiceSender;
     private final PersonFeignClient personFeignClient;
+    private final RandomGenerator randomGenerator;
 
 
     @GetMapping("/all")
@@ -53,8 +55,8 @@ public class PatientAppealsOuterController {
 
     @GetMapping
     public ResponseEntity<GetPatientAppealFullInfoResponse> getAppealFullInfo(
-/*            @RequestParam(name = "patient_id") long patientId,
-            @RequestParam(name = "appeal_id") long appealId*/) {
+            @RequestParam(name = "patient_id") long patientId,
+            @RequestParam(name = "appeal_id") long appealId) {
         //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
@@ -69,8 +71,9 @@ public class PatientAppealsOuterController {
     public ResponseEntity<String> downloadAppealReport(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId,
-            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail) throws InterruptedException {
-        UUID operationId = UUID.randomUUID();
+            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail)
+            throws InterruptedException {
+        UUID operationId = randomGenerator.generate();
         UUID userId = isPatientExistAndAuthenticatedUserPatient(patientId);
         Appeal appeal = isAppealExistAndPatientOwner(appealId, patientId);
         String email = sendEmail ? personFeignClient.getPersonContactByUserId(userId) : null;
@@ -110,9 +113,6 @@ public class PatientAppealsOuterController {
     private UUID isPatientExistAndAuthenticatedUserPatient(long patientId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient1 = patientService.getPatientById(patientId);
-        log.info("authentication: {}", authentication.getName());
-        log.info("patient: {}", patient1.getUserId());
-        log.info(String.valueOf(UUID.fromString(authentication.getName()).equals(patient1.getUserId())));
 
         Optional.ofNullable(patientService.getPatientById(patientId))
                 .filter(patient -> patient.getUserId().equals(UUID.fromString(authentication.getName())))
