@@ -18,12 +18,13 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
     private String topic;
 
     @Override
-    public void sendInReportService(UUID userId, String email, String info) {
+    public void sendInReportService(UUID userId, String userEmail, String info, UUID operationId) {
         kafkaSenderService.sendToKafkaAsync(topic,
                 RequestSendAppealToReportService.builder()
                         .userId(userId)
-                        .email(email)
+                        .userEmail(userEmail)
                         .info(info)
+                        .operationId(operationId)
                         .build()
         );
     }

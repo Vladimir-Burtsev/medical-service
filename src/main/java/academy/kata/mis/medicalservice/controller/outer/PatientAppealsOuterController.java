@@ -2,7 +2,6 @@ package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.dto.RedirectUrlResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealFullInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealsResponse;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,8 +53,8 @@ public class PatientAppealsOuterController {
 
     @GetMapping
     public ResponseEntity<GetPatientAppealFullInfoResponse> getAppealFullInfo(
-            @RequestParam(name = "patient_id") long patientId,
-            @RequestParam(name = "appeal_id") long appealId) {
+/*            @RequestParam(name = "patient_id") long patientId,
+            @RequestParam(name = "appeal_id") long appealId*/) {
         //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
@@ -66,11 +66,11 @@ public class PatientAppealsOuterController {
     }
 
     @GetMapping("/report")
-    public ResponseEntity<RedirectUrlResponse> downloadAppealReport(
+    public ResponseEntity<String> downloadAppealReport(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId,
-            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail) {
-
+            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail) throws InterruptedException {
+        UUID operationId = UUID.randomUUID();
         UUID userId = isPatientExistAndAuthenticatedUserPatient(patientId);
         Appeal appeal = isAppealExistAndPatientOwner(appealId, patientId);
         String email = sendEmail ? personFeignClient.getPersonContactByUserId(userId) : null;
@@ -89,37 +89,30 @@ public class PatientAppealsOuterController {
                         Дата закрытия: %s
                         Врач: %s""", appeal.getDiseaseDep().getDisease().getName(), appeal.getStatus(),
                 appeal.getInsuranceType(), "moneyForAppeal", "1000", appeal.getOpenDate(), "doctorName",
-                "apealServices", appeal.getClosedDate(), "doctorName");           //todo убрать загушки
+                "apealServices", appeal.getClosedDate(), "doctorName");
+        //todo убрать загушки
 
-        reportServiceSender.sendInReportService(userId, email, info);
-
-
+        reportServiceSender.sendInReportService(userId, email, info, operationId);
         //todo
-        // сходить и экономик сервис и узнать сумму лечения (заглушка)
-        // собрать всю необходимую информацию и через кафку отправить в report service + uuid пользователя и если надо то email пользователя.
-        // вернуть редирект с (url + uuid операции) в репорт сервис по которому можно постучаться и скачать файл
-
-        //todo
-        // в репорт сервисе
-        // из запроса принять собственника отчета и если есть то email
-        // собрать pdf документ и положить в базу данных postgres и minio (предложить решение)
-        // если был передан email то отправть через message-service ссылку для скачивания отчета
-
-        //todo
-        // Написать эндпоинт по которому можно придти с uuid операции и uuid пользователя из jwt и забрать pdf если авторизованный пользователь совпадает с владельцем
-        // вернуть byte[] и правильно указать Content-type
-        // и надо подумать как очишать эту базу - всем файлам проставлять время дедлайна, каждые 3 часа запушкать шедулед таску которая убьет старые файлы
         // помним! шедулед таска будет запускаться в каждом инстансе а нам надо только один запуск (подойти к ментору)
+        Thread.sleep(3000);
 
-        return ResponseEntity.status(HttpStatus.SEE_OTHER).body(null);
+        return sendEmail ?
+                ResponseEntity
+                        .status(HttpStatus.SEE_OTHER)
+                        .location(URI.create("http://localhost:8766/api/report/download?operation_id=" + operationId))
+                        .build() :
+                ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body("Отчет отпвлен на почту");
     }
 
     private UUID isPatientExistAndAuthenticatedUserPatient(long patientId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient1 = patientService.getPatientById(patientId);
         log.info("authentication: {}", authentication.getName());
-        log.info( "patient: {}", patient1.getUserId());
-        log.info(String.valueOf(UUID.fromString( authentication.getName()).equals(patient1.getUserId())));
+        log.info("patient: {}", patient1.getUserId());
+        log.info(String.valueOf(UUID.fromString(authentication.getName()).equals(patient1.getUserId())));
 
         Optional.ofNullable(patientService.getPatientById(patientId))
                 .filter(patient -> patient.getUserId().equals(UUID.fromString(authentication.getName())))
