@@ -97,7 +97,7 @@ public class PatientAppealsOuterController {
         // помним! шедулед таска будет запускаться в каждом инстансе а нам надо только один запуск (подойти к ментору)
         Thread.sleep(3000);
 
-        return sendEmail ?
+        return !sendEmail ?
                 ResponseEntity
                         .status(HttpStatus.SEE_OTHER)
                         .location(URI.create("http://localhost:8766/api/report/download?operation_id=" + operationId))
