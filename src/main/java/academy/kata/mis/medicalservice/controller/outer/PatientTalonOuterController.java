@@ -1,9 +1,11 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.service.PatientService;
 import academy.kata.mis.medicalservice.service.TalonService;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -68,7 +71,24 @@ public class PatientTalonOuterController {
         String operation = "Отмена записи на прием к врачу";
         log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
 
-        talonService.cancelReservationTalon(talonId, UUID.fromString(principal.getName()));
+        Optional<Talon> talon = talonService.findById(talonId);
+        //проверка что талон существует
+        if (talon.isEmpty()) {
+            log.error("{}; ошибка: талон с указанным Id не найден; talonId {}", operation, talonId);
+            throw new LogicException("Талон с Id = " + talonId + " не сущестует.");
+        }
+
+        //проверка что талон принадлежит авторизованному пользователю
+        UUID userId = UUID.fromString(principal.getName()); // Id авторизованного пользователя
+        UUID userIdTalon = talon.get().getPatient().getUserId(); //Id пользователя талона
+        if (!userIdTalon.equals(userId)) {
+            log.error("{}; Ошибка: авторизованный пользователь не является владельцем талона; " +
+                    "Id авторизованного пользователя {}; Id пользователя талона {}", operation, userId, talonId);
+            throw new LogicException("Авторизованный пользователь не является владельцем талона.");
+        }
+
+        //Отмена записи к врачу
+        talonService.cancelReservationTalon(talon.get());
 
         log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
 
