@@ -1,9 +1,16 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.entity.Talon;
+import academy.kata.mis.medicalservice.service.PatientService;
+import academy.kata.mis.medicalservice.service.TalonService;
+import io.jsonwebtoken.Jwts;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +18,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+import javax.management.Query;
+import java.security.Principal;
+import java.util.Optional;
+
 @Slf4j
 @PreAuthorize("hasAuthority('PATIENT')")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
+
+    private final TalonService talonService;
+    private final PatientService patientService;
 
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
@@ -56,7 +71,14 @@ public class PatientTalonOuterController {
 
     @PatchMapping("/unassign")
     public void cancelReservation(
-            @RequestParam(name = "talon_id") long talonId) {
+            @RequestParam(name = "talon_id") Long talonId, Principal principal) {
+        String operation = "Отмена записи на прием к врачу";
+        log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
+
+        talonService.cancelReservationTalon(talonId, UUID.fromString(principal.getName()));
+
+        log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
+
         //todo
         // проверить что талон существует
         // проверить что талон принадлежит авторизованному пациенту
