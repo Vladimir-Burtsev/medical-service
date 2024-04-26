@@ -5,9 +5,7 @@ import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
-import academy.kata.mis.medicalservice.model.entity.Talon;
-import academy.kata.mis.medicalservice.service.PatientService;
-import academy.kata.mis.medicalservice.service.TalonService;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -25,9 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
-
-    private final TalonService talonService;
-    private final PatientService patientService;
+    private final TalonBusinessService talonBusinessService;
 
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
@@ -71,31 +66,21 @@ public class PatientTalonOuterController {
         String operation = "Отмена записи на прием к врачу";
         log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
 
-        Optional<Talon> talon = talonService.findById(talonId);
-        //проверка что талон существует
-        if (talon.isEmpty()) {
-            log.error("{}; ошибка: талон с указанным Id не найден; talonId {}", operation, talonId);
-            throw new LogicException("Талон с Id = " + talonId + " не сущестует.");
-        }
+        boolean isAs = talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()));
 
-        //проверка что талон принадлежит авторизованному пользователю
-        UUID userId = UUID.fromString(principal.getName()); // Id авторизованного пользователя
-        UUID userIdTalon = talon.get().getPatient().getUserId(); //Id пользователя талона
-        if (!userIdTalon.equals(userId)) {
-            log.error("{}; Ошибка: авторизованный пользователь не является владельцем талона; " +
-                    "Id авторизованного пользователя {}; Id пользователя талона {}", operation, userId, talonId);
-            throw new LogicException("Авторизованный пользователь не является владельцем талона.");
+        //проверка что талон существует и что талон принадлежит авторизованному пользователю
+        if (!isAs) {
+            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId {}; UserId {}",
+                    operation, talonId, principal.getName());
+            throw new LogicException("Талон с Id = " + talonId + " у пользователя с userId = "
+                    + principal.getName() + " не сущестует.");
         }
 
         //Отмена записи к врачу
-        talonService.cancelReservationTalon(talon.get());
+        talonBusinessService.cancelReservationTalon(talonId);
 
         log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
-
         //todo
-        // проверить что талон существует
-        // проверить что талон принадлежит авторизованному пациенту
-        // отменить запись к врачу (талон должен остаться без ссылки на пациента)
         // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
     }
 

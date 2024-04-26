@@ -4,25 +4,31 @@ import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.repository.TalonRepository;
 import academy.kata.mis.medicalservice.service.TalonService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TalonServiceImpl implements TalonService {
     private final TalonRepository talonRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Talon> findById(Long talonId) {
         return talonRepository.findById(talonId);
     }
 
     @Override
-    public void cancelReservationTalon(Talon talon) {
-        talon.setPatient(null);
+    @Transactional
+    public void save(Talon talon) {
         talonRepository.save(talon);
+    }
+    @Override
+    @Transactional
+    public boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId) {
+        return talonRepository.existsTalonByIdAndPatientUserId(talonId, userId);
     }
 }
