@@ -16,7 +16,6 @@ public class TalonServiceImpl implements TalonService {
     private final TalonRepository talonRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<Talon> findById(Long talonId) {
         return talonRepository.findById(talonId);
     }
@@ -26,8 +25,8 @@ public class TalonServiceImpl implements TalonService {
     public void save(Talon talon) {
         talonRepository.save(talon);
     }
+
     @Override
-    @Transactional
     public boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId) {
         return talonRepository.existsTalonByIdAndPatientUserId(talonId, userId);
     }

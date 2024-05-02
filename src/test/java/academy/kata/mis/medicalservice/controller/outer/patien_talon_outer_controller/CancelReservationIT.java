@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/controller/outer/patient_talon_outer_controller/cancel_reservation.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/clear.sql")
 public class CancelReservationIT extends ContextIT {
+
     @MockBean
     private JwtProvider jwtProvider;
 
@@ -41,7 +42,6 @@ public class CancelReservationIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        //запустим тест
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
                                 .header("Authorization", accessToken)
@@ -109,7 +109,7 @@ public class CancelReservationIT extends ContextIT {
     //Проверяем выброс исключения и соответствие сообщения при выбросе исключения,
     //если у талона нет пользователя (patient = null)
     @Test
-    public void cancelReservationTalonPatientNull() throws Exception {
+    public void cancelReservationTalon_patientNull() throws Exception {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 3L;

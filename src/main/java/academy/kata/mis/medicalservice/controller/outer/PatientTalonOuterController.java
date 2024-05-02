@@ -61,22 +61,18 @@ public class PatientTalonOuterController {
     }
 
     @PatchMapping("/unassign")
-    public void cancelReservation(
-            @RequestParam(name = "talon_id") Long talonId, Principal principal) {
+    public void cancelReservation(@RequestParam(name = "talon_id") Long talonId,
+                                  Principal principal) {
         String operation = "Отмена записи на прием к врачу";
         log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
 
-        boolean isAs = talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()));
-
-        //проверка что талон существует и что талон принадлежит авторизованному пользователю
-        if (!isAs) {
+        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()))) {
             log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId {}; UserId {}",
                     operation, talonId, principal.getName());
             throw new LogicException("Талон с Id = " + talonId + " у пользователя с userId = "
                     + principal.getName() + " не сущестует.");
         }
 
-        //Отмена записи к врачу
         talonBusinessService.cancelReservationTalon(talonId);
 
         log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
