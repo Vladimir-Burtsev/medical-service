@@ -10,6 +10,9 @@ import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 //import academy.kata.mis.medicalservice.service.RandomGenerator;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
+import academy.kata.mis.medicalservice.service.RandomGenerator;
+import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,10 @@ public class PatientTalonOuterController {
     private final AuditMessageService auditMessageService;
     private final PersonFeignClient personFeignClient;
 //    private final RandomGenerator randomGenerator;
+    private final ReportServiceSender reportServiceSender;
+    private final AuditMessageService auditMessageService;
+    private final PersonFeignClient personFeignClient;
+    private final RandomGenerator randomGenerator;
     private final ReportServiceSender reportServiceSender;
 
     /**
