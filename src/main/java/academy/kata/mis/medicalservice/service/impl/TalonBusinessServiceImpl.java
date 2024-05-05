@@ -12,6 +12,8 @@ import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabin
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.service.*;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
@@ -32,9 +34,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
+    private final PersonFeignClient personFeignClient;
     private final TalonConverter talonConverter;
     private final DoctorConvertor doctorConvertor;
-    private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
 
     @Override
