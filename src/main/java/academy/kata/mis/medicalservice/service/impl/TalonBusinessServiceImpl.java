@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
@@ -163,5 +164,19 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                                 )
                         )
                 );
+    }
+
+    @Override
+    public String getResponseTalonCancel(Long talonId) {
+        Talon talon = talonService.findById(talonId).get();
+        PersonDto personDto = personFeignClient.getPersonById(talonService.getDoctorPersonIdByTalonId(talonId));
+        String response = String.format("""
+                Запись на прием в %s к врачу %s %s отменена.
+                """,
+                talon.getTime(),
+                personDto.firstName(),
+                personDto.lastName()
+        );
+        return response;
     }
 }

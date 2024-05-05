@@ -169,7 +169,6 @@ public class CancelReservationIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        //запустим тест
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
                                 .header("Authorization", accessToken)
