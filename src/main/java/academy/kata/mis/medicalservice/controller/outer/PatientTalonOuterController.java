@@ -33,8 +33,6 @@ public class PatientTalonOuterController {
     private final PersonFeignClient personFeignClient;
     private final ReportServiceSender reportServiceSender;
 
-
-
     /**
      * страница 2
      */

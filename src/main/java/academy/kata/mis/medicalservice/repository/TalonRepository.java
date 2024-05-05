@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface TalonRepository extends JpaRepository<Talon, Long> {
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID id);
+
     @Query("""
         select t 
         from Talon t 
