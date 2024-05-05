@@ -14,4 +14,6 @@ public interface TalonService {
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
 
     Set<Talon> allPatientTalonByPatientId(long patientId);
+
+    Long getDoctorPersonIdByTalonId(Long talonId);
 }
