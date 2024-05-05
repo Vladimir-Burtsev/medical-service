@@ -1,10 +1,14 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
+import academy.kata.mis.medicalservice.service.RandomGenerator;
+import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,10 @@ import java.util.UUID;
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
+    private final AuditMessageService auditMessageService;
+    private final PersonFeignClient personFeignClient;
+    private final RandomGenerator randomGenerator;
+    private final ReportServiceSender reportServiceSender;
 
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
@@ -67,17 +75,27 @@ public class PatientTalonOuterController {
         log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
 
         if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()))) {
-            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId {}; UserId {}",
+            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId = {}; UserId = {}",
                     operation, talonId, principal.getName());
-            throw new LogicException("Талон с Id = " + talonId + " у пользователя с userId = "
-                    + principal.getName() + " не сущестует.");
+            throw new LogicException(String.format(
+                    "Талон с Id = %s у пользователя с userId = %s не сущестует.",
+                    talonId,
+                    principal.getName()
+            ));
         }
 
         talonBusinessService.cancelReservationTalon(talonId);
 
+        reportServiceSender.sendInReportService(
+                UUID.fromString(principal.getName()),
+                personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
+                talonBusinessService.getResponseTalonCancel(talonId),
+                randomGenerator.generate()
+        );
+
+        auditMessageService.sendAudit(principal.getName(), operation, "успешная отмена записи на прием к врачу");
+
         log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
-        //todo
-        // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
     }
 
     @PatchMapping("/assign")

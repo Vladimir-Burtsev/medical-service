@@ -1,5 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import academy.kata.mis.medicalservice.service.TalonService;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
+    private final PersonFeignClient personFeignClient;
 
     @Override
     @Transactional
@@ -25,5 +28,19 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     @Override
     public boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId) {
         return talonService.existsTalonByIdAndPatientUserId(talonId, userId);
+    }
+
+    @Override
+    public String getResponseTalonCancel(Long talonId) {
+        Talon talon = talonService.findById(talonId).get();
+        PersonDto personDto = personFeignClient.getPersonById(talonService.getDoctorPersonIdByTalonId(talonId));
+        String response = String.format("""
+                Запись на прием в %s к врачу %s %s отменена.
+                """,
+                talon.getTime(),
+                personDto.firstName(),
+                personDto.lastName()
+        );
+        return response;
     }
 }

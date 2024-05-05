@@ -30,4 +30,9 @@ public class TalonServiceImpl implements TalonService {
     public boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId) {
         return talonRepository.existsTalonByIdAndPatientUserId(talonId, userId);
     }
+
+    @Override
+    public Long getDoctorPersonIdByTalonId(Long talonId) {
+        return talonRepository.getDoctorPersonIdByTalonId(talonId);
+    }
 }
