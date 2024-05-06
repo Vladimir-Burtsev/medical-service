@@ -45,7 +45,6 @@ public class PatientAppealsOuterController {
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "count", required = false, defaultValue = "10") long count,
             @RequestParam(name = "page", required = false, defaultValue = "1") long page) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все заболевания пациента с пагинацией отсортированные по дате начала лечения (LIFO)
@@ -57,7 +56,6 @@ public class PatientAppealsOuterController {
     public ResponseEntity<GetPatientAppealFullInfoResponse> getAppealFullInfo(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // проверить что заболевание существует
@@ -73,6 +71,11 @@ public class PatientAppealsOuterController {
             @RequestParam(name = "appeal_id") long appealId,
             @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail)
             throws InterruptedException {
+
+        //todo
+        // обработать InterruptedException и кидать что-то, что пользователь прочитает
+        // надо положить в бизнес логику в бизнес сервис
+
         UUID operationId = randomGenerator.generate();
         UUID userId = isPatientExistAndAuthenticatedUserPatient(patientId);
         Appeal appeal = isAppealExistAndPatientOwner(appealId, patientId);
@@ -110,6 +113,9 @@ public class PatientAppealsOuterController {
                         .body("Отчет отпвлен на почту");
     }
 
+    //todo
+    // переработать метод - лишние запросы
+    // проверить работу метода
     private UUID isPatientExistAndAuthenticatedUserPatient(long patientId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Patient patient1 = patientService.getPatientById(patientId);
@@ -130,6 +136,9 @@ public class PatientAppealsOuterController {
         return UUID.fromString(authentication.getName());
     }
 
+    //todo
+    // переработать метод - лишние запросы
+    // проверить работу метода
     private Appeal isAppealExistAndPatientOwner(long appealId, long patientId) {
         Optional.ofNullable(appealService.getAppealById(appealId))
                 .filter(appeal -> appeal.getPatient().getId() == patientId)

@@ -29,7 +29,6 @@ public class DoctorMedicalServicesOuterController {
             @RequestParam(name = "size", required = false, defaultValue = "10") long size,
             @RequestParam(name = "page", required = false, defaultValue = "1") long page,
             @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") MedicalServiceOrder order) {
-        //todo
         // проверить что доктор существует и авторизованный пользователь это он
         // вернуть услуги которые может оказывать отделение доктора у которых статус 'open'
         // найти все услуги которые выполняют условия обоих паттернов поиска.

@@ -27,7 +27,6 @@ public class PatientTalonOuterController {
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент
@@ -38,7 +37,6 @@ public class PatientTalonOuterController {
     @GetMapping("/assigned/full")
     public ResponseEntity<GetAssignedPatientTalonsByDepartmentsResponse> getAssignedTalonsByPatientFull(
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент в разрезе отделений организации пациента
@@ -50,7 +48,6 @@ public class PatientTalonOuterController {
     public ResponseEntity<GetTalonFullInformationResponse> getTalonFullInformation(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "talon_id") long talonId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // проверить что талон существует
@@ -83,7 +80,6 @@ public class PatientTalonOuterController {
     @PatchMapping("/assign")
     public void signUpForTalon(
             @RequestBody @NotNull AssignPatientToTalonRequest request) {
-        //todo
         // создать переменную в проперти - минуты до блокировки записи до приема
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом

@@ -24,7 +24,6 @@ public class DoctorAppealOuterController {
     public ResponseEntity<GetPatientAppealShortInfoResponse> getOpenAppealsByPatient(
             @RequestParam(name = "doctor_id") long doctorId,
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // проверить что доктор существует
         // проверить что авторизованный пользователь является доктором
         // проерить что пациент существует и они с доктором из одной организации
@@ -39,7 +38,6 @@ public class DoctorAppealOuterController {
     @PostMapping("/create")
     public ResponseEntity<GetAppealShortInfo> createAppealForPatient(
             @RequestBody @NotNull CreateAppealForPatientRequest request) {
-        //todo
         // проверить что доктор существует
         // проверить что авторизованный пользователь является доктором
         // проверить что заболевание отделения существует и совпадает с отделением доктора
@@ -59,7 +57,6 @@ public class DoctorAppealOuterController {
             @RequestParam(name = "doctor_id") long doctorId,
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId) {
-        //todo
         // проверить что доктор существует
         // проверить что авторизованный пользователь является доктором
         // проверить что обращение существует и совпадает с отделением доктора

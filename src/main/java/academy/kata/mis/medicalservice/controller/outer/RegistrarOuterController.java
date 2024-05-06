@@ -1,8 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
-import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentRegistrarInfoResponse;
-import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetRegistrarPersonalInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +22,6 @@ public class RegistrarOuterController {
 
     @GetMapping
     public ResponseEntity<GetRegistrarPersonalInfoResponse> getCurrentRegistrarInformation(Principal principal) {
-
-        //todo
         // вернуть всех медрегистраторов которыми является пользователь
 
         return ResponseEntity.ok(null);
@@ -34,7 +30,6 @@ public class RegistrarOuterController {
     @GetMapping("/current")
     public ResponseEntity<GetCurrentRegistrarInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "registrar_id") long registrarId) {
-        //todo
         // проверить что регистратор существует
         // проверить что текущий авторизованный пользователь соответствует переданному регистратору
 
