@@ -59,9 +59,8 @@ public class DoctorAppealOuterController {
         UUID doctorUUID = UUID.fromString(principal.getName());
         log.info("Doctor try to make appeal for patient {}", principal.getName());
 
-        isDoctorExists(doctorUUID, request.doctorId());
+        Doctor doctor = isDoctorExists(doctorUUID, request.doctorId());
 
-        Doctor doctor = doctorService.findDoctorByUUID(doctorUUID);
         doctorBusinessService
                 .isDiseaseDepExistsAndMatchesDoctorDepartment(
                         request.diseaseDepId(), doctor.getDepartment());
@@ -78,11 +77,12 @@ public class DoctorAppealOuterController {
         return ResponseEntity.ok("Обращение создано");
     }
 
-    private void isDoctorExists(UUID doctorUUID, long id) {
+    private Doctor isDoctorExists(UUID doctorUUID, long id) {
         if (!doctorService.findDoctorByUUID(doctorUUID).getId().equals(id)) {
             log.error("Доктор с id:{}; не найден.", doctorUUID);
             throw new LogicException("Доктор не найден");
         }
+        return doctorService.findDoctorByUUID(doctorUUID);
     }
 
     private void checkIsPatientExistsAndFromSameOrganizationAsDoctor(long patientId, Department department) {
