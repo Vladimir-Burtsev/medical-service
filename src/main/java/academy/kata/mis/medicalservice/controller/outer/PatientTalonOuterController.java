@@ -24,12 +24,24 @@ import java.util.UUID;
 public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
 
+    /**
+     * страница 2
+     */
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент
+
+        //получить только ту информацию которая хранится в медикал сервисе
+        // покрыть тестами
+        // то есть
+        // public record TalonWithDoctorShortDto(long talonId,
+        //                                      LocalDateTime visitTime,
+        //                                      long doctorId) {}
+
+        //после успешного мерджа в мастер второй частью задачи выполнить получение информации о докторе в других сервисах и попраавить тесты
 
         return ResponseEntity.ok(null);
     }
