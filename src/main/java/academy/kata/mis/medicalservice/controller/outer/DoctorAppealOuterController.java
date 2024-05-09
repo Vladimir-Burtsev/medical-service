@@ -4,11 +4,10 @@ import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.CreateAppealForPatientRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealShortInfoResponse;
-import academy.kata.mis.medicalservice.model.entity.Department;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.AppealBusinessService;
+import academy.kata.mis.medicalservice.service.DiseaseDepBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
-import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/doctor/appeal")
 public class DoctorAppealOuterController {
-    private final DoctorService doctorService;
     private final DoctorBusinessService doctorBusinessService;
+    private final DiseaseDepBusinessService diseaseDepBusinessService;
     private final AppealBusinessService appealBusinessService;
     private final PatientBusinessService patientBusinessService;
 
@@ -52,41 +51,41 @@ public class DoctorAppealOuterController {
      * страница 3.2.2
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createAppealForPatient(
+    public ResponseEntity<GetAppealShortInfo> createAppealForPatient(
             @RequestBody @NotNull CreateAppealForPatientRequest request,
             Principal principal) {
 
         UUID doctorUUID = UUID.fromString(principal.getName());
         log.info("Doctor try to make appeal for patient {}", principal.getName());
 
-        Doctor doctor = isDoctorExists(doctorUUID, request.doctorId());
+        Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, request.doctorId());
+        checkIsDiseaseDepExistByDoctorId(request.diseaseDepId(), doctor.getId());
+        checkIsPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(), request.doctorId());
 
-        doctorBusinessService
-                .isDiseaseDepExistsAndMatchesDoctorDepartment(
-                        request.diseaseDepId(), doctor.getDepartment());
 
-        checkIsPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(),
-                doctor.getDepartment());
+        GetAppealShortInfo response = appealBusinessService.createPatientVisit(doctor, request.diseaseDepId(),
+                request.patientId());
+        log.debug("Ответ на создание обращения: {}", response);
 
-        appealBusinessService.createPatientVisit(doctor, request.diseaseDepId(), request.patientId());
 
         // оставить до лучших времен
 //        String message = String.format("Создание обращения пациента %s", request.patientId());
 //        auditMessageService.sendAudit(doctorUUID.toString(), "create-appeal", message);
 
-        return ResponseEntity.ok("Обращение создано");
+
+        return ResponseEntity.ok(response);
     }
 
-    private Doctor isDoctorExists(UUID doctorUUID, long id) {
-        if (!doctorService.findDoctorByUUID(doctorUUID).getId().equals(id)) {
-            log.error("Доктор с id:{}; не найден.", doctorUUID);
-            throw new LogicException("Доктор не найден");
+    private void checkIsDiseaseDepExistByDoctorId(long diseaseDepId, long doctorId) {
+        if (!diseaseDepBusinessService.checkIsExistByIdAndDoctorId(diseaseDepId, doctorId)) {
+            log.debug("Заболевание с id {} и доктором с id {} не существует",
+                    diseaseDepId, doctorId);
+            throw new LogicException("Заболевание не существует");
         }
-        return doctorService.findDoctorByUUID(doctorUUID);
     }
 
-    private void checkIsPatientExistsAndFromSameOrganizationAsDoctor(long patientId, Department department) {
-        if (!patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, department)) {
+    private void checkIsPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
+        if (!patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId)) {
             log.error("Пациент {}; не существует или находится с доктором в разных организациях",
                     patientId);
             throw new LogicException("Пациент не существует или находится с доктором в разных организациях");

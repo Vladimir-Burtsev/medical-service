@@ -1,30 +1,36 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
-import academy.kata.mis.medicalservice.model.entity.Department;
-import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
-import academy.kata.mis.medicalservice.model.enums.DiseaseStatus;
+import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
+import academy.kata.mis.medicalservice.service.DoctorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
+    private final DoctorService doctorService;
+
+    public DoctorBusinessServiceImpl(DoctorService doctorService) {
+        this.doctorService = doctorService;
+    }
+
 
     @Override
-    public void isDiseaseDepExistsAndMatchesDoctorDepartment(Long diseaseDepId, Department department) {
-                Set<DiseaseDep> diseasesDepList = department.getDiseasesDep();
-        DiseaseDep diseasesDep = diseasesDepList.stream()
-                .filter(diseaseDep -> diseaseDep.getStatus().equals(DiseaseStatus.OPEN)
-                        && diseaseDep.getId().equals(diseaseDepId))
-                .findFirst()
-                .orElse(null);
-        if (diseasesDep == null) {
-            log.error("Заболевание отделения с id:{}; не найдено или заболевание не совпадает с отделением доктора.", diseaseDepId);
-            throw new LogicException("Заболевание не найдено или не совпадает с отделением доктора.");
+    public Doctor getDoctorIfExists(UUID doctorUUID, long id) {
+        if (doctorService.findByUserId(doctorUUID) == null) {
+            log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
+                    doctorUUID);
+            throw new LogicException("Доктор не найден");
         }
+        if (!doctorService.findByUserId(doctorUUID).getId().equals(id)) {
+            log.error("Авторизованный пользователь не является переданным доктором userId={}; doctorId={}.", doctorUUID, id);
+            throw new LogicException("Доктор не найден");
+        }
+
+        return doctorService.findByUserId(doctorUUID);
     }
 }

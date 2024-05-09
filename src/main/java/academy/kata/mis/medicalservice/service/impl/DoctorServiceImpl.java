@@ -21,7 +21,7 @@ public class DoctorServiceImpl implements DoctorService {
         this.doctorRepository = doctorRepository;
     }
     @Override
-    public Doctor findDoctorByUUID(UUID id) {
+    public Doctor findByUserId(UUID id) {
         return doctorRepository.findByUserId(id);
     }
 
