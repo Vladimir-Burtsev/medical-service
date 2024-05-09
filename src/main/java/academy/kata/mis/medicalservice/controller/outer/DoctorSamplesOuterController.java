@@ -39,10 +39,6 @@ public class DoctorSamplesOuterController {
             Principal principal,
             @RequestParam(name = "doctor_id") long doctorId,
             @RequestParam(name = "disease_dep_id") long diseaseDepId) {
-        //todo
-        // проверить что доктор существует и авторизованный пользователь это он
-        // проверить что заболевание существует и они с доктором в одном отделении
-        // вернуть шаблоны с услугами
         try {
             Doctor doctor = doctorService.findDoctorById(doctorId);
             DiseaseDep diseaseDep = diseaseDepService.findDiseaseDepById(diseaseDepId);
