@@ -22,8 +22,6 @@ public class DoctorOuterController {
 
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
-
-        //todo
         // вернуть всех докторов которыми является авторизованный пользователь
 
         return ResponseEntity.ok(null);
@@ -32,7 +30,6 @@ public class DoctorOuterController {
     @GetMapping("/current")
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "doctor_id") long doctorId) {
-        //todo
         // проверить что доктор существует
         // проверить что текущий авторизованный доктор соответствует авторизованному пользователю
 
