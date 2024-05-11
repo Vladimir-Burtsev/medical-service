@@ -23,8 +23,6 @@ import java.util.UUID;
 public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessService {
 
     private final DiseaseSampleConverter diseaseSampleConverter;
-    private final DoctorService doctorService;
-    private final DiseaseDepService diseaseDepService;
 
     @Override
     public GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDep(Doctor doctor, DiseaseDep diseaseDep, UUID authUserId) {
