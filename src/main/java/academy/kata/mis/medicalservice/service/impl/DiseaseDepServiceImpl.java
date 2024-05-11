@@ -4,7 +4,6 @@ import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
 import academy.kata.mis.medicalservice.repository.DiseaseDepRepository;
 import academy.kata.mis.medicalservice.service.DiseaseDepService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

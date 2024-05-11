@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.hibernate.query.sqm.tree.SqmNode.log;
-
 @Service
 @RequiredArgsConstructor
 public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessService {
@@ -45,13 +43,13 @@ public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessSe
     }
 
     private void equalsDoctorUserIdWithAuthUserId(UUID doctorUserId, UUID authUserId) {
-        if(!doctorUserId.equals(authUserId)) {
+        if (!doctorUserId.equals(authUserId)) {
             throw new LogicException("Недостаточно прав");
         }
     }
 
     private void equalsDoctorDepWithDiseaseDep(Doctor doctor, DiseaseDep diseaseDep) {
-        if(!doctor.getDepartment().equals(diseaseDep.getDepartment())) {
+        if (!doctor.getDepartment().equals(diseaseDep.getDepartment())) {
             throw new LogicException("Неверные данные");
         }
     }
