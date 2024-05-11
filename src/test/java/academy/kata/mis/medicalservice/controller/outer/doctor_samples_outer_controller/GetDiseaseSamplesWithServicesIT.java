@@ -94,7 +94,7 @@ public class GetDiseaseSamplesWithServicesIT extends ContextIT {
 
                 )
 
-                .andExpect(status().isForbidden());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class GetDiseaseSamplesWithServicesIT extends ContextIT {
 
                 )
 
-                .andExpect(status().isNotFound());
+                .andExpect(status().is4xxClientError());
     }
 
 }

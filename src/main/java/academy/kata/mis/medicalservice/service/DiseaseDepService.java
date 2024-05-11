@@ -6,4 +6,5 @@ public interface DiseaseDepService {
 
     DiseaseDep findDiseaseDepById(long diseaseDepId);
 
+    boolean isExistById(long diseaseDepId);
 }

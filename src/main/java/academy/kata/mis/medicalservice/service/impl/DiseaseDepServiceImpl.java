@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
 import academy.kata.mis.medicalservice.repository.DiseaseDepRepository;
 import academy.kata.mis.medicalservice.service.DiseaseDepService;
@@ -20,6 +21,11 @@ public class DiseaseDepServiceImpl implements DiseaseDepService {
         Optional<DiseaseDep> optionalDiseaseDep = diseaseDepRepository.findById(diseaseDepId);
         if (optionalDiseaseDep.isPresent()) {
             return optionalDiseaseDep.get();
-        } else throw new EntityNotFoundException("DiseaseDep с id=" + diseaseDepId + " не найденo");
+        } else throw new LogicException("DiseaseDep с id=" + diseaseDepId + " не найденo");
+    }
+
+    @Override
+    public boolean isExistById(long diseaseDepId) {
+        return diseaseDepRepository.existsById(diseaseDepId);
     }
 }

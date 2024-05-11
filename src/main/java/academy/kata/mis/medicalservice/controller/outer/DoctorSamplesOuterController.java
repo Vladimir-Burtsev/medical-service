@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesResponse;
 import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -39,19 +40,44 @@ public class DoctorSamplesOuterController {
             Principal principal,
             @RequestParam(name = "doctor_id") long doctorId,
             @RequestParam(name = "disease_dep_id") long diseaseDepId) {
-        try {
-            Doctor doctor = doctorService.findDoctorById(doctorId);
-            DiseaseDep diseaseDep = diseaseDepService.findDiseaseDepById(diseaseDepId);
-            UUID authUserId = UUID.fromString(principal.getName());
-            if (doctor.getUserId().equals(authUserId)) {
-                if (diseaseDep.getDepartment().equals(doctor.getDepartment())) {
-                    GetDiseaseSamplesWithServicesResponse response =
-                            doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDep(diseaseDep);
-                    return ResponseEntity.ok(response);
-                } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        String operation = "Врач получает свои шаблоны для заболевания";
+        UUID authUserId = UUID.fromString(principal.getName());
+        log.info("Пользователь: {}; {}; Заболевание: {}", authUserId, operation, diseaseDepId);
+
+        Doctor doctor = checkDoctorExist(doctorId);
+        DiseaseDep diseaseDep = checkDiseaseDepExist(diseaseDepId);
+
+        GetDiseaseSamplesWithServicesResponse response =
+                doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDep(
+                        doctor,
+                        diseaseDep,
+                        authUserId
+                );
+
+
+        return ResponseEntity.ok(response);
     }
+
+    private Doctor checkDoctorExist(long doctorId) {
+        Doctor doctor;
+        try {
+            doctor = doctorService.findDoctorById(doctorId);
+        } catch (LogicException e) {
+            log.error("Доктор с id: {}, не найден", doctorId);
+            throw e;
+        }
+        return doctor;
+    }
+
+    private DiseaseDep checkDiseaseDepExist(long diseaseDepId) {
+        DiseaseDep diseaseDep;
+        try {
+            diseaseDep = diseaseDepService.findDiseaseDepById(diseaseDepId);
+        } catch (LogicException e) {
+            log.error("Заболевание с id: {}, не найдено", diseaseDepId);
+            throw e;
+        }
+        return diseaseDep;
+    }
+
 }
