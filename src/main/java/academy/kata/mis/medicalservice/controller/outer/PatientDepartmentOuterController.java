@@ -20,7 +20,6 @@ public class PatientDepartmentOuterController {
     @GetMapping
     public ResponseEntity<GetDepartmentsResponse> getDepartments(
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // создать переменную в проперти (если нету) - количество дней в пределах которых пациент видит свободные талоны
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом

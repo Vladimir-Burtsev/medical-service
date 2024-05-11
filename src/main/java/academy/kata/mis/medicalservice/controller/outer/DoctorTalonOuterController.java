@@ -26,7 +26,6 @@ public class DoctorTalonOuterController {
     @GetMapping
     public ResponseEntity<GetDoctorCurrentDayTalonsResponse> getCurrentDayTalons(
             @RequestParam(name = "doctor_id") long doctorId) {
-        //todo
         // проерить что доктор существует
         // проверить что совпадают доктор и авторизованный пользователь
         // вернуть все занятые талоны доктора на сегодняшний день отсортированные по дате
@@ -44,7 +43,6 @@ public class DoctorTalonOuterController {
             @RequestParam(name = "date_end", required = false) LocalDate dateEnd,
             @RequestParam(name = "size", required = false, defaultValue = "5") long size,
             @RequestParam(name = "page", required = false, defaultValue = "1") long page) {
-        //todo
         // создать в проперти переменную - количество дней видимых доктором
         // проерить что доктор существует
         // проверить что совпадают доктор и авторизованный пользователь
@@ -64,7 +62,6 @@ public class DoctorTalonOuterController {
     @GetMapping("/full/info")
     public ResponseEntity<GetFullTalonInformationResponse> getFullTalonInfo(
             @RequestParam(name = "talon_id") long talonId) {
-        //todo
         // проерить что талон существует
         // проверить что талон принадлежит доктору который является авторизованным пользователем
         // вернуть полную информацию о талоне (пациент может отсутсвовать)
@@ -78,7 +75,6 @@ public class DoctorTalonOuterController {
     @PatchMapping("/assign")
     public ResponseEntity<GetFullTalonInformationResponse> assignPatientToTalon(
             @RequestBody @NotNull AssignPatientToTalonRequest request) {
-        //todo
         // проерить что талон существует
         // проверить что талон принадлежит доктору который является авторизованным пользователем
         // проверить что пациент существует и они с доктором из одной организации
@@ -97,7 +93,6 @@ public class DoctorTalonOuterController {
     @DeleteMapping
     public ResponseEntity<Void> deleteTalon(
             @RequestParam(name = "talon_id") long talonId) {
-        //todo
         // проерить что талон существует
         // проверить что талон принадлежит доктору который является авторизованным пользователем
         // проверить что талон не занят
@@ -113,7 +108,6 @@ public class DoctorTalonOuterController {
     @PatchMapping("/unassign")
     public ResponseEntity<GetFullTalonInformationResponse> unAssignPatientFromTalon(
             @RequestParam(name = "talon_id") long talonId) {
-        //todo
         // проерить что талон существует
         // проверить что талон принадлежит доктору который является авторизованным пользователем
         // проверить что талон занят пациентом

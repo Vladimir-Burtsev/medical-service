@@ -22,7 +22,6 @@ public class DoctorVisitRestController {
     @GetMapping("/info")
     public ResponseEntity<VisitDto> getVisitInfo(
             @RequestParam(name = "visit_id") long visitId) {
-        //todo
         // проверить что посещение существует
         // вернуть информацию о оказанных услугах
 
@@ -35,7 +34,6 @@ public class DoctorVisitRestController {
     @PatchMapping("/update")
     public ResponseEntity<VisitDto> updateVisit(
             @RequestBody @NotNull UpdateVisitRequest request) {
-        //todo
         // проверить что посещение существует
         // проверить что доктор существует и авторизованный пользователь это он
         // проверить что посещение принадлежит доктору

@@ -38,6 +38,7 @@ spring:
     producer:
       topic:
         save-audit: ${KAFKA_PRODUCER_SAVE_AUDIT_TOPIC:mis_audit_local}
+        report-message: ${KAFKA_CONSUMER_REPORT_MESSAGE_TOPIC:mis_report_local}
     consumer:
       group-id: medical_service_group
       topic:
