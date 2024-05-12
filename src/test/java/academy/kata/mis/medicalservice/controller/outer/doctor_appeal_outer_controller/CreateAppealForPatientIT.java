@@ -2,17 +2,23 @@ package academy.kata.mis.medicalservice.controller.outer.doctor_appeal_outer_con
 
 import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.model.dto.CreateAppealForPatientRequest;
+import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
+import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static academy.kata.mis.medicalservice.model.enums.InsuranceType.DMS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,33 +38,41 @@ public class CreateAppealForPatientIT extends ContextIT {
     @Test
     public void createAppealForPatient_success() throws Exception {
         String user = "cf29361a-c9ed-4644-a6dc-db639774860e";
-        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 1L, 1L);
+        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 1L, 1L, DMS);
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR")));
+        jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
 
-        mockMvc.perform(post(
+        MvcResult result = mockMvc.perform(post(
                 "/api/medical/doctor/appeal/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", accessToken)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseContent = result.getResponse().getContentAsString();
+
+        GetAppealShortInfo response = objectMapper.readValue(responseContent, GetAppealShortInfo.class);
+
+        List<VisitShortDto> visitShortDtoList = response.visits();
+        assertEquals(1, visitShortDtoList.size());
     }
 
     @Test
     public void createAppealForPatient_noDoctor() throws Exception {
         String user = "cf29361a-c9ed-4644-a6dc-db639774860e";
-        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(4L, 1L, 1L);
+        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(4L, 1L, 1L, DMS);
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR")));
+        jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
@@ -77,11 +91,11 @@ public class CreateAppealForPatientIT extends ContextIT {
     @Test
     public void createAppealForPatient_diseaseDepDoesntExistAndNotMatchesDoctorDepartment() throws Exception {
         String user = "cf29361a-c9ed-4644-a6dc-db639774860e";
-        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 1L, 4L);
+        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 1L, 4L, DMS);
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR")));
+        jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
@@ -99,17 +113,15 @@ public class CreateAppealForPatientIT extends ContextIT {
     @Test
     public void createAppealForPatient_patientDoesntExistsAndNotFromSameOrganizationAsDoctor() throws Exception {
         String user = "cf29361a-c9ed-4644-a6dc-db639774860e";
-        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 4L, 1L);
+        CreateAppealForPatientRequest request = new CreateAppealForPatientRequest(1L, 4L, 1L, DMS);
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR")));
+        jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-
-
 
         mockMvc.perform(post(
                 "/api/medical/doctor/appeal/create")
@@ -118,7 +130,5 @@ public class CreateAppealForPatientIT extends ContextIT {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Пациент не существует или находится с доктором в разных организациях"));
-
-
     }
 }

@@ -62,9 +62,8 @@ public class DoctorAppealOuterController {
         checkIsDiseaseDepExistByDoctorId(request.diseaseDepId(), doctor.getId());
         checkIsPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(), request.doctorId());
 
-
         GetAppealShortInfo response = appealBusinessService.createPatientVisit(doctor, request.diseaseDepId(),
-                request.patientId());
+                request.patientId(), request.insuranceType());
         log.debug("Ответ на создание обращения: {}", response);
 
 

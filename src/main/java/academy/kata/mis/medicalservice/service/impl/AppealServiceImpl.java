@@ -1,34 +1,37 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.entity.Appeal;
+import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
+import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.model.enums.InsuranceType;
-import academy.kata.mis.medicalservice.repository.DiseaseDepRepository;
+import academy.kata.mis.medicalservice.repository.AppealRepository;
 import academy.kata.mis.medicalservice.service.AppealService;
-import academy.kata.mis.medicalservice.service.PatientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+
 @Service
+@RequiredArgsConstructor
 public class AppealServiceImpl implements AppealService {
+    private final AppealRepository appealRepository;
 
-    private final DiseaseDepRepository diseaseDepRepository;
-
-    private final PatientService patientService;
-
-    public AppealServiceImpl(DiseaseDepRepository diseaseDepRepository, PatientService patientService) {
-        this.diseaseDepRepository = diseaseDepRepository;
-        this.patientService = patientService;
+    @Override
+    public Appeal createPatientAppeal(DiseaseDep diseaseDep, Patient patient, InsuranceType insuranceType) {
+        return Appeal.builder()
+                .status(AppealStatus.OPEN)
+                .insuranceType(insuranceType)
+                .openDate(LocalDate.now())
+                .patient(patient)
+                .diseaseDep(diseaseDep)
+                .build();
     }
 
     @Override
-    public Appeal createPatientAppeal(Long diseaseDepId, Long patientId) {
-        return Appeal.builder()
-                .status(AppealStatus.OPEN)
-                .insuranceType(InsuranceType.DMS)
-                .openDate(LocalDate.now())
-                .patient(patientService.getPatientById(patientId))
-                .diseaseDep(diseaseDepRepository.getReferenceById(diseaseDepId))
-                .build();
+    @Transactional
+    public Appeal save(Appeal appeal) {
+        return appealRepository.save(appeal);
     }
 }

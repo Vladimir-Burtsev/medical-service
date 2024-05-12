@@ -18,19 +18,20 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
         this.doctorService = doctorService;
     }
 
-
     @Override
     public Doctor getDoctorIfExists(UUID doctorUUID, long id) {
-        if (doctorService.findByUserId(doctorUUID) == null) {
+        Doctor doctor = doctorService.findByUserId(doctorUUID);
+        if (doctor == null) {
             log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
                     doctorUUID);
             throw new LogicException("Доктор не найден");
         }
-        if (!doctorService.findByUserId(doctorUUID).getId().equals(id)) {
-            log.error("Авторизованный пользователь не является переданным доктором userId={}; doctorId={}.", doctorUUID, id);
+        if (!doctor.getId().equals(id)) {
+            log.error("Авторизованный пользователь не является переданным доктором userId={}; doctorId={}.",
+                    doctorUUID, id);
             throw new LogicException("Доктор не найден");
         }
 
-        return doctorService.findByUserId(doctorUUID);
+        return doctor;
     }
 }
