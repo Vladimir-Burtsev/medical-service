@@ -19,6 +19,9 @@ public class AppealServiceImpl implements AppealService {
     private final AppealRepository appealRepository;
 
     @Override
+    public Appeal getAppealById(long appealId) {
+        return appealRepository.getAppealById(appealId);
+    }
     public Appeal createPatientAppeal(DiseaseDep diseaseDep, Patient patient, InsuranceType insuranceType) {
         return Appeal.builder()
                 .status(AppealStatus.OPEN)

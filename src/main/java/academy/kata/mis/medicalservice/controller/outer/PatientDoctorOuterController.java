@@ -26,7 +26,6 @@ public class PatientDoctorOuterController {
             @RequestParam(name = "department_id") long departmentId,
             @RequestParam(name = "date_start", required = false) LocalDateTime dateStart,
             @RequestParam(name = "date_end", required = false) LocalDateTime dateEnd)  {
-        //todo
         // создать переменную в проперти (если нету) - количество дней в пределах которых пациент видит свободные талоны
         // если не передана dateStart - используем now()
         // если не передана dateEnd - используем максимальную область видимости пациента
@@ -50,7 +49,6 @@ public class PatientDoctorOuterController {
             @RequestParam(name = "date_end") LocalDateTime dateEnd,
             @RequestParam(name = "page", required = false, defaultValue = "1") long page,
             @RequestParam(name = "count",  required = false, defaultValue = "20") long count)  {
-        //todo
         // создать переменную в проперти (если нету) - количество дней в пределах которых пациент видит свободные талоны
         // проверить что даты корректны - дата начала раньше даты конца
         // проверить что дата окончания не превышает области видимости пациента

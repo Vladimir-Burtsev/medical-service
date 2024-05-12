@@ -9,4 +9,6 @@ public interface AppealService {
     Appeal createPatientAppeal(DiseaseDep diseaseDep, Patient patient, InsuranceType insuranceType);
 
     Appeal save(Appeal appeal);
+
+    Appeal getAppealById(long appealId);
 }

@@ -1,9 +1,11 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,20 +13,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.UUID;
+
 @Slf4j
 @PreAuthorize("hasAuthority('PATIENT')")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
+    private final TalonBusinessService talonBusinessService;
 
+    /**
+     * страница 2
+     */
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент
+
+        //получить только ту информацию которая хранится в медикал сервисе
+        // покрыть тестами
+        // то есть
+        // public record TalonWithDoctorShortDto(long talonId,
+        //                                      LocalDateTime visitTime,
+        //                                      long doctorId) {}
+
+        //после успешного мерджа в мастер второй частью задачи выполнить получение информации о докторе в других сервисах и попраавить тесты
 
         return ResponseEntity.ok(null);
     }
@@ -32,7 +49,6 @@ public class PatientTalonOuterController {
     @GetMapping("/assigned/full")
     public ResponseEntity<GetAssignedPatientTalonsByDepartmentsResponse> getAssignedTalonsByPatientFull(
             @RequestParam(name = "patient_id") long patientId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // вернуть все талоны на которые записан пациент в разрезе отделений организации пациента
@@ -44,7 +60,6 @@ public class PatientTalonOuterController {
     public ResponseEntity<GetTalonFullInformationResponse> getTalonFullInformation(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "talon_id") long talonId) {
-        //todo
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом
         // проверить что талон существует
@@ -55,19 +70,28 @@ public class PatientTalonOuterController {
     }
 
     @PatchMapping("/unassign")
-    public void cancelReservation(
-            @RequestParam(name = "talon_id") long talonId) {
+    public void cancelReservation(@RequestParam(name = "talon_id") Long talonId,
+                                  Principal principal) {
+        String operation = "Отмена записи на прием к врачу";
+        log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
+
+        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()))) {
+            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId {}; UserId {}",
+                    operation, talonId, principal.getName());
+            throw new LogicException("Талон с Id = " + talonId + " у пользователя с userId = "
+                    + principal.getName() + " не сущестует.");
+        }
+
+        talonBusinessService.cancelReservationTalon(talonId);
+
+        log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
         //todo
-        // проверить что талон существует
-        // проверить что талон принадлежит авторизованному пациенту
-        // отменить запись к врачу (талон должен остаться без ссылки на пациента)
         // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
     }
 
     @PatchMapping("/assign")
     public void signUpForTalon(
             @RequestBody @NotNull AssignPatientToTalonRequest request) {
-        //todo
         // создать переменную в проперти - минуты до блокировки записи до приема
         // проверить что пациент существует
         // проверить что авторизованный пользователь является этим пациентом

@@ -66,12 +66,6 @@ public class DoctorAppealOuterController {
                 request.patientId(), request.insuranceType());
         log.debug("Ответ на создание обращения: {}", response);
 
-
-        // оставить до лучших времен
-//        String message = String.format("Создание обращения пациента %s", request.patientId());
-//        auditMessageService.sendAudit(doctorUUID.toString(), "create-appeal", message);
-
-
         return ResponseEntity.ok(response);
     }
 
@@ -91,7 +85,6 @@ public class DoctorAppealOuterController {
         }
     }
 
-
     /**
      * страница 3.2.3
      */
@@ -109,5 +102,4 @@ public class DoctorAppealOuterController {
 
         return ResponseEntity.ok(null);
     }
-
 }

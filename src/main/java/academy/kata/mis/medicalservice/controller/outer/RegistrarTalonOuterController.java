@@ -20,7 +20,6 @@ public class RegistrarTalonOuterController {
     @GetMapping("/today")
     public ResponseEntity<CurrentDayTalonsByDepartmentResponse> getCurrentDayTalonsByDepartmentInfo(
             @RequestParam(name = "registrar_id") long registrarId) {
-        //todo
         // проверить что регистратор существует
         // проверить что текущий авторизованный пользователь соответствует переданному регистратору
         // вернуть информацию о талонах на прием к врачам из отделения регистратора в текущий день

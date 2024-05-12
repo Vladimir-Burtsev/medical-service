@@ -30,7 +30,6 @@ public class DoctorDiseaseOuterController {
             @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") DiseaseOrder order,
             @RequestParam(name = "page", required = false, defaultValue = "1") long page,
             @RequestParam(name = "size", required = false, defaultValue = "10") long size) {
-        //todo
         // проверить что доктор существует
         // проверить что авторизованный пользователь является доктором
         // вернуть все заболевания отделения доктора которые имеют статус 'open' и попадают под два строковых паттерна
