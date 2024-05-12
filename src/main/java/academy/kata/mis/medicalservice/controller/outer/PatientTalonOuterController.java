@@ -1,19 +1,25 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
+import academy.kata.mis.medicalservice.model.entity.Patient;
+import academy.kata.mis.medicalservice.service.PatientService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Slf4j
@@ -23,6 +29,7 @@ import java.util.UUID;
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
+    private final PatientService patientService;
 
     /**
      * страница 2
@@ -30,20 +37,36 @@ public class PatientTalonOuterController {
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
-        // проверить что пациент существует
-        // проверить что авторизованный пользователь является этим пациентом
-        // вернуть все талоны на которые записан пациент
+        log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
+        Patient patient = checkPatientExist(patientId);
 
-        //получить только ту информацию которая хранится в медикал сервисе
-        // покрыть тестами
-        // то есть
-        // public record TalonWithDoctorShortDto(long talonId,
-        //                                      LocalDateTime visitTime,
-        //                                      long doctorId) {}
+        checkPatientIsAutUser(patient);
+
+        GetAssignedTalonsByPatientResponse response =
+                talonBusinessService.getAllPatientTalonByPatientId(patientId);
+
+        log.info("Талоны пользователя {} - получены", patientId);
 
         //после успешного мерджа в мастер второй частью задачи выполнить получение информации о докторе в других сервисах и попраавить тесты
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(response);
+    }
+
+    private Patient checkPatientExist(long patientId) {
+        return patientService.existsPatientByPatientId(patientId)
+                .orElseThrow(() -> {
+                    log.error("Пациент не найден; PatientId: {}", patientId);
+                    return new NoSuchElementException("Patient with id: " + patientId + " does not exist");
+                });
+    }
+
+    private void checkPatientIsAutUser(Patient patient) {
+        UUID userId = ((JwtAuthentication) SecurityContextHolder.getContext().getAuthentication())
+                .getUserId();
+        if (!patient.getUserId().equals(userId)) {
+            log.error("У авторизованного пользователя с Id: {} нет доступа к данным о пациенте", userId);
+            throw new AuthException("User with id: " + userId + " does not have access");
+        }
     }
 
     @GetMapping("/assigned/full")
