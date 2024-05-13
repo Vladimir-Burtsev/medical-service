@@ -1,11 +1,14 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
+import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import academy.kata.mis.medicalservice.service.TalonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
