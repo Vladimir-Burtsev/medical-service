@@ -28,4 +28,9 @@ public class PatientServiceImpl implements PatientService {
     public Patient getPatientById(long patientId) {
         return patientRepository.getPatientById(patientId);
     }
+
+    @Override
+    public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
+        return patientRepository.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
+    }
 }

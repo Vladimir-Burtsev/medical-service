@@ -3,18 +3,20 @@ package academy.kata.mis.medicalservice.service.impl;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
-import academy.kata.mis.medicalservice.model.dto.patient.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatientBusinessServiceImpl implements PatientBusinessService {
@@ -37,6 +39,11 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
                 .person(personDto)
                 .patients(createPatients(patients))
                 .build();
+    }
+
+    @Override
+    public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
+        return patientService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
     }
 
 
