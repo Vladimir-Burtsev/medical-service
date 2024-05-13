@@ -13,4 +13,6 @@ public interface ReportServiceSender {
 //    void sendInMessageService(String userEmail, String subject, String text);
 //    void sendInReportService(UUID userId, String email, String info, UUID operationId);
     void sendInMessageService(String type, String userEmail, String subject, String text);
+    void sendInReportService(UUID userId, String email, String info, UUID operationId);
+    void sendInMessageService(String userEmail, String subject, String text);
 }
