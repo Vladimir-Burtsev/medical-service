@@ -78,6 +78,10 @@ public class CancelReservationIT extends ContextIT {
                 )
                 .andExpect(status().isOk());
 
+        //проверяем что была попытка отправить запрос в message service
+        verify(reportServiceSender, times(1))
+                .sendInMessageService(anyString(), anyString(), anyString());
+
         //проверяем что была попытка отправить запрос в аудит сервис
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
     }
