@@ -11,9 +11,13 @@ import org.springframework.stereotype.Service;
 public class DiseaseDepServiceImpl implements DiseaseDepService {
     private final DiseaseDepRepository diseaseDepRepository;
 
-
     @Override
     public DiseaseDep getById(long diseaseDepId) {
         return diseaseDepRepository.getReferenceById(diseaseDepId);
+    }
+
+    @Override
+    public boolean checkIsExistByIdAndDoctorId(long diseaseDepId, long doctorId) {
+        return diseaseDepRepository.checkIsExistByIdAndDoctorId(diseaseDepId, doctorId);
     }
 }

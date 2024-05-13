@@ -62,8 +62,9 @@ public class DoctorAppealOuterController {
         checkIsDiseaseDepExistByDoctorId(request.diseaseDepId(), doctor.getId());
         checkIsPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(), request.doctorId());
 
-        GetAppealShortInfo response = appealBusinessService.createPatientVisit(doctor, request.diseaseDepId(),
-                request.patientId(), request.insuranceType());
+        GetAppealShortInfo response = appealBusinessService
+                .createPatientVisit(doctor, request.diseaseDepId(), request.patientId(), request.insuranceType());
+        //todo напиши нормальный лог: principal{uuid} успешно создал обращение {обращение}
         log.debug("Ответ на создание обращения: {}", response);
 
         return ResponseEntity.ok(response);

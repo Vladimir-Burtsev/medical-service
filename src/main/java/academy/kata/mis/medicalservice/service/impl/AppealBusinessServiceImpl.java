@@ -44,11 +44,8 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
                                                  InsuranceType insuranceType) {
         Patient patient = patientService.getPatientById(patientId);
         DiseaseDep diseaseDep = diseaseDepService.getById(diseaseDepId);
-
         Appeal appeal = appealService.save(appealService.createPatientAppeal(diseaseDep, patient, insuranceType));
-
         Visit visit = visitService.save(visitService.createPatientVisit(doctor, appeal));
-        log.debug("Создание обращения успешно: doctor={}, patient={}, appeal={}", doctor.getId(), patientId, appeal);
 
         List<VisitShortDto> visitShortDtoList = new ArrayList<>();
         visitShortDtoList.add(visitConvertor.entityToVisitShortDto(visit));

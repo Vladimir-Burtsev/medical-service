@@ -7,6 +7,7 @@ import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import lombok.Builder;
 
 import java.util.List;
+
 @Builder
 public record GetAppealShortInfo(long appealId,
                                  AppealStatus appealStatus,

@@ -5,8 +5,6 @@ import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoRe
 import java.util.UUID;
 
 public interface PatientBusinessService {
-
     GetCurrentPatientPersonalInfoResponse getPatientPersonalInformationByUser(UUID userId);
-
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
 }

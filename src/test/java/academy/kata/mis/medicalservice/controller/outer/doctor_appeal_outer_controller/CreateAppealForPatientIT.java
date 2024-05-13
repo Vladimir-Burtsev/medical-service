@@ -49,11 +49,15 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
 
-        MvcResult result = mockMvc.perform(post(
-                "/api/medical/doctor/appeal/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", accessToken)
-                .content(objectMapper.writeValueAsString(request)))
+        MvcResult result = mockMvc.perform(
+                        post(
+                                "/api/medical/doctor/appeal/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                //todo
+                // я бы хотел видет проверку как в GetCurrentPatientInformationIT
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -79,11 +83,13 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
 
-        mockMvc.perform(post(
-                "/api/medical/doctor/appeal/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", accessToken)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+                        post(
+                                "/api/medical/doctor/appeal/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Доктор не найден"));
     }
@@ -101,11 +107,13 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        mockMvc.perform(post(
-                "/api/medical/doctor/appeal/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", accessToken)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+                        post(
+                                "/api/medical/doctor/appeal/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Заболевание не существует"));
     }
@@ -123,11 +131,13 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        mockMvc.perform(post(
-                "/api/medical/doctor/appeal/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", accessToken)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+                        post(
+                                "/api/medical/doctor/appeal/create")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Пациент не существует или находится с доктором в разных организациях"));
     }

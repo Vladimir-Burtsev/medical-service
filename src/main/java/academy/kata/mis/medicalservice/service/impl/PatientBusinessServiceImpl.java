@@ -3,11 +3,10 @@ package academy.kata.mis.medicalservice.service.impl;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
-import academy.kata.mis.medicalservice.model.dto.patient.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientPersonalInformation;
 import academy.kata.mis.medicalservice.model.entity.Patient;
-import academy.kata.mis.medicalservice.repository.PatientRepository;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     private final PatientService patientService;
     private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
-    private final PatientRepository patientRepository;
 
     @Override
     public GetCurrentPatientPersonalInfoResponse getPatientPersonalInformationByUser(UUID userId) {
@@ -45,7 +43,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
 
     @Override
     public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
-        return patientRepository.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
+        return patientService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
     }
 
 
