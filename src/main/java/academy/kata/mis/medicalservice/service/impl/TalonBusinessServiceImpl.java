@@ -32,11 +32,19 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     @Override
     public GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId) {
         Set<Talon> patientTalons = talonService.allPatientTalonByPatientId(patientId);
-        List<TalonWithDoctorShortDto> talonsWithDoctorShortDtos = new ArrayList<>();
+        List<TalonWithDoctorShortDto> talonsWithDoctorShortDto = new ArrayList<>();
         for (Talon talon : patientTalons) {
-            talonsWithDoctorShortDtos.add(new TalonWithDoctorShortDto(talon.getId(), talon.getTime(), talon.getDoctor().getId(),
-                    null, null, null, null, null));
+            talonsWithDoctorShortDto.add(TalonWithDoctorShortDto.builder()
+                    .talonId(talon.getId())
+                    .visitTime(talon.getTime())
+                    .doctorId(talon.getDoctor().getId())
+                    .doctorFirstName(null)
+                    .doctorLastName(null)
+                    .doctorPositionName(null)
+                    .doctorPatronymic(null)
+                    .cabinet(null)
+                    .build());
         }
-        return new GetAssignedTalonsByPatientResponse(talonsWithDoctorShortDtos);
+        return new GetAssignedTalonsByPatientResponse(talonsWithDoctorShortDto);
     }
 }

@@ -7,7 +7,6 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepar
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
-import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.service.PatientService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
@@ -38,34 +37,34 @@ public class PatientTalonOuterController {
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
         log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
-        Patient patient = checkPatientExist(patientId);
+        String patientUserId = checkPatientExist(patientId);
 
-        checkPatientIsAutUser(patient);
+        checkPatientIsAutUser(patientUserId);
 
         GetAssignedTalonsByPatientResponse response =
                 talonBusinessService.getAllPatientTalonByPatientId(patientId);
 
-        log.info("Талоны пользователя {} - получены", patientId);
+        log.debug("Талоны пользователя {} - получены", patientId);
 
         //после успешного мерджа в мастер второй частью задачи выполнить получение информации о докторе в других сервисах и попраавить тесты
 
         return ResponseEntity.ok(response);
     }
 
-    private Patient checkPatientExist(long patientId) {
-        return patientService.existsPatientByPatientId(patientId)
+    private String checkPatientExist(long patientId) {
+        return patientService.getPatientUserIdByPatientId(patientId)
                 .orElseThrow(() -> {
-                    log.error("Пациент не найден; PatientId: {}", patientId);
+                    log.error("Пациент не найден: PatientId: {}", patientId);
                     return new NoSuchElementException("Patient with id: " + patientId + " does not exist");
                 });
     }
 
-    private void checkPatientIsAutUser(Patient patient) {
-        UUID userId = ((JwtAuthentication) SecurityContextHolder.getContext().getAuthentication())
+    private void checkPatientIsAutUser(String userId) {
+        UUID authUserId = ((JwtAuthentication) SecurityContextHolder.getContext().getAuthentication())
                 .getUserId();
-        if (!patient.getUserId().equals(userId)) {
+        if (!userId.equals(authUserId.toString())) {
             log.error("У авторизованного пользователя с Id: {} нет доступа к данным о пациенте", userId);
-            throw new AuthException("User with id: " + userId + " does not have access");
+            throw new AuthException("User with id: " + authUserId + " does not have access");
         }
     }
 

@@ -77,7 +77,7 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
         );
 
         //then
-        result.andExpect(status().isNotFound())
+        result.andExpect(status().is4xxClientError())
                 .andExpect(content().string("Patient with id: 3 does not exist"));
     }
 
@@ -104,6 +104,7 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
 
         //then
         result.andExpect(status().isForbidden())
-                .andExpect(content().string("User with id: 599d9ef0-7ae0-4924-890b-55eb13f85e53 does not have access"));
+                .andExpect(content()
+                        .string("User with id: 599d9ef0-7ae0-4924-890b-55eb13f85e53 does not have access"));
     }
 }

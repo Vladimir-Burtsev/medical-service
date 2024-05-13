@@ -11,5 +11,5 @@ public interface PatientService {
     Boolean existsPatientByUserIdAndOrganizationId(UUID userId,long organizationId);
 
     Patient getPatientById(long patientId);
-    Optional<Patient> existsPatientByPatientId(long patientId);
+    Optional<String> getPatientUserIdByPatientId(long patientId);
 }

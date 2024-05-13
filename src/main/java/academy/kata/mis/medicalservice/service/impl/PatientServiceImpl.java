@@ -31,7 +31,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Optional<Patient> existsPatientByPatientId(long patientId) {
-        return patientRepository.findPatientById(patientId);
+    public Optional<String> getPatientUserIdByPatientId(long patientId) {
+        return patientRepository.findUserIdByPatientId(patientId);
     }
 }
