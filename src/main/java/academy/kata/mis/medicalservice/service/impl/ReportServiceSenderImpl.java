@@ -2,6 +2,7 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
+import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
@@ -27,7 +28,6 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
 
     @Value("${spring.kafka.producer.topic.report-message}")
     private String topic;
-
 
     @Override
     public void sendInReportService(UUID userId, boolean isEmail, Appeal appeal, UUID operationId) {

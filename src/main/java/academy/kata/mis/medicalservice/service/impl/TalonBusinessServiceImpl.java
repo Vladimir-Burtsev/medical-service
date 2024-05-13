@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
