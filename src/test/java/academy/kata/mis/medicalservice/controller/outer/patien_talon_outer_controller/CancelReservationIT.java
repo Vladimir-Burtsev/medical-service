@@ -6,7 +6,6 @@ import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
-import academy.kata.mis.medicalservice.service.RandomGenerator;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,6 @@ public class CancelReservationIT extends ContextIT {
     private ReportServiceSender reportServiceSender;
     @MockBean
     private PersonFeignClient personFeignClient;
-    @MockBean
-    private RandomGenerator randomGenerator;
 
     private final String accessToken = "Bearer token";
 
@@ -58,7 +55,6 @@ public class CancelReservationIT extends ContextIT {
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
         when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
         when(personFeignClient.getPersonById(anyLong())).thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
-        when(randomGenerator.generate()).thenReturn(UUID.fromString("cf29341a-c9ed-4644-a6dc-db639784850e"));
 
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
@@ -69,7 +65,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что была попытка отправить запрос в message service
         verify(reportServiceSender, times(1))
-                .sendInReportService(any(), anyString(), anyString(), any());
+                .sendInMessageService(anyString(), anyString(), anyString());
 
         //проверяем что была попытка отправить запрос в аудит сервис
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
@@ -107,7 +103,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInReportService(any(), anyString(), anyString(), any());
+                .sendInMessageService(anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -144,7 +140,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInReportService(any(), anyString(), anyString(), any());
+                .sendInMessageService(anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -181,7 +177,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInReportService(any(), anyString(), anyString(), any());
+                .sendInMessageService(anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
