@@ -98,11 +98,10 @@ public class PatientTalonOuterController {
 
         talonBusinessService.cancelReservationTalon(talonId);
 
-        reportServiceSender.sendInReportService(
-                UUID.fromString(principal.getName()),
+        reportServiceSender.sendInMessageService(
                 personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
-                talonBusinessService.getResponseTalonCancel(talonId),
-                randomGenerator.generate()
+                "отмена записи на прием к врачу",
+                talonBusinessService.getResponseTalonCancel(talonId)
         );
 
         auditMessageService.sendAudit(principal.getName(), operation, "успешная отмена записи на прием к врачу");

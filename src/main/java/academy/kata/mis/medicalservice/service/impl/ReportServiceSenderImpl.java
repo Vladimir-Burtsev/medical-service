@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
@@ -20,6 +21,9 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
 
     @Value("${spring.kafka.producer.topic.report-message}")
     private String topic;
+
+    @Value("${KAFKA_PRODUCER_SEND_MESSAGE_CANCEL_TALON_TOPIC:mis_message_cancel_talon_local}")
+    private String topicMessageService;
 
     @Override
     public void sendInReportService(UUID userId, boolean isEmail, Appeal appeal, UUID operationId) {
@@ -62,6 +66,17 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
                 "appealServices",
                 appeal.getClosedDate(),
                 "doctorName"
+        );
+    }
+
+    @Override
+    public void sendInMessageService(String userEmail, String subject, String text) {
+        kafkaSenderService.sendToKafkaAsync(topicMessageService,
+                AppealToMessageService.builder()
+                        .userEmail(userEmail)
+                        .subject(subject)
+                        .text(text)
+                        .build()
         );
     }
 }
