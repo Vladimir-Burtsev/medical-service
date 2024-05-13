@@ -2,7 +2,6 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
-import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
