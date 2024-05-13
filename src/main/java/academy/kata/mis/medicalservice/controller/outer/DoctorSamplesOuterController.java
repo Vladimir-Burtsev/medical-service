@@ -42,40 +42,40 @@ public class DoctorSamplesOuterController {
         UUID authUserId = UUID.fromString(principal.getName());
         log.info("Пользователь: {}; {}; Заболевание: {}", authUserId, operation, diseaseDepId);
 
-        Doctor doctor = checkDoctorExist(doctorId);
-        DiseaseDep diseaseDep = checkDiseaseDepExist(diseaseDepId);
+        checkDoctorExistAndCurrent(doctorId, authUserId);
+        checkDiseaseDepExist(doctorId, diseaseDepId);
+        checkIsDoctorDepEqualsDiseaseDep(doctorId, diseaseDepId);
 
         GetDiseaseSamplesWithServicesResponse response =
-                doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDep(
-                        doctor,
-                        diseaseDep,
-                        authUserId
-                );
+                doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDep(doctorId, diseaseDepId);
 
-
+        log.debug("");
         return ResponseEntity.ok(response);
     }
 
-    private Doctor checkDoctorExist(long doctorId) {
-        Doctor doctor;
-        try {
-            doctor = doctorService.findDoctorById(doctorId);
-        } catch (LogicException e) {
-            log.error("Доктор с id: {}, не найден", doctorId);
-            throw e;
+    private void checkDoctorExistAndCurrent(long doctorId, UUID userId) {
+        //todo перенеси в бизнес сервис
+        // проверить что действительно существует доктор с таким ид и таким юсер ид
+        if (!doctorService.isExist(doctorId, userId)) {
+            log.error(String.format("Доктор с id: %s, не найден", doctorId));
+            throw new LogicException("");
         }
-        return doctor;
     }
 
-    private DiseaseDep checkDiseaseDepExist(long diseaseDepId) {
-        DiseaseDep diseaseDep;
-        try {
-            diseaseDep = diseaseDepService.findDiseaseDepById(diseaseDepId);
-        } catch (LogicException e) {
-            log.error("Заболевание с id: {}, не найдено", diseaseDepId);
-            throw e;
+    private void checkDiseaseDepExist(long doctorId, long diseaseDepId) {
+        //todo перенеси в бизнес сервис
+        if (!diseaseDepService.isExistAndSimpleDepartment(diseaseDepId, doctorId)) {
+            log.error("");
+            throw new LogicException("");
         }
-        return diseaseDep;
+    }
+
+    private void checkIsDoctorDepEqualsDiseaseDep(long doctorId, long diseaseDepId) {
+        if (false) {
+            //todo поймет ли пользователь ответ?
+            log.error("");
+            throw new LogicException("Неверные данные");
+        }
     }
 
 }

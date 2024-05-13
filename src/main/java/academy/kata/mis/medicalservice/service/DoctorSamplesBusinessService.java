@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface DoctorSamplesBusinessService {
 
-    GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDep(Doctor doctor, DiseaseDep diseaseDep, UUID userId);
-
+    GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDep(long doctorId,
+                                                                                    long diseaseDepId);
 }
