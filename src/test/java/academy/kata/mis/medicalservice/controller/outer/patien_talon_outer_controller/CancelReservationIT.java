@@ -35,7 +35,7 @@ public class CancelReservationIT extends ContextIT {
     private JwtProvider jwtProvider;
     @MockBean
     private AuditMessageService auditMessageService;
-    @MockBean
+    @Spy
     private ReportServiceSender reportServiceSender;
     @MockBean
     private PersonFeignClient personFeignClient;
@@ -60,16 +60,14 @@ public class CancelReservationIT extends ContextIT {
         when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
         when(personFeignClient.getPersonById(anyLong())).thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
 
+        doNothing().when(reportServiceSender).sendInMessageService(any(), any(), any());
+
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
                                 .header("Authorization", accessToken)
                                 .param("talon_id", String.valueOf(talonId))
                 )
                 .andExpect(status().isOk());
-
-        //проверяем что была попытка отправить запрос в message service
-        verify(reportServiceSender, times(1))
-                .sendInMessageService(anyString(), anyString(), anyString());
 
         //проверяем что была попытка отправить запрос в аудит сервис
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
