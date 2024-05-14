@@ -1,7 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
-import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import academy.kata.mis.medicalservice.service.TalonService;
@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
+    private final TalonConverter talonConverter;
 
     @Override
     @Transactional
@@ -31,20 +33,11 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
 
     @Override
     public GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId) {
-        Set<Talon> patientTalons = talonService.allPatientTalonByPatientId(patientId);
-        List<TalonWithDoctorShortDto> talonsWithDoctorShortDto = new ArrayList<>();
-        for (Talon talon : patientTalons) {
-            talonsWithDoctorShortDto.add(TalonWithDoctorShortDto.builder()
-                    .talonId(talon.getId())
-                    .visitTime(talon.getTime())
-                    .doctorId(talon.getDoctor().getId())
-                    .doctorFirstName(null)
-                    .doctorLastName(null)
-                    .doctorPositionName(null)
-                    .doctorPatronymic(null)
-                    .cabinet(null)
-                    .build());
-        }
-        return new GetAssignedTalonsByPatientResponse(talonsWithDoctorShortDto);
+        return new GetAssignedTalonsByPatientResponse(
+                talonService.allPatientTalonByPatientId(patientId)
+                        .stream()
+                        .map(talonConverter::entityToTalonWithDoctorShortDto)
+                        .collect(Collectors.toList())
+        );
     }
 }
