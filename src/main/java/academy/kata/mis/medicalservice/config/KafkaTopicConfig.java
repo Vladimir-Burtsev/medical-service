@@ -19,9 +19,6 @@ public class KafkaTopicConfig {
     @Value(value = "${spring.kafka.producer.topic.report-message}")
     private String topic;
 
-//    @Value(value = "${spring.kafka.producer.topic.send-message-cancel-talon}")
-//    private String topicSendMassageCancelTalon;
-
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
@@ -37,13 +34,4 @@ public class KafkaTopicConfig {
                 .replicas(1)
                 .build();
     }
-//
-//    @Bean
-//    public NewTopic topicSendMessageCancelTalon() {
-//        return TopicBuilder
-//                .name(topicSendMassageCancelTalon)
-//                .partitions(1)
-//                .replicas(1)
-//                .build();
-//    }
 }
