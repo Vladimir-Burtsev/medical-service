@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,5 +33,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
         return patientRepository.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
+    }
+
+    @Override
+    public Optional<String> getPatientUserIdByPatientId(long patientId) {
+        return patientRepository.findUserIdByPatientId(patientId);
     }
 }

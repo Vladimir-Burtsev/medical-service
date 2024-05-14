@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
@@ -22,4 +23,8 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
             WHERE p.id = :patientId AND d.id = :doctorId
             """)
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
+
+    @Query("select p.userId from Patient p where p.id =:id")
+    Optional<String> findUserIdByPatientId(long id);
+
 }
