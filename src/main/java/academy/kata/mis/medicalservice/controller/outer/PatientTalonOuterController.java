@@ -37,8 +37,8 @@ public class PatientTalonOuterController {
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
             @RequestParam(name = "patient_id") long patientId) {
         log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
-        String patientUserId = getPatientUserIdIfExist(patientId);
 
+        String patientUserId = getPatientUserIdIfExist(patientId);
         checkPatientIsAutUser(patientUserId);
 
         GetAssignedTalonsByPatientResponse response =

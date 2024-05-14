@@ -25,11 +25,10 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
     private final String accessToken = "Bearer token";
     private final String userId = "662b6f6e-4702-44c4-98f4-e73243087d46";
 
-    @Test
-    public void searchTalonsByPatientId_success() throws Exception {
-        //given
-        long patientId = 1L;
 
+    @Test
+    public void getAssignedTalonsByPatient_success() throws Exception {
+        long patientId = 1L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("PATIENT")));
@@ -38,29 +37,25 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        //when
-        var result = mockMvc.perform(
-                get("/api/medical/patient/talon/assigned")
-                        .header("Authorization", accessToken)
-                        .param("patient_id", String.valueOf(patientId))
-        );
-
-        //then
-        result.andExpect(status().isOk())
+        mockMvc.perform(
+                        get("/api/medical/patient/talon/assigned")
+                                .header("Authorization", accessToken)
+                                .param("patient_id", String.valueOf(patientId))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("talons.length()").value(2))
                 .andExpect(jsonPath("talons[0].talonId").value(1))
                 .andExpect(jsonPath("talons[0].visitTime").value("2024-05-17T10:00:00"))
                 .andExpect(jsonPath("talons[0].doctorId").value(1))
                 .andExpect(jsonPath("talons[1].talonId").value(2))
                 .andExpect(jsonPath("talons[1].visitTime").value("2024-05-17T10:00:00"))
-                .andExpect(jsonPath("talons[1].doctorId").value(1))
-                .andExpect(jsonPath("talons[2]").doesNotExist());
+                .andExpect(jsonPath("talons[1].doctorId").value(1));
     }
 
-    @Test
-    public void searchTalonsByPatientId_patientNotExist() throws Exception {
-        //given
-        long patientId = 3L;
 
+    @Test
+    public void getAssignedTalonsByPatient_patientNotExist() throws Exception {
+        long patientId = 3L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("PATIENT")));
@@ -69,24 +64,20 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        //when
-        var result = mockMvc.perform(
-                get("/api/medical/patient/talon/assigned")
-                        .header("Authorization", accessToken)
-                        .param("patient_id", String.valueOf(patientId))
-        );
-
-        //then
-        result.andExpect(status().is4xxClientError())
+        mockMvc.perform(
+                        get("/api/medical/patient/talon/assigned")
+                                .header("Authorization", accessToken)
+                                .param("patient_id", String.valueOf(patientId))
+                )
+                .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Patient with id: 3 does not exist"));
     }
 
+
     @Test
-    public void searchTalonsByPatientId_userInNotAccess() throws Exception {
-        //given
+    public void getAssignedTalonsByPatient_userInNotAccess() throws Exception {
         long patientId = 1L;
         String userId = "599d9ef0-7ae0-4924-890b-55eb13f85e53";
-
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("PATIENT")));
@@ -95,15 +86,12 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        //when
-        var result = mockMvc.perform(
-                get("/api/medical/patient/talon/assigned")
-                        .header("Authorization", accessToken)
-                        .param("patient_id", String.valueOf(patientId))
-        );
-
-        //then
-        result.andExpect(status().isForbidden())
+        mockMvc.perform(
+                        get("/api/medical/patient/talon/assigned")
+                                .header("Authorization", accessToken)
+                                .param("patient_id", String.valueOf(patientId))
+                )
+                .andExpect(status().isForbidden())
                 .andExpect(content()
                         .string("User with id: 599d9ef0-7ae0-4924-890b-55eb13f85e53 does not have access"));
     }
