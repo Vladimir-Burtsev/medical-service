@@ -5,7 +5,4 @@ import java.util.UUID;
 public interface DoctorService {
 
     boolean isExistByIdAndUserId(long doctorId, UUID userId, long diseaseDepId);
-
-    long getDoctorDepartmentId(long doctorId);
-
 }

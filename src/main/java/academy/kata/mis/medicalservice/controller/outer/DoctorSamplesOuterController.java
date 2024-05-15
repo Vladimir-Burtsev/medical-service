@@ -49,12 +49,4 @@ public class DoctorSamplesOuterController {
         return ResponseEntity.ok(response);
     }
 
-    //private void checkIsDoctorDepEqualsDiseaseDep(long doctorId, long diseaseDepId) {
-    //    if (!(doctorBusinessService.getDoctorDepartmentId(doctorId) ==
-    //            diseaseDepBusinessService.getDiseaseDepDepartmentId(diseaseDepId))) {
-    //        log.error(String.format("Доктор с id=%s и заболевание с id=%s, из разных отделений", doctorId, diseaseDepId));
-    //        throw new LogicException("Доктор и заболевание из разных отделений");
-    //    }
-    //}
-
 }

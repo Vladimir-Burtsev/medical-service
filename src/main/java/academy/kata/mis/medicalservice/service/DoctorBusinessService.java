@@ -6,7 +6,4 @@ import java.util.UUID;
 
 public interface DoctorBusinessService {
     void checkDoctorExistAndCurrent(long doctorId, UUID userId, long diseaseDepId);
-
-    long getDoctorDepartmentId(long doctorId);
-
 }

@@ -15,8 +15,4 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     boolean existsByIdAndUserId(@Param("doctorId") long doctorId,
                                 @Param("userId") UUID userId,
                                 @Param("diseaseDepId") long diseaseDepId);
-
-    @Query("SELECT d.department.id FROM Doctor d WHERE d.id = :doctorId")
-    long getDoctorDepartmentId(@Param("doctorId") long doctorId);
-
 }

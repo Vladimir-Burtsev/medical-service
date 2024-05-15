@@ -16,11 +16,4 @@ public class DoctorServiceImpl implements DoctorService {
     public boolean isExistByIdAndUserId(long doctorId, UUID userId, long diseaseDepId) {
         return doctorRepository.existsByIdAndUserId(doctorId, userId, diseaseDepId);
     }
-
-    @Override
-    public long getDoctorDepartmentId(long doctorId) {
-        return doctorRepository.getDoctorDepartmentId(doctorId);
-    }
-
-
 }

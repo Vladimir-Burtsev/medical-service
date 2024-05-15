@@ -21,10 +21,4 @@ public class DiseaseDepBusinessServiceImpl implements DiseaseDepBusinessService 
             throw new LogicException("Заболевание не найдено");
         }
     }
-
-    @Override
-    public long getDiseaseDepDepartmentId(long diseaseDepId) {
-        return diseaseDepService.getDiseaseDepDepartmentId(diseaseDepId);
-    }
-
 }

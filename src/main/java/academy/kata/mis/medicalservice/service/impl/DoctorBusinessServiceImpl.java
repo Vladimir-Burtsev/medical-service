@@ -19,13 +19,10 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     @Override
     public void checkDoctorExistAndCurrent(long doctorId, UUID userId, long diseaseDepId) {
         if (!doctorService.isExistByIdAndUserId(doctorId, userId, diseaseDepId)) {
-            log.error(String.format("Доктор с id=%s, не найден", doctorId));
+            log.error(String.format("Доктор с id=%s не найден или заболевание с id=%s из другого отделения",
+                    doctorId,
+                    diseaseDepId));
             throw new LogicException("Авторизованный пользователь не из указанного лечебного отделения");
         }
-    }
-
-    @Override
-    public long getDoctorDepartmentId(long doctorId) {
-        return doctorService.getDoctorDepartmentId(doctorId);
     }
 }

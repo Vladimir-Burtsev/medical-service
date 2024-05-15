@@ -6,6 +6,4 @@ public interface DiseaseDepService {
 
     boolean isExistById(long diseaseDepId);
 
-    long getDiseaseDepDepartmentId(long diseaseDepId);
-
 }
