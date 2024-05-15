@@ -2,6 +2,7 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesResponse;
 import academy.kata.mis.medicalservice.model.dto.sample.DiseaseSampleConverter;
+import academy.kata.mis.medicalservice.service.DiseaseSampleService;
 import academy.kata.mis.medicalservice.service.DoctorSamplesBusinessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,11 @@ public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessSe
     private final DiseaseSampleConverter diseaseSampleConverter;
 
     @Override
-    //todo rename
-    public GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDep(long doctorId,
-                                                                                           long diseaseDepId) {
+    public GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDepAndDoctor(long doctorId,
+                                                                                                    long diseaseDepId) {
         return new GetDiseaseSamplesWithServicesResponse(
                 diseaseSampleService.getByDoctorAndDiseaseDep(doctorId, diseaseDepId).stream()
                         .map(diseaseSampleConverter::entityToDiseaseSampleDto)
                         .collect(Collectors.toList()));
     }
-
-
-
 }

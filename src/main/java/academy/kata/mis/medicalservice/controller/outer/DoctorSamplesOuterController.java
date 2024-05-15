@@ -1,12 +1,9 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
-import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesResponse;
-import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
-import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.service.DiseaseDepService;
+import academy.kata.mis.medicalservice.service.DiseaseDepBusinessService;
+import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorSamplesBusinessService;
-import academy.kata.mis.medicalservice.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +24,8 @@ import java.util.UUID;
 public class DoctorSamplesOuterController {
 
     private final DoctorSamplesBusinessService doctorSamplesBusinessService;
-    private final DoctorService doctorService;
-    private final DiseaseDepService diseaseDepService;
+    private final DiseaseDepBusinessService diseaseDepBusinessService;
+    private final DoctorBusinessService doctorBusinessService;
 
     /**
      * страница 3.2.4
@@ -42,40 +39,22 @@ public class DoctorSamplesOuterController {
         UUID authUserId = UUID.fromString(principal.getName());
         log.info("Пользователь: {}; {}; Заболевание: {}", authUserId, operation, diseaseDepId);
 
-        checkDoctorExistAndCurrent(doctorId, authUserId);
-        checkDiseaseDepExist(doctorId, diseaseDepId);
-        checkIsDoctorDepEqualsDiseaseDep(doctorId, diseaseDepId);
+        doctorBusinessService.checkDoctorExistAndCurrent(doctorId, authUserId, diseaseDepId);
+        diseaseDepBusinessService.checkDiseaseDepExist(diseaseDepId);
 
         GetDiseaseSamplesWithServicesResponse response =
-                doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDep(doctorId, diseaseDepId);
+                doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDepAndDoctor(doctorId, diseaseDepId);
 
-        log.debug("");
+        log.debug("{}; Успешно; principal {}", operation, authUserId);
         return ResponseEntity.ok(response);
     }
 
-    private void checkDoctorExistAndCurrent(long doctorId, UUID userId) {
-        //todo перенеси в бизнес сервис
-        // проверить что действительно существует доктор с таким ид и таким юсер ид
-        if (!doctorService.isExist(doctorId, userId)) {
-            log.error(String.format("Доктор с id: %s, не найден", doctorId));
-            throw new LogicException("");
-        }
-    }
-
-    private void checkDiseaseDepExist(long doctorId, long diseaseDepId) {
-        //todo перенеси в бизнес сервис
-        if (!diseaseDepService.isExistAndSimpleDepartment(diseaseDepId, doctorId)) {
-            log.error("");
-            throw new LogicException("");
-        }
-    }
-
-    private void checkIsDoctorDepEqualsDiseaseDep(long doctorId, long diseaseDepId) {
-        if (false) {
-            //todo поймет ли пользователь ответ?
-            log.error("");
-            throw new LogicException("Неверные данные");
-        }
-    }
+    //private void checkIsDoctorDepEqualsDiseaseDep(long doctorId, long diseaseDepId) {
+    //    if (!(doctorBusinessService.getDoctorDepartmentId(doctorId) ==
+    //            diseaseDepBusinessService.getDiseaseDepDepartmentId(diseaseDepId))) {
+    //        log.error(String.format("Доктор с id=%s и заболевание с id=%s, из разных отделений", doctorId, diseaseDepId));
+    //        throw new LogicException("Доктор и заболевание из разных отделений");
+    //    }
+    //}
 
 }

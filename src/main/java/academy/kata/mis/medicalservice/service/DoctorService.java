@@ -1,9 +1,11 @@
 package academy.kata.mis.medicalservice.service;
 
-import academy.kata.mis.medicalservice.model.entity.Doctor;
+import java.util.UUID;
 
 public interface DoctorService {
 
-    Doctor findDoctorById(long doctorId);
+    boolean isExistByIdAndUserId(long doctorId, UUID userId, long diseaseDepId);
+
+    long getDoctorDepartmentId(long doctorId);
 
 }
