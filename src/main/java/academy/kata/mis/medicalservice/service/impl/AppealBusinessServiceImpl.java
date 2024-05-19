@@ -1,7 +1,9 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.disease.convertor.DiseaseConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
@@ -37,6 +39,7 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
     private final PatientConvertor patientConvertor;
     private final DiseaseConvertor diseaseConvertor;
     private final VisitConvertor visitConvertor;
+    private final PersonFeignClient personFeignClient;
 
     @Override
     @Transactional
@@ -52,10 +55,11 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         List<VisitShortDto> visitShortDtoList = new ArrayList<>();
         visitShortDtoList.add(visitConvertor.entityToVisitShortDto(visit));
 
+        GetCurrentPatientInformation currentPatient = personFeignClient.getCurrentPersonById(patient.getPersonId());
         return GetAppealShortInfo.builder()
                 .appealId(appeal.getId())
                 .appealStatus(appeal.getStatus())
-                .patient(patientConvertor.entityToPatientShortDto(patient))
+                .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient))
                 .disease(diseaseConvertor.entityToDiseaseShortInfoDto(diseaseDep))
                 .visits(visitShortDtoList)
                 .build();

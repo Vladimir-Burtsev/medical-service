@@ -6,6 +6,7 @@ import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealShortInfoResponse;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.AppealBusinessService;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DiseaseDepBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
@@ -29,6 +30,7 @@ public class DoctorAppealOuterController {
     private final DiseaseDepBusinessService diseaseDepBusinessService;
     private final AppealBusinessService appealBusinessService;
     private final PatientBusinessService patientBusinessService;
+    private final AuditMessageService auditMessageService;
 
 
     /**
@@ -64,8 +66,11 @@ public class DoctorAppealOuterController {
 
         GetAppealShortInfo response = appealBusinessService
                 .createPatientVisit(doctor, request.diseaseDepId(), request.patientId(), request.insuranceType());
-        //todo напиши нормальный лог: principal{uuid} успешно создал обращение {обращение}
-        log.debug("Ответ на создание обращения: {}", response);
+
+        log.debug("Успешно создано обращение с ID {}", response.appealId());
+
+        auditMessageService.sendAudit(doctorUUID.toString(), "create-appeal",
+                "успешное создание обращения");
 
         return ResponseEntity.ok(response);
     }
