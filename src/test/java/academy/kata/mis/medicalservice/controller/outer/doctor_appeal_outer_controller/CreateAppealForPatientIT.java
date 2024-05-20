@@ -11,6 +11,7 @@ import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -72,33 +73,34 @@ public class CreateAppealForPatientIT extends ContextIT {
                 "FirstName",
                 "LastName",
                 "Patronymic",
-                LocalDate.now());
+                LocalDate.of(2001, 1, 21));
 
         when(personFeignClient.getCurrentPersonById(1L)).thenReturn(person);
 
-        MvcResult result = mockMvc.perform(
+        mockMvc.perform(
                         post(
                                 "/api/medical/doctor/appeal/create")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", accessToken)
                                 .content(objectMapper.writeValueAsString(request))
                 )
+//                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.appealStatus", Is.is("OPEN")))
+                .andExpect(jsonPath("$.appealId", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.appealStatus", Is.is(AppealStatus.OPEN.name())))
                 .andExpect(jsonPath("$.patient.patientId", Is.is(1)))
                 .andExpect(jsonPath("$.patient.patientFirstName", Is.is("FirstName")))
                 .andExpect(jsonPath("$.patient.patientLastname", Is.is("LastName")))
                 .andExpect(jsonPath("$.patient.patientPatronymic", Is.is("Patronymic")))
+                .andExpect(jsonPath("$.patient.birthday", Is.is("2001-01-21")))
                 .andExpect(jsonPath("$.disease.diseaseDepId", Is.is(1)))
+                .andExpect(jsonPath("$.disease.diseaseName", Matchers.nullValue()))//todo
+                .andExpect(jsonPath("$.disease.diseaseIdentifier", Matchers.nullValue()))//todo
+                .andExpect(jsonPath("$.visits.length()", Is.is(1)))
+                .andExpect(jsonPath("$.visits[0].visitId", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.visits[0].visitTime", Matchers.notNullValue()))
+                //todo и доктора сюда добавить
                 .andReturn();
-
-        String responseContent = result.getResponse().getContentAsString();
-        System.out.println("Response Content: " + responseContent);
-        GetAppealShortInfo response = objectMapper.readValue(responseContent, GetAppealShortInfo.class);
-
-        List<VisitShortDto> visitShortDtoList = response.visits();
-        assertEquals(1, visitShortDtoList.size());
-        assertEquals(AppealStatus.OPEN, response.appealStatus());
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
         verify(personFeignClient, times(1)).getCurrentPersonById(1);

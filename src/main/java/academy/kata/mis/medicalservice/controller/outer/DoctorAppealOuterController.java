@@ -67,10 +67,10 @@ public class DoctorAppealOuterController {
         GetAppealShortInfo response = appealBusinessService
                 .createPatientVisit(doctor, request.diseaseDepId(), request.patientId(), request.insuranceType());
 
-        log.debug("Успешно создано обращение с ID {}", response.appealId());
+        log.debug("Appeal created success; principal={}; appeal={}", doctorUUID, response);
 
         auditMessageService.sendAudit(doctorUUID.toString(), "create-appeal",
-                "успешное создание обращения");
+                "success; appeal=" + response);
 
         return ResponseEntity.ok(response);
     }

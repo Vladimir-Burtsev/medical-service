@@ -6,25 +6,15 @@ import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.disease.convertor.DiseaseConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
-import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
 import academy.kata.mis.medicalservice.model.dto.visit.convertor.VisitConvertor;
-import academy.kata.mis.medicalservice.model.entity.Appeal;
-import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
-import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.model.entity.Patient;
-import academy.kata.mis.medicalservice.model.entity.Visit;
+import academy.kata.mis.medicalservice.model.entity.*;
 import academy.kata.mis.medicalservice.model.enums.InsuranceType;
-import academy.kata.mis.medicalservice.service.AppealBusinessService;
-import academy.kata.mis.medicalservice.service.AppealService;
-import academy.kata.mis.medicalservice.service.DiseaseDepService;
-import academy.kata.mis.medicalservice.service.PatientService;
-import academy.kata.mis.medicalservice.service.VisitService;
+import academy.kata.mis.medicalservice.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,16 +42,16 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         Appeal appeal = appealService.save(appealService.createPatientAppeal(diseaseDep, patient, insuranceType));
         Visit visit = visitService.save(visitService.createPatientVisit(doctor, appeal));
 
-        List<VisitShortDto> visitShortDtoList = new ArrayList<>();
-        visitShortDtoList.add(visitConvertor.entityToVisitShortDto(visit));
-
         GetCurrentPatientInformation currentPatient = personFeignClient.getCurrentPersonById(patient.getPersonId());
+        //todo надо получить информацию по доктору - финальный дто должен владеть этой информацией
+        //todo надо получить информацию о заболевании в финальном дто
+
         return GetAppealShortInfo.builder()
                 .appealId(appeal.getId())
                 .appealStatus(appeal.getStatus())
                 .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient))
                 .disease(diseaseConvertor.entityToDiseaseShortInfoDto(diseaseDep))
-                .visits(visitShortDtoList)
+                .visits(List.of(visitConvertor.entityToVisitShortDto(visit)))
                 .build();
     }
 
