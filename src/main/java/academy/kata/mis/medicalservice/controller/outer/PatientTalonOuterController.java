@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -34,8 +35,9 @@ public class PatientTalonOuterController {
             @RequestParam(name = "patient_id") long patientId) {
         log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
 
-        String patientUserId = patientBusinessService.getPatientUserIdIfExist(patientId);
-        patientBusinessService.checkPatientIsAutUser(patientUserId);
+        UUID patientUserId = patientBusinessService
+                .isPatientExistAndAuthenticatedUserPatient(patientId,
+                        SecurityContextHolder.getContext().getAuthentication());
 
         GetAssignedTalonsByPatientResponse response =
                 talonBusinessService.getAllPatientTalonByPatientId(patientId);

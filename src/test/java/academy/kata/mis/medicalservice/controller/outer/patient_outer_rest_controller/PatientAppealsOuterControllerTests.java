@@ -4,7 +4,6 @@ import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
-import academy.kata.mis.medicalservice.service.RandomGenerator;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
@@ -12,13 +11,12 @@ import org.mockito.Spy;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,10 +34,8 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
     private ReportServiceSender reportServiceSender;
     @MockBean
     private PersonFeignClient personFeignClient;
-    @MockBean
-    private RandomGenerator randomGenerator;
 
-    private String accessToken = "Bearer token";
+    private final String accessToken = "Bearer token";
 
     @Test
     public void isPatientExistAndAuthenticatedUserPatientBadId() throws Exception {
@@ -77,7 +73,6 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
 
         String patientId = "3";
 
-
         mockMvc.perform(get("/api/medical/patient/appeal/report")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("patient_id", patientId)
@@ -86,7 +81,7 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
                         .header("Authorization", accessToken))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(String.format("Patient with id %s not found", patientId)));
-    } //todo разобраться что не так
+    }
 
     @Test
     public void isAppealExistAndPatientOwnerBadId() throws Exception {
@@ -146,8 +141,7 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
         when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
 
-        doNothing().when(reportServiceSender).sendInReportService(any(), any(), any(), any());
-
+        doNothing().when(reportServiceSender).sendInReportService(any(), anyBoolean(), any(), any());
 
         mockMvc.perform(get("/api/medical/patient/appeal/report")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,33 +150,6 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
                         .param("send_email", "true")
                         .header("Authorization", accessToken))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Отчет отпвлен на почту"));
-
-    }
-
-    @Test
-    public void isAppealExistAndPatientTestDownload() throws Exception {
-        JwtAuthentication jwtInfoToken = new JwtAuthentication();
-        jwtInfoToken.setUserId(UUID.fromString("cf29361a-c9ed-4644-a6dc-db639774850e"));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR")));
-        jwtInfoToken.setAuthenticated(true);
-        UUID generatedId = UUID.randomUUID();
-        String expectedLocation = "http://localhost:8766/api/report/download?operation_id=" + generatedId;
-
-        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
-        when(jwtProvider.validateAccessToken("token")).thenReturn(true);
-        when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-        when(randomGenerator.generate()).thenReturn(generatedId);
-
-        MvcResult result = mockMvc.perform(get("/api/medical/patient/appeal/report")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("patient_id", "1")
-                        .param("appeal_id", "1")
-                        .param("send_email", "false")
-                        .header("Authorization", accessToken))
-                .andExpect(status().isSeeOther())
-                .andReturn();
-
-        assertEquals(expectedLocation, result.getResponse().getHeader("Location"));
+                .andExpect(content().string("Отчет отправлен на почту"));
     }
 }

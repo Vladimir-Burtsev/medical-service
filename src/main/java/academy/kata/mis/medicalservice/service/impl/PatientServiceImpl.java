@@ -22,7 +22,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Boolean existsPatientByUserIdAndOrganizationId(UUID userId, long organizationId) {
-        return patientRepository.existsPatientByUserIdAndOrganizationId(userId,organizationId);
+        return patientRepository.existsPatientByUserIdAndOrganizationId(userId, organizationId);
     }
 
     @Override
@@ -38,5 +38,10 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Optional<String> getPatientUserIdByPatientId(long patientId) {
         return patientRepository.findUserIdByPatientId(patientId);
+    }
+
+    @Override
+    public Optional<String> findUserIdById(long id) {
+        return patientRepository.findUserIdByPatientId(id);
     }
 }
