@@ -31,10 +31,12 @@ public class PatientTalonOuterController {
      */
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
-            @RequestParam(name = "patient_id") long patientId, Principal principal) {
-        log.info("getAssignedTalonsByPatient: patientId = {}, userId = {}", patientId, principal.getName());
+            @RequestParam(name = "patient_id") long patientId,
+            Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        log.info("getAssignedTalonsByPatient: patientId = {}, userId = {}", patientId, userId);
 
-        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, principal.getName())) {
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, userId)) {
             throw new LogicException("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа");
         }
 
@@ -42,7 +44,7 @@ public class PatientTalonOuterController {
                 talonBusinessService.getAllPatientTalonByPatientId(patientId);
 
         log.debug("getAssignedTalonsByPatient: patientId = {}, userId = {}, response: {}",
-                patientId, principal.getName(), response);
+                patientId, userId, response);
 
         return ResponseEntity.ok(response);
     }

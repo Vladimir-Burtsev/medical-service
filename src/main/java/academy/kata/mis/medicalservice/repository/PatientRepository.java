@@ -29,7 +29,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("""
         select case when (count(p.id) > 0 ) then true else false end 
         from Patient p 
-        where  p.id = :id and p.userId = cast(:userId as uuid)
+        where  p.id = :id and p.userId = :userId
         """)
-    boolean isPatientExistAndUserIdIsPatientUserId(long id, String userId);
+    boolean isPatientExistAndUserIdIsPatientUserId(long id, UUID userId);
 }

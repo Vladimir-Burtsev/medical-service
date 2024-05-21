@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public boolean isPatientExistAndUserIdIsPatientUserId(long patientId, String userId) {
+    public boolean isPatientExistAndUserIdIsPatientUserId(long patientId, UUID userId) {
         return patientRepository.isPatientExistAndUserIdIsPatientUserId(patientId, userId);
     }
 }

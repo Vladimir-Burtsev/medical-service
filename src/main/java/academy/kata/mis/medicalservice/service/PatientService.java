@@ -16,5 +16,5 @@ public interface PatientService {
 
     UUID getPatientUserIdByPatientId(long patientId);
 
-    boolean isPatientExistAndUserIdIsPatientUserId(long patientId, String userId);
+    boolean isPatientExistAndUserIdIsPatientUserId(long patientId, UUID userId);
 }

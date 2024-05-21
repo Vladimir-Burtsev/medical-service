@@ -10,7 +10,6 @@ public class DoctorConvertor {
     public DoctorFullNameAndPositionsAndCabinetDto entityToDoctorFullNameAndPositionsAndCabinetDto(PersonFullNameDto personFullNameDto,
                                                    PositionsNameAndCabinetDto positionsNameAndCabinetDto) {
         return DoctorFullNameAndPositionsAndCabinetDto.builder()
-                .doctorId(personFullNameDto.id())
                 .doctorFirstName(personFullNameDto.firstName())
                 .doctorLastName(personFullNameDto.lastName())
                 .patronymic(personFullNameDto.patronymic())

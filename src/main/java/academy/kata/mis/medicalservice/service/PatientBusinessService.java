@@ -9,7 +9,7 @@ public interface PatientBusinessService {
 
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
 
-    boolean isPatientExistAndAuthenticatedUserPatient(long patientId, String userId);
+    boolean isPatientExistAndAuthenticatedUserPatient(long patientId, UUID userId);
 
     UUID getUserId(long patientId);
 }

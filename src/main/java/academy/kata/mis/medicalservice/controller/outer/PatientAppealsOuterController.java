@@ -65,9 +65,10 @@ public class PatientAppealsOuterController {
             @RequestParam(name = "appeal_id") long appealId,
             @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail,
             Principal principal) {
+        UUID currentUserId = UUID.fromString(principal.getName());
         log.info("downloadAppealReport: userId = {}, sendEmail = {}", patientId, sendEmail);
 
-        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, principal.getName())) {
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, currentUserId)) {
             throw new LogicException("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа");
         }
         UUID userId = patientBusinessService.getUserId(patientId);

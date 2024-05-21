@@ -47,7 +47,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     }
 
     @Override
-    public boolean isPatientExistAndAuthenticatedUserPatient(long patientId, String userId) {
+    public boolean isPatientExistAndAuthenticatedUserPatient(long patientId, UUID userId) {
         return patientService.isPatientExistAndUserIdIsPatientUserId(patientId, userId);
     }
 
