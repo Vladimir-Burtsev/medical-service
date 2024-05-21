@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -32,17 +31,18 @@ public class PatientTalonOuterController {
      */
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
-            @RequestParam(name = "patient_id") long patientId) {
-        log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
+            @RequestParam(name = "patient_id") long patientId, Principal principal) {
+        log.info("getAssignedTalonsByPatient: patientId = {}, userId = {}", patientId, principal.getName());
 
-        UUID patientUserId = patientBusinessService
-                .isPatientExistAndAuthenticatedUserPatient(patientId,
-                        SecurityContextHolder.getContext().getAuthentication());
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, principal.getName())) {
+            throw new LogicException("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа");
+        }
 
         GetAssignedTalonsByPatientResponse response =
                 talonBusinessService.getAllPatientTalonByPatientId(patientId);
 
-        log.debug("Талоны пользователя {} - получены", patientId);
+        log.debug("getAssignedTalonsByPatient: patientId = {}, userId = {}, response: {}",
+                patientId, principal.getName(), response);
 
         return ResponseEntity.ok(response);
     }

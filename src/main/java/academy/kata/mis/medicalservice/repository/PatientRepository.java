@@ -25,6 +25,12 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
 
     @Query("select p.userId from Patient p where p.id =:id")
-    Optional<String> findUserIdByPatientId(long id);
+    UUID findUserIdByPatientId(long id);
 
+    @Query("""
+        select case when (count(p.id) > 0 ) then true else false end 
+        from Patient p 
+        where  p.id = :id and p.userId = cast(:userId as uuid)
+        """)
+    boolean isPatientExistAndUserIdIsPatientUserId(long id, String userId);
 }

@@ -66,10 +66,10 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("talons.length()").value(2))
-                .andExpect(jsonPath("talons[0].talonId").value(1))
+                .andExpect(jsonPath("talons[0].talonId").value(2))
                 .andExpect(jsonPath("talons[0].visitTime").value("2024-05-17T10:00:00"))
                 .andExpect(jsonPath("talons[0].doctorId").value(1))
-                .andExpect(jsonPath("talons[1].talonId").value(2))
+                .andExpect(jsonPath("talons[1].talonId").value(1))
                 .andExpect(jsonPath("talons[1].visitTime").value("2024-05-17T10:00:00"))
                 .andExpect(jsonPath("talons[1].doctorId").value(1));
 
@@ -95,8 +95,8 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
                                 .header("Authorization", accessToken)
                                 .param("patient_id", String.valueOf(patientId))
                 )
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Patient with id: 3 does not exist"));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа"));
     }
 
 
@@ -117,9 +117,9 @@ public class GetAssignedTalonsByPatientTest extends ContextIT {
                                 .header("Authorization", accessToken)
                                 .param("patient_id", String.valueOf(patientId))
                 )
-                .andExpect(status().isForbidden())
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content()
-                        .string("User with id: 599d9ef0-7ae0-4924-890b-55eb13f85e53 does not have access"));
+                        .string("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа"));
     }
 
 

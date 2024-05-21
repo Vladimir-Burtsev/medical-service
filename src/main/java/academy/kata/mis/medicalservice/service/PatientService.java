@@ -15,7 +15,7 @@ public interface PatientService {
 
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
 
-    Optional<String> getPatientUserIdByPatientId(long patientId);
+    UUID getPatientUserIdByPatientId(long patientId);
 
-    Optional<String> findUserIdById(long id);
+    boolean isPatientExistAndUserIdIsPatientUserId(long patientId, String userId);
 }

@@ -36,12 +36,12 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Optional<String> getPatientUserIdByPatientId(long patientId) {
+    public UUID getPatientUserIdByPatientId(long patientId) {
         return patientRepository.findUserIdByPatientId(patientId);
     }
 
     @Override
-    public Optional<String> findUserIdById(long id) {
-        return patientRepository.findUserIdByPatientId(id);
+    public boolean isPatientExistAndUserIdIsPatientUserId(long patientId, String userId) {
+        return patientRepository.isPatientExistAndUserIdIsPatientUserId(patientId, userId);
     }
 }
