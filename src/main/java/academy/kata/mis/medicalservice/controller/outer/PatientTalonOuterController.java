@@ -8,6 +8,7 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientRespo
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
+import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
