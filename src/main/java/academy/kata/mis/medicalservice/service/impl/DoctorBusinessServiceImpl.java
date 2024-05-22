@@ -1,6 +1,8 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
+import academy.kata.mis.medicalservice.model.dto.PositionDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
@@ -33,5 +35,16 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
         }
 
         return doctor;
+    }
+
+    @Override
+    public DoctorShortDto getFullDoctorShortDto(DoctorShortDto doctorShortDto, PositionDto positionDto){
+        return DoctorShortDto.builder()
+                .doctorId(doctorShortDto.doctorId())
+                .doctorFirstName(doctorShortDto.doctorFirstName())
+                .doctorLastName(doctorShortDto.doctorLastName())
+                .patronymic(doctorShortDto.patronymic())
+                .doctorPositionName(positionDto.name())
+                .build();
     }
 }

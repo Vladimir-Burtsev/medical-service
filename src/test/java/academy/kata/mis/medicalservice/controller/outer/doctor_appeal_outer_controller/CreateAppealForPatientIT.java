@@ -2,11 +2,14 @@ package academy.kata.mis.medicalservice.controller.outer.doctor_appeal_outer_con
 
 import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.CreateAppealForPatientRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
+import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
@@ -50,6 +53,9 @@ public class CreateAppealForPatientIT extends ContextIT {
     @MockBean
     private PersonFeignClient personFeignClient;
 
+    @MockBean
+    private StructureFeignClient structureFeignClient;
+
     private final String accessToken = "Bearer token";
 
     @Test
@@ -77,6 +83,13 @@ public class CreateAppealForPatientIT extends ContextIT {
 
         when(personFeignClient.getCurrentPersonById(1L)).thenReturn(person);
 
+        DoctorShortDto doctorShortDto = new DoctorShortDto(1L, "DoctorFirstName",
+                "DoctorLastName", "Patronymic", "DoctorPositionName");
+        when(personFeignClient.getCurrentDoctorById(1L)).thenReturn(doctorShortDto);
+
+        PositionDto positionDto = new PositionDto(1L, "DoctorPositionName");
+        when(structureFeignClient.getPositionNameById(1L)).thenReturn(positionDto);
+
         mockMvc.perform(
                         post(
                                 "/api/medical/doctor/appeal/create")
@@ -99,11 +112,14 @@ public class CreateAppealForPatientIT extends ContextIT {
                 .andExpect(jsonPath("$.visits.length()", Is.is(1)))
                 .andExpect(jsonPath("$.visits[0].visitId", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.visits[0].visitTime", Matchers.notNullValue()))
-                //todo и доктора сюда добавить
+                .andExpect(jsonPath("$.doctor.doctorId", Is.is(1)))
+                .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("DoctorFirstName")))
+                .andExpect(jsonPath("$.doctor.doctorLastname", Is.is("DoctorLastName")))
                 .andReturn();
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
         verify(personFeignClient, times(1)).getCurrentPersonById(1);
+        verify(structureFeignClient, times(1)).getPositionNameById(1);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.feign;
 
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import org.springframework.cloud.openfeign.FallbackFactory;
@@ -19,8 +20,11 @@ public interface PersonFeignClient {
     @GetMapping("/internal/person/information")
     PersonDto getPersonById(@RequestParam(name = "person_id") long personId);
 
-    @GetMapping("/internal/person/information")
+    @GetMapping("/internal/person/information/currentpatientinformation")
     GetCurrentPatientInformation getCurrentPersonById(@RequestParam(name = "person_id") long personId);
+
+    @GetMapping("/internal/person/information/currentdoctorinformation")
+    DoctorShortDto getCurrentDoctorById(@RequestParam(name = "person_id") long personId);
 
     @GetMapping("internal/person/information/contact")
     String getPersonContactByUserId(@RequestParam(name = "user_id") UUID userId);
@@ -47,6 +51,15 @@ public interface PersonFeignClient {
 
         @Override
         public GetCurrentPatientInformation getCurrentPersonById(long personId) {
+            String responseMessage = """
+                    Персона не существует по переданному personId: %s; message: %s
+                    """.formatted(personId, reason);
+
+            throw new FeignRequestException(responseMessage);
+        }
+
+        @Override
+        public DoctorShortDto getCurrentDoctorById(long personId) {
             String responseMessage = """
                     Персона не существует по переданному personId: %s; message: %s
                     """.formatted(personId, reason);
