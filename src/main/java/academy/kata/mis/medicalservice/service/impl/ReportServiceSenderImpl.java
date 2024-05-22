@@ -2,12 +2,8 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
-import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
-import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessage;
-import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessageParamsCancelTalon;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
