@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface DiseaseDepRepository extends JpaRepository<DiseaseDep, Long> {
 
+    DiseaseDep getDiseaseDepById(long diseaseDepId);
+
     @Query("""
                 select case when count(dd.id) > 0 then true else false end
                 from DiseaseDep dd
@@ -15,4 +17,7 @@ public interface DiseaseDepRepository extends JpaRepository<DiseaseDep, Long> {
                     and dd.id = :diseaseDepId
             """)
     boolean checkIsExistByIdAndDoctorId(long diseaseDepId, long doctorId);
+
+    @Query("select d.disease.id from DiseaseDep d where d.id = :diseaseDepId")
+    long findDiseaseIdByDiseaseDepId(long diseaseDepId);
 }

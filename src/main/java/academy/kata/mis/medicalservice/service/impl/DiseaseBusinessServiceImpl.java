@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
-    DiseaseService diseaseService;
+    private final DiseaseService diseaseService;
     @Override
     public String getDiseaseIdentifier(long diseaseDepId) {
-        return diseaseService.getById(diseaseDepId).getIdentifier();
+        long diseaseId = diseaseService.getDiseaseByDiseaseDepId(diseaseDepId);
+        return diseaseService.getById(diseaseId).getIdentifier();
     }
 }

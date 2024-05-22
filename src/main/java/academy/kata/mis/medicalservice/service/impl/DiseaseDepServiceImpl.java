@@ -13,7 +13,7 @@ public class DiseaseDepServiceImpl implements DiseaseDepService {
 
     @Override
     public DiseaseDep getById(long diseaseDepId) {
-        return diseaseDepRepository.getReferenceById(diseaseDepId);
+        return diseaseDepRepository.getDiseaseDepById(diseaseDepId);
     }
 
     @Override

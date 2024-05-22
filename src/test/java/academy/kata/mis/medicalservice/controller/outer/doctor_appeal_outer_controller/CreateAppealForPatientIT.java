@@ -4,13 +4,11 @@ import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.CreateAppealForPatientRequest;
-import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
-import academy.kata.mis.medicalservice.model.dto.visit.VisitShortDto;
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
@@ -20,15 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static academy.kata.mis.medicalservice.model.enums.InsuranceType.DMS;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -84,7 +79,7 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(personFeignClient.getCurrentPersonById(1L)).thenReturn(person);
 
         DoctorShortDto doctorShortDto = new DoctorShortDto(1L, "DoctorFirstName",
-                "DoctorLastName", "Patronymic", "DoctorPositionName");
+                "DoctorLastName", "Patronymic", null);
         when(personFeignClient.getCurrentDoctorById(1L)).thenReturn(doctorShortDto);
 
         PositionDto positionDto = new PositionDto(1L, "DoctorPositionName");
@@ -97,7 +92,7 @@ public class CreateAppealForPatientIT extends ContextIT {
                                 .header("Authorization", accessToken)
                                 .content(objectMapper.writeValueAsString(request))
                 )
-//                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
+                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.appealId", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.appealStatus", Is.is(AppealStatus.OPEN.name())))
@@ -107,18 +102,21 @@ public class CreateAppealForPatientIT extends ContextIT {
                 .andExpect(jsonPath("$.patient.patientPatronymic", Is.is("Patronymic")))
                 .andExpect(jsonPath("$.patient.birthday", Is.is("2001-01-21")))
                 .andExpect(jsonPath("$.disease.diseaseDepId", Is.is(1)))
-                .andExpect(jsonPath("$.disease.diseaseName", Matchers.nullValue()))//todo
-                .andExpect(jsonPath("$.disease.diseaseIdentifier", Matchers.nullValue()))//todo
+                .andExpect(jsonPath("$.disease.diseaseName", Is.is("Covid-19")))
+                .andExpect(jsonPath("$.disease.diseaseIdentifier", Is.is("Covid-19")))
                 .andExpect(jsonPath("$.visits.length()", Is.is(1)))
                 .andExpect(jsonPath("$.visits[0].visitId", Matchers.notNullValue()))
                 .andExpect(jsonPath("$.visits[0].visitTime", Matchers.notNullValue()))
-                .andExpect(jsonPath("$.doctor.doctorId", Is.is(1)))
-                .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("DoctorFirstName")))
-                .andExpect(jsonPath("$.doctor.doctorLastname", Is.is("DoctorLastName")))
+                .andExpect(jsonPath("$.visits[0].doctor.doctorId", Is.is(1)))
+                .andExpect(jsonPath("$.visits[0].doctor.doctorFirstName", Is.is("DoctorFirstName")))
+                .andExpect(jsonPath("$.visits[0].doctor.doctorLastName", Is.is("DoctorLastName")))
+                .andExpect(jsonPath("$.visits[0].doctor.patronymic", Is.is("Patronymic")))
+                .andExpect(jsonPath("$.visits[0].doctor.doctorPositionName", Is.is("DoctorPositionName")))
                 .andReturn();
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
         verify(personFeignClient, times(1)).getCurrentPersonById(1);
+        verify(personFeignClient, times(1)).getCurrentDoctorById(1);
         verify(structureFeignClient, times(1)).getPositionNameById(1);
     }
 
@@ -135,7 +133,6 @@ public class CreateAppealForPatientIT extends ContextIT {
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-
 
         mockMvc.perform(
                         post(
