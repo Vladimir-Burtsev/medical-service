@@ -6,6 +6,7 @@ import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 //import academy.kata.mis.medicalservice.service.RandomGenerator;
@@ -106,6 +107,7 @@ public class PatientTalonOuterController {
         talonBusinessService.cancelReservationTalon(talonId);
 
         reportServiceSender.sendInMessageService(
+                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON.toString(),
                 personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
                 "отмена записи на прием к врачу",
                 talonBusinessService.getResponseTalonCancel(talonId)
