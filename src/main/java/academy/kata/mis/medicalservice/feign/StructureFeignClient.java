@@ -3,6 +3,7 @@ package academy.kata.mis.medicalservice.feign;
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
+import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public interface StructureFeignClient {
 
     @GetMapping("/internal/structure/organization")
     OrganizationDto getOrganizationById(@RequestParam(name = "organization_id") long organizationId);
+
+    @GetMapping("/internal/structure/positions")
+    PositionsNameAndCabinetDto getPositionsNameAndCabinetById(@RequestParam(name = "position_id") long positionId);
 
     @GetMapping("/internal/structure/organization/positionname")
     PositionDto getPositionNameById(
@@ -38,6 +42,15 @@ public interface StructureFeignClient {
             String responseMessage = """
                     Медицинская организация не существует по переданному id %s
                     """.formatted(organizationId, reason);
+
+            throw new FeignRequestException(responseMessage);
+        }
+
+        @Override
+        public PositionsNameAndCabinetDto getPositionsNameAndCabinetById(long positionsId) {
+            String responseMessage = """
+                    Позиции не существует по переданному id %s
+                    """.formatted(positionsId, reason);
 
             throw new FeignRequestException(responseMessage);
         }

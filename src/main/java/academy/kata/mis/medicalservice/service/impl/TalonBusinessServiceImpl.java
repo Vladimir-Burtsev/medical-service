@@ -1,22 +1,35 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
+import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
+import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
+import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Talon;
-import academy.kata.mis.medicalservice.service.TalonBusinessService;
-import academy.kata.mis.medicalservice.service.TalonService;
+import academy.kata.mis.medicalservice.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
     private final TalonConverter talonConverter;
+    private final DoctorConvertor doctorConvertor;
+    private final PersonFeignClient personFeignClient;
+    private final StructureFeignClient structureFeignClient;
 
     @Override
     @Transactional
@@ -33,11 +46,81 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
 
     @Override
     public GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId) {
-        return new GetAssignedTalonsByPatientResponse(
-                talonService.allPatientTalonByPatientId(patientId)
-                        .stream()
-                        .map(talonConverter::entityToTalonWithDoctorShortDto)
-                        .collect(Collectors.toList())
-        );
+        Set<Talon> talons = talonService.allPatientTalonByPatientId(patientId);
+        Set<Doctor> doctors = talons.stream()
+                .map(Talon::getDoctor)
+                .collect(Collectors.toSet());
+
+        Map<Long, PersonFullNameDto> doctorFullNameByID = getDoctorFullNameByDoctor(doctors);
+
+        Map<Long, PositionsNameAndCabinetDto> doctorPositionInfoByPositionsId =
+                getDoctorPositionInfoByDoctor(doctors);
+
+        Map<Long, DoctorFullNameAndPositionsAndCabinetDto> doctorFullNameAndPositionsAndCabinetDtoByDoctorId =
+                getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(
+                        doctors,
+                        doctorFullNameByID,
+                        doctorPositionInfoByPositionsId
+                );
+
+        List<TalonWithDoctorShortDto> talonWithDoctorShortDtos =
+                getTalonWithDoctorShortDto(
+                        talons,
+                        doctorFullNameAndPositionsAndCabinetDtoByDoctorId
+                );
+
+        return new GetAssignedTalonsByPatientResponse(talonWithDoctorShortDtos);
+    }
+
+    private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(
+            Set<Talon> talons,
+            Map<Long, DoctorFullNameAndPositionsAndCabinetDto> doctorsMap) {
+        return talons.stream()
+                .map(
+                        talon -> talonConverter.entityToTalonWithDoctorShortDto(
+                                talon,
+                                doctorsMap.get(talon.getDoctor().getId())
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    private Map<Long, PersonFullNameDto> getDoctorFullNameByDoctor(Set<Doctor> doctors) {
+        return doctors
+                .stream()
+                .map(Doctor::getPersonId)
+                .map(personFeignClient::getPersonFullNameDtoById)
+                .collect(Collectors.toMap(PersonFullNameDto::id, Function.identity()));
+    }
+
+    private Map<Long, PositionsNameAndCabinetDto> getDoctorPositionInfoByDoctor(Set<Doctor> doctors) {
+        return doctors
+                .stream()
+                .map(Doctor::getPositionId)
+                .map(structureFeignClient::getPositionsNameAndCabinetById)
+                .collect(Collectors.toMap(PositionsNameAndCabinetDto::id, Function.identity()));
+    }
+
+    private DoctorFullNameAndPositionsAndCabinetDto getDoctorFullNameAndPositionsAndCabinet(
+            PersonFullNameDto personFullNameDtoMap,
+            PositionsNameAndCabinetDto positionsNameAndCabinetDtoMap) {
+        return doctorConvertor.entityToDoctorFullNameAndPositionsAndCabinetDto(personFullNameDtoMap,
+                                                                                positionsNameAndCabinetDtoMap);
+    }
+
+    private Map<Long, DoctorFullNameAndPositionsAndCabinetDto> getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(
+            Set<Doctor> doctorsId,
+            Map<Long, PersonFullNameDto> personFullNameDtoMap,
+            Map<Long, PositionsNameAndCabinetDto> positionsNameAndCabinetDtoMap) {
+        return doctorsId.stream()
+                .collect(
+                        Collectors.toMap(
+                                Doctor::getId,
+                                it -> getDoctorFullNameAndPositionsAndCabinet(
+                                        personFullNameDtoMap.get(it.getPersonId()),
+                                        positionsNameAndCabinetDtoMap.get(it.getPositionId())
+                                )
+                        )
+                );
     }
 }

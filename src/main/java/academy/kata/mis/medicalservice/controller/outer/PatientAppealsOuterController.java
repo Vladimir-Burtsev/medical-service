@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealFullInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealsResponse;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
@@ -64,12 +65,25 @@ public class PatientAppealsOuterController {
             @RequestParam(name = "appeal_id") long appealId,
             @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail,
             Principal principal) {
-        UUID userId = patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, principal);
+        UUID currentUserId = UUID.fromString(principal.getName());
+        log.info("downloadAppealReport: userId = {}, sendEmail = {}", patientId, sendEmail);
+
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, currentUserId)) {
+            throw new LogicException(
+                    String.format("%s %s %s", "Пациент с ID:", patientId, "- не найден, или у вас нет прав доступа"));
+        }
+
+        //todo перенести несколько обращений к расным бизнес сервисам в один бизнес сервис
+        // который внутри работает с разными сервисами
+        UUID userId = patientBusinessService.getUserId(patientId);
         Appeal appeal = appealBusinessService.isAppealExistAndPatientOwner(appealId, patientId);
 
         UUID operationId = UUID.randomUUID();
         reportServiceSender.sendInReportService(userId, sendEmail, appeal, operationId);
         Thread.sleep(3000);
+
+        log.debug("downloadAppealReport: userId = {}, sendEmail = {}", userId, sendEmail);
+
         return !sendEmail ?
                 ResponseEntity
                         .status(HttpStatus.SEE_OTHER)

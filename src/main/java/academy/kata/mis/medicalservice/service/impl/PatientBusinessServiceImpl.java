@@ -1,6 +1,5 @@
 package academy.kata.mis.medicalservice.service.impl;
 
-import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,17 +47,8 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
     }
 
     @Override
-    public UUID isPatientExistAndAuthenticatedUserPatient(long patientId, Principal principal) {
-        String userId = patientService.findUserIdById(patientId)
-                .orElseThrow(() -> {
-                    log.error("Пациент не найден; patientId:{};", patientId);
-                    return new LogicException(String.format("Patient with id %d not found", patientId));
-                });
-        if (!userId.equals(principal.getName())) {
-            log.error("Авторизованный пользователь не является текущим пациентом; patientId:{};", patientId);
-            throw new LogicException(String.format("Current user is not patient with id %d", patientId));
-        }
-        return UUID.fromString(userId);
+    public boolean isPatientExistAndAuthenticatedUserPatient(long patientId, UUID userId) {
+        return patientService.isPatientExistAndUserIdIsPatientUserId(patientId, userId);
     }
 
     private List<PatientPersonalInformation> createPatients(List<Patient> patients) {
@@ -77,5 +66,9 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
 
     private OrganizationDto createOrganization(long organizationId) {
         return structureFeignClient.getOrganizationById(organizationId);
+    }
+
+    public UUID getUserId(long patientId) {
+        return patientService.getPatientUserIdByPatientId(patientId);
     }
 }
