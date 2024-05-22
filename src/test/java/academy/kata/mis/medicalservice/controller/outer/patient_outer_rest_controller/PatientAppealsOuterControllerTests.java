@@ -57,7 +57,7 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
                         .param("send_email", "false")
                         .header("Authorization", accessToken))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(String.format("Current user is not patient with id %s", patientId)));
+                .andExpect(content().string(String.format("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа")));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
                         .param("send_email", "false")
                         .header("Authorization", accessToken))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(String.format("Patient with id %s not found", patientId)));
+                .andExpect(content().string(String.format("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа")));
     }
 
     @Test

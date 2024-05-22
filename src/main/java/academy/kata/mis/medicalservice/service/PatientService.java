@@ -3,7 +3,6 @@ package academy.kata.mis.medicalservice.service;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface PatientService {
@@ -15,7 +14,7 @@ public interface PatientService {
 
     boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId);
 
-    Optional<String> getPatientUserIdByPatientId(long patientId);
+    UUID getPatientUserIdByPatientId(long patientId);
 
-    Optional<String> findUserIdById(long id);
+    boolean isPatientExistAndUserIdIsPatientUserId(long patientId, UUID userId);
 }

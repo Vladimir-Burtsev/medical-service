@@ -1,24 +1,20 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
-import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
-import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
-import academy.kata.mis.medicalservice.service.PatientService;
+import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Slf4j
@@ -28,45 +24,29 @@ import java.util.UUID;
 @RequestMapping("/api/medical/patient/talon")
 public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
-    private final PatientService patientService;
+    private final PatientBusinessService patientBusinessService;
 
     /**
      * страница 2
      */
     @GetMapping("/assigned")
     public ResponseEntity<GetAssignedTalonsByPatientResponse> getAssignedTalonsByPatient(
-            @RequestParam(name = "patient_id") long patientId) {
-        log.info("Поиск пациента по интедефикатору для получения всех талонов пациента: {}", patientId);
+            @RequestParam(name = "patient_id") long patientId,
+            Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        log.info("getAssignedTalonsByPatient: patientId = {}, userId = {}", patientId, userId);
 
-        String patientUserId = getPatientUserIdIfExist(patientId);
-        checkPatientIsAutUser(patientUserId);
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, userId)) {
+            throw new LogicException(
+                    String.format("%s %s %s", "Пациент с ID:", patientId, "- не найден, или у вас нет прав доступа"));
+        }
 
         GetAssignedTalonsByPatientResponse response =
                 talonBusinessService.getAllPatientTalonByPatientId(patientId);
 
-        log.debug("Талоны пользователя {} - получены", patientId);
-
-        //после успешного мерджа в мастер второй частью задачи выполнить получение информации о докторе в других сервисах и попраавить тесты
-
+        log.debug("getAssignedTalonsByPatient: patientId = {}, userId = {}, response: {}",
+                patientId, userId, response);
         return ResponseEntity.ok(response);
-    }
-
-    private String getPatientUserIdIfExist(long patientId) {
-        //todo перенести getPatientUserIdByPatientId в бизнес сервис
-        return patientService.getPatientUserIdByPatientId(patientId)
-                .orElseThrow(() -> {
-                    log.error("Пациент не найден: PatientId: {}", patientId);
-                    return new NoSuchElementException("Patient with id: " + patientId + " does not exist");
-                });
-    }
-
-    private void checkPatientIsAutUser(String userId) {
-        UUID authUserId = ((JwtAuthentication) SecurityContextHolder.getContext().getAuthentication())
-                .getUserId();
-        if (!userId.equals(authUserId.toString())) {
-            log.error("У авторизованного пользователя с Id: {} нет доступа к данным о пациенте", userId);
-            throw new AuthException("User with id: " + authUserId + " does not have access");
-        }
     }
 
     @GetMapping("/assigned/full")
