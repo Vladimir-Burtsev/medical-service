@@ -17,8 +17,7 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
 
     @Value("${spring.kafka.producer.topic.report-message}")
     private String topic;
-
-    @Value("${KAFKA_PRODUCER_SEND_MESSAGE_CANCEL_TALON_TOPIC:mis_message_cancel_talon_local}")
+    @Value("${spring.kafka.producer.topic.send-message}")
     private String topicMessageService;
 
     @Override
@@ -34,9 +33,10 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
     }
 
     @Override
-    public void sendInMessageService(String userEmail, String subject, String text) {
+    public void sendInMessageService(String type, String userEmail, String subject, String text) {
         kafkaSenderService.sendToKafkaAsync(topicMessageService,
                 AppealToMessageService.builder()
+                        .type(type)
                         .userEmail(userEmail)
                         .subject(subject)
                         .text(text)
