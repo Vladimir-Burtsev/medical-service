@@ -69,8 +69,12 @@ public class PatientAppealsOuterController {
         log.info("downloadAppealReport: userId = {}, sendEmail = {}", patientId, sendEmail);
 
         if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, currentUserId)) {
-            throw new LogicException("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа");
+            throw new LogicException(
+                    String.format("%s %s %s", "Пациент с ID:", patientId, "- не найден, или у вас нет прав доступа"));
         }
+
+        //todo перенести несколько обращений к расным бизнес сервисам в один бизнес сервис
+        // который внутри работает с разными сервисами
         UUID userId = patientBusinessService.getUserId(patientId);
         Appeal appeal = appealBusinessService.isAppealExistAndPatientOwner(appealId, patientId);
 

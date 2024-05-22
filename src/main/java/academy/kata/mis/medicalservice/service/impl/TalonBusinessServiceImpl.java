@@ -47,7 +47,9 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     @Override
     public GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId) {
         Set<Talon> talons = talonService.allPatientTalonByPatientId(patientId);
-        Set<Doctor> doctors = talons.stream().map(Talon::getDoctor).collect(Collectors.toSet());
+        Set<Doctor> doctors = talons.stream()
+                .map(Talon::getDoctor)
+                .collect(Collectors.toSet());
 
         Map<Long, PersonFullNameDto> doctorFullNameByID = getDoctorFullNameByDoctor(doctors);
 
@@ -74,10 +76,12 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
             Set<Talon> talons,
             Map<Long, DoctorFullNameAndPositionsAndCabinetDto> doctorsMap) {
         return talons.stream()
-                .map(talon -> talonConverter.entityToTalonWithDoctorShortDto(
-                        talon,
-                        doctorsMap.get(talon.getDoctor().getId())
-                ))
+                .map(
+                        talon -> talonConverter.entityToTalonWithDoctorShortDto(
+                                talon,
+                                doctorsMap.get(talon.getDoctor().getId())
+                        )
+                )
                 .collect(Collectors.toList());
     }
 
@@ -97,17 +101,17 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 .collect(Collectors.toMap(PositionsNameAndCabinetDto::id, Function.identity()));
     }
 
-    private DoctorFullNameAndPositionsAndCabinetDto
-            getDoctorFullNameAndPositionsAndCabinet(PersonFullNameDto personFullNameDtoMap,
-                                                    PositionsNameAndCabinetDto positionsNameAndCabinetDtoMap) {
+    private DoctorFullNameAndPositionsAndCabinetDto getDoctorFullNameAndPositionsAndCabinet(
+            PersonFullNameDto personFullNameDtoMap,
+            PositionsNameAndCabinetDto positionsNameAndCabinetDtoMap) {
         return doctorConvertor.entityToDoctorFullNameAndPositionsAndCabinetDto(personFullNameDtoMap,
                                                                                 positionsNameAndCabinetDtoMap);
     }
 
-    private Map<Long, DoctorFullNameAndPositionsAndCabinetDto>
-    getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(Set<Doctor> doctorsId,
-                                                          Map<Long, PersonFullNameDto> personFullNameDtoMap,
-                                                          Map<Long, PositionsNameAndCabinetDto> positionsNameAndCabinetDtoMap) {
+    private Map<Long, DoctorFullNameAndPositionsAndCabinetDto> getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(
+            Set<Doctor> doctorsId,
+            Map<Long, PersonFullNameDto> personFullNameDtoMap,
+            Map<Long, PositionsNameAndCabinetDto> positionsNameAndCabinetDtoMap) {
         return doctorsId.stream()
                 .collect(
                         Collectors.toMap(

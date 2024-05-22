@@ -37,7 +37,8 @@ public class PatientTalonOuterController {
         log.info("getAssignedTalonsByPatient: patientId = {}, userId = {}", patientId, userId);
 
         if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, userId)) {
-            throw new LogicException("Пациент с ID: " + patientId + " - не найден, или у вас нет прав доступа");
+            throw new LogicException(
+                    String.format("%s %s %s", "Пациент с ID:", patientId, "- не найден, или у вас нет прав доступа"));
         }
 
         GetAssignedTalonsByPatientResponse response =
@@ -45,7 +46,6 @@ public class PatientTalonOuterController {
 
         log.debug("getAssignedTalonsByPatient: patientId = {}, userId = {}, response: {}",
                 patientId, userId, response);
-
         return ResponseEntity.ok(response);
     }
 
