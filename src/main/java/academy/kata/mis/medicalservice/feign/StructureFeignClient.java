@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.feign;
 
+import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -19,6 +20,9 @@ public interface StructureFeignClient {
 
     @GetMapping("/internal/structure/positions")
     PositionsNameAndCabinetDto getPositionsNameAndCabinetById(@RequestParam(name = "position_id") long positionId);
+
+    @GetMapping("/internal/structure/department-organization")
+    DepartmentAndOrganizationDto getDepartmentAndOrganizationName(@RequestParam(name = "department_id") Long departmentId);
 
     @Component
     class StructureServiceFallbackFactory implements FallbackFactory<FallbackWithFactory> {
@@ -47,6 +51,15 @@ public interface StructureFeignClient {
                     """.formatted(positionsId, reason);
 
             throw new FeignRequestException(responseMessage);
+        }
+
+        @Override
+        public DepartmentAndOrganizationDto getDepartmentAndOrganizationName(Long departmentId) {
+            String responseMassage = """
+                    Департамент с указанным Id = %s не найден.
+                    """.formatted(departmentId, reason);
+
+            throw new FeignRequestException(responseMassage);
         }
     }
 }
