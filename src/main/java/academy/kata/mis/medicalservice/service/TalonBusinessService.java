@@ -1,6 +1,8 @@
 package academy.kata.mis.medicalservice.service;
 
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
+import academy.kata.mis.medicalservice.model.entity.Talon;
+
 import java.util.UUID;
 
 public interface TalonBusinessService {
