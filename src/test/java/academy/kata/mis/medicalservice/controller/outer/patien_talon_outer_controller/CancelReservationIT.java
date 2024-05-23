@@ -57,7 +57,7 @@ public class CancelReservationIT extends ContextIT {
         when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
         when(personFeignClient.getPersonById(anyLong())).thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
 
-        doNothing().when(reportServiceSender).sendInMessageService(any(), any(), any());
+        doNothing().when(reportServiceSender).sendInMessageService(any(), any(), any(), any());
 
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
@@ -102,7 +102,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString());
+                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -139,7 +139,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString());
+                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -176,7 +176,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString());
+                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
