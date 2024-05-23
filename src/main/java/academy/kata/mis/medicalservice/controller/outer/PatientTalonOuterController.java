@@ -7,6 +7,9 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepar
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
+import academy.kata.mis.medicalservice.service.ReportServiceSender;
+import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
@@ -32,8 +35,7 @@ public class PatientTalonOuterController {
     private final AuditMessageService auditMessageService;
     private final PersonFeignClient personFeignClient;
     private final ReportServiceSender reportServiceSender;
-
-
+//    private final RandomGenerator randomGenerator;
 
     /**
      * страница 2

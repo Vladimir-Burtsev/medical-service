@@ -7,5 +7,6 @@ public interface TalonBusinessService {
     void cancelReservationTalon(Long talonId);
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
     String getResponseTalonCancel(Long talonId);
+
     GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId);
 }

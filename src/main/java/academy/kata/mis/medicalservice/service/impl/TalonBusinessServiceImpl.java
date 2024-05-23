@@ -37,9 +37,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
-    private final PersonFeignClient personFeignClient;
     private final TalonConverter talonConverter;
     private final DoctorConvertor doctorConvertor;
+    private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
 
     @Override
