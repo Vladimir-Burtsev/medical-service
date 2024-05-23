@@ -14,7 +14,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     private final DiseaseDepRepository diseaseDepRepository;
     @Override
     public Disease getById(long diseaseId) {
-        return diseaseRepository.getDiseaseById(diseaseId);
+        return diseaseRepository.getReferenceById(diseaseId);
     }
 
     @Override
