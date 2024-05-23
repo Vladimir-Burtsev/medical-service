@@ -162,4 +162,18 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                         )
                 );
     }
+
+    @Override
+    public String getResponseTalonCancel(Long talonId) {
+        Talon talon = talonService.findById(talonId).get();
+        PersonDto personDto = personFeignClient.getPersonById(talonService.getDoctorPersonIdByTalonId(talonId));
+        String response = String.format("""
+                Запись на прием в %s к врачу %s %s отменена.
+                """,
+                talon.getTime(),
+                personDto.firstName(),
+                personDto.lastName()
+        );
+        return response;
+    }
 }
