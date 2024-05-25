@@ -21,4 +21,6 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
         where t.patient.id = :patientId
         """)
     Set<Talon> findAllByPatientId(long patientId);
+    @Query("SELECT t.doctor.id FROM Talon t WHERE t.id=:talonId")
+    Long getDoctorIdByTalonId(@Param("talonId") Long talonId);
 }

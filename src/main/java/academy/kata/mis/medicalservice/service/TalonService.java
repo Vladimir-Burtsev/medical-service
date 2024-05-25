@@ -18,4 +18,6 @@ public interface TalonService {
     Long getDoctorPersonIdByTalonId(Long talonId);
 
     Set<Talon> allPatientTalonByPatientId(long patientId);
+
+    Long getDoctorIdByTalonId(Long talonId);
 }

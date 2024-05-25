@@ -22,7 +22,8 @@ public interface StructureFeignClient {
     PositionsNameAndCabinetDto getPositionsNameAndCabinetById(@RequestParam(name = "position_id") long positionId);
 
     @GetMapping("/internal/structure/department-organization")
-    DepartmentAndOrganizationDto getDepartmentAndOrganizationName(@RequestParam(name = "department_id") Long departmentId);
+    DepartmentAndOrganizationDto getDepartmentAndOrganizationName(
+            @RequestParam(name = "department_id") Long departmentId);
 
     @Component
     class StructureServiceFallbackFactory implements FallbackFactory<FallbackWithFactory> {

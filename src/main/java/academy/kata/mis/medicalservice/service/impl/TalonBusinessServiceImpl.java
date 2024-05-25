@@ -44,10 +44,11 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
 
     @Override
     @Transactional
-    public void cancelReservationTalon(Long talonId) {
+    public Talon cancelReservationTalon(Long talonId) {
         Talon talon = talonService.findById(talonId).get();
         talon.setPatient(null);
         talonService.save(talon);
+        return talon;
     }
 
     @Override
@@ -116,7 +117,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
             PersonFullNameDto personFullNameDtoMap,
             PositionsNameAndCabinetDto positionsNameAndCabinetDtoMap) {
         return doctorConvertor.entityToDoctorFullNameAndPositionsAndCabinetDto(personFullNameDtoMap,
-                                                                                positionsNameAndCabinetDtoMap);
+                positionsNameAndCabinetDtoMap);
     }
 
     private Map<Long, DoctorFullNameAndPositionsAndCabinetDto> getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(
@@ -140,12 +141,22 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
         Talon talon = talonService.findById(talonId).get();
         PersonDto personDto = personFeignClient.getPersonById(talonService.getDoctorPersonIdByTalonId(talonId));
         String response = String.format("""
-                Запись на прием в %s к врачу %s %s отменена.
-                """,
+                        Запись на прием в %s к врачу %s %s отменена.
+                        """,
                 talon.getTime(),
                 personDto.firstName(),
                 personDto.lastName()
         );
         return response;
+    }
+
+    @Override
+    public Long getDoctorPersonIdByTalonId(Long talonId) {
+        return talonService.getDoctorPersonIdByTalonId(talonId);
+    }
+
+    @Override
+    public Long getDoctorIdByTalonId(Long talonId) {
+        return talonService.getDoctorIdByTalonId(talonId);
     }
 }

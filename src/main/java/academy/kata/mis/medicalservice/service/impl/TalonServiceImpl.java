@@ -37,6 +37,10 @@ public class TalonServiceImpl implements TalonService {
         return talonRepository.getDoctorPersonIdByTalonId(talonId);
     }
 
+    @Override
+    public Long getDoctorIdByTalonId(Long talonId) {
+        return talonRepository.getDoctorIdByTalonId(talonId);
+    }
 
     @Override
     public Set<Talon> allPatientTalonByPatientId(long patientId) {
