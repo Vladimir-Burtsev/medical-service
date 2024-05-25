@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.CreateAppealForPatientRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealShortInfoResponse;
@@ -64,8 +65,18 @@ public class DoctorAppealOuterController {
         log.info("createAppealForPatient: doctor: {}, patientId = {}", principal.getName(), request.patientId());
 
         Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, request.doctorId());
-        diseaseDepBusinessService.checkIsExistByIdAndDoctorId(request.diseaseDepId(), doctor.getId());
-        patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(), request.doctorId());
+        if (!diseaseDepBusinessService.checkIsExistByIdAndDoctorId(request.diseaseDepId(), doctor.getId())) {
+            log.debug("Заболевание с id {} и доктором с id {} не существует",
+                    request.diseaseDepId(), doctor.getId());
+            throw new LogicException("Заболевание не существует");
+        }
+
+        if (!patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(),
+                request.doctorId())) {
+            log.error("Пациент {}; не существует или находится с доктором в разных организациях",
+                    request.patientId());
+            throw new LogicException("Пациент не существует или находится с доктором в разных организациях");
+        }
 
         GetAppealShortInfo response = appealBusinessService
                 .createPatientVisit(doctor, request.diseaseDepId(), request.patientId(), request.insuranceType());

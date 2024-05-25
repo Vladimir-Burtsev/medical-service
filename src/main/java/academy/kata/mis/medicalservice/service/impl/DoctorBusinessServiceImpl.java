@@ -1,8 +1,6 @@
 package academy.kata.mis.medicalservice.service.impl;
 
-import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
-import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -36,17 +34,6 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .patronymic(personFullNameDto.patronymic())
                 .positionsName(positionsNameAndCabinetDto.name())
                 .cabinet(positionsNameAndCabinetDto.cabinet())
-                .build();
-    }
-
-    @Override
-    public DoctorShortDto getFullDoctorShortDto(DoctorShortDto doctorShortDto, PositionDto positionDto){
-        return DoctorShortDto.builder()
-                .doctorId(doctorShortDto.doctorId())
-                .doctorFirstName(doctorShortDto.doctorFirstName())
-                .doctorLastName(doctorShortDto.doctorLastName())
-                .patronymic(doctorShortDto.patronymic())
-                .doctorPositionName(positionDto.name())
                 .build();
     }
 }

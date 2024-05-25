@@ -1,6 +1,5 @@
 package academy.kata.mis.medicalservice.service.impl;
 
-import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
@@ -44,12 +43,7 @@ public class PatientBusinessServiceImpl implements PatientBusinessService {
 
     @Override
     public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
-        if (!patientService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId)) {
-            log.error("Пациент {}; не существует или находится с доктором в разных организациях",
-                    patientId);
-            throw new LogicException("Пациент не существует или находится с доктором в разных организациях");
-        }
-        return true;
+        return patientService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
     }
 
     @Override

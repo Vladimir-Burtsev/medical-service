@@ -7,6 +7,7 @@ import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.disease.DiseaseShortInfoDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.visit.convertor.VisitConvertor;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
@@ -17,9 +18,8 @@ import academy.kata.mis.medicalservice.model.entity.Visit;
 import academy.kata.mis.medicalservice.model.enums.InsuranceType;
 import academy.kata.mis.medicalservice.service.AppealBusinessService;
 import academy.kata.mis.medicalservice.service.AppealService;
-import academy.kata.mis.medicalservice.service.DiseaseBusinessService;
 import academy.kata.mis.medicalservice.service.DiseaseDepService;
-import academy.kata.mis.medicalservice.service.DoctorBusinessService;
+import academy.kata.mis.medicalservice.service.DiseaseService;
 import academy.kata.mis.medicalservice.service.PatientService;
 import academy.kata.mis.medicalservice.service.VisitService;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +42,8 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
     private final VisitConvertor visitConvertor;
     private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
-    private final DiseaseBusinessService diseaseBusinessService;
-    private final DoctorBusinessService doctorBusinessService;
+    private final DiseaseService diseaseService;
+    private final DoctorConvertor doctorConvertor;
 
     @Override
     @Transactional
@@ -57,14 +57,15 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         Visit visit = visitService.save(visitService.createPatientVisit(doctor, appeal));
         GetCurrentPatientInformation currentPatient = personFeignClient.getCurrentPersonById(patient.getPersonId());
 
-        DoctorShortDto doctorShortDto = doctorBusinessService.getFullDoctorShortDto(
+        DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
                 personFeignClient.getCurrentDoctorById(doctor.getPersonId()),
                 structureFeignClient.getPositionNameById(doctor.getPositionId()));
 
         DiseaseShortInfoDto diseaseDepInfo = DiseaseShortInfoDto.builder()
                 .diseaseDepId(diseaseDepId)
-                .diseaseName(diseaseDep.getDisease().getName())
-                .diseaseIdentifier(diseaseBusinessService.getDiseaseIdentifier(diseaseDepId))
+                .diseaseName(diseaseService.getById(diseaseService.getDiseaseByDiseaseDepId(diseaseDepId)).getName())
+                .diseaseIdentifier(diseaseService.getById(diseaseService.getDiseaseByDiseaseDepId(diseaseDepId))
+                        .getIdentifier())
                 .build();
 
         return GetAppealShortInfo.builder()
