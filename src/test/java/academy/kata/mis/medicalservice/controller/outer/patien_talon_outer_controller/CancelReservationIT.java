@@ -2,8 +2,13 @@ package academy.kata.mis.medicalservice.controller.outer.patien_talon_outer_cont
 
 import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
+import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
+import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
@@ -36,6 +41,8 @@ public class CancelReservationIT extends ContextIT {
     private ReportServiceSender reportServiceSender;
     @MockBean
     private PersonFeignClient personFeignClient;
+    @MockBean
+    StructureFeignClient structureFeignClient;
 
     private final String accessToken = "Bearer token";
 
@@ -55,9 +62,17 @@ public class CancelReservationIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
         when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
-        when(personFeignClient.getPersonById(anyLong())).thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
+        when(personFeignClient.getPersonById(anyLong()))
+                .thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
+        when(structureFeignClient.getDepartmentAndOrganizationName(anyLong()))
+                .thenReturn(new DepartmentAndOrganizationDto(
+                        1L,
+                        "Department Name1",
+                        1L,
+                        "Organization Name1"));
 
-        doNothing().when(reportServiceSender).sendInMessageService(any(), any(), any(), any());
+        doNothing().when(reportServiceSender)
+                .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         mockMvc.perform(
                         patch("/api/medical/patient/talon/unassign")
@@ -102,7 +117,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
+                .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -139,7 +154,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
+                .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -177,7 +192,7 @@ public class CancelReservationIT extends ContextIT {
 
         //проверяем что не было попыток отправить запрос в message service
         verify(reportServiceSender, times(0))
-                .sendInMessageService(anyString(), anyString(), anyString(), anyString());
+                .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());

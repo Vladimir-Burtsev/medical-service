@@ -28,7 +28,8 @@ public interface StructureFeignClient {
             @RequestParam(name = "position_id") long positionId);
 
     @GetMapping("/internal/structure/department-organization")
-    DepartmentAndOrganizationDto getDepartmentAndOrganizationName(@RequestParam(name = "department_id") Long departmentId);
+    DepartmentAndOrganizationDto getDepartmentAndOrganizationName(
+            @RequestParam(name = "department_id") Long departmentId);
 
     @Component
     class StructureServiceFallbackFactory implements FallbackFactory<FallbackWithFactory> {

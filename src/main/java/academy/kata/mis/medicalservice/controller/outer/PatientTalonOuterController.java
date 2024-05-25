@@ -2,12 +2,16 @@ package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
@@ -33,6 +37,7 @@ public class PatientTalonOuterController {
     private final PatientBusinessService patientBusinessService;
     private final AuditMessageService auditMessageService;
     private final PersonFeignClient personFeignClient;
+    private final StructureFeignClient structureFeignClient;
     private final ReportServiceSender reportServiceSender;
 
     /**
@@ -97,14 +102,29 @@ public class PatientTalonOuterController {
             ));
         }
 
-        talonBusinessService.cancelReservationTalon(talonId);
+        Talon talon = talonBusinessService.cancelReservationTalon(talonId);
+        PersonDto personDto = personFeignClient.getPersonById(
+                talonBusinessService.getDoctorPersonIdByTalonId(talonId));
+        DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
+                .getDepartmentAndOrganizationName(talonBusinessService.getDoctorIdByTalonId(talonId));
 
         reportServiceSender.sendInMessageService(
-                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON.toString(),
-                personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
+                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
+                personFeignClient.getPersonContactByUserId((UUID.fromString(principal.getName()))),
                 "отмена записи на прием к врачу",
-                talonBusinessService.getResponseTalonCancel(talonId)
+                talon.getTime(),
+                personDto.firstName(),
+                personDto.lastName(),
+                departmentAndOrganizationDto.departmentName(),
+                departmentAndOrganizationDto.organizationName()
         );
+
+//        reportServiceSender.sendInMessageService(
+//                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON.toString(),
+//                personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
+//                "отмена записи на прием к врачу",
+//                talonBusinessService.getResponseTalonCancel(talonId)
+//        );
 
         auditMessageService.sendAudit(principal.getName(), operation, "успешная отмена записи на прием к врачу");
 

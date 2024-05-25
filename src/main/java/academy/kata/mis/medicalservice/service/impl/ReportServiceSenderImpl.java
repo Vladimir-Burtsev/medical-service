@@ -5,13 +5,17 @@ import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
+import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessage;
+import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessageParamsCancelTalon;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
+import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -70,15 +74,55 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
         );
     }
 
+    /*
+        @Override
+        public void sendInMessageService(String type,
+                                         String userEmail,
+                                         String subject,
+                                         String text) {
+            kafkaSenderService.sendToKafkaAsync(topicMessageService,
+                    AppealToMessageService.builder()
+                            .type(type)
+                            .userEmail(userEmail)
+                            .subject(subject)
+                            .text(text)
+                            .build()
+            );
+        }
+    */
     @Override
-    public void sendInMessageService(String type, String userEmail, String subject, String text) {
-        kafkaSenderService.sendToKafkaAsync(topicMessageService,
-                AppealToMessageService.builder()
-                        .type(type)
-                        .userEmail(userEmail)
-                        .subject(subject)
-                        .text(text)
-                        .build()
+    public void sendInMessageService(CommandType commandType,
+                                     String email,
+                                     String subject,
+                                     LocalDateTime talonTime,
+                                     String doctorFirstName,
+                                     String doctorLastName,
+                                     String departmentName,
+                                     String organizationName) {
+        kafkaSenderService.sendToKafkaAsync(
+                topicMessageService,
+                new EventMessage(
+                        commandType,
+                        email,
+                        new EventMessageParamsCancelTalon(
+                                subject,
+                                talonTime,
+                                doctorFirstName,
+                                doctorLastName,
+                                departmentName,
+                                organizationName)
+                )
         );
     }
+
 }
+/*
+        kafkaSenderService.sendToKafkaAsync(
+                topic,
+                new SaveAuditEvent(
+                        CommandType.SAVE_AUDIT_EVENT,
+                        new AuditEventMessage(systemName, initiator, operation, LocalDateTime.now(), message)
+                )
+        );
+    }
+ */

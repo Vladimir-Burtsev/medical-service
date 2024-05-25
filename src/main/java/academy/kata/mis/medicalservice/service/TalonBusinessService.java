@@ -6,8 +6,12 @@ import academy.kata.mis.medicalservice.model.entity.Talon;
 import java.util.UUID;
 
 public interface TalonBusinessService {
-    void cancelReservationTalon(Long talonId);
+    Talon cancelReservationTalon(Long talonId);
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
     String getResponseTalonCancel(Long talonId);
     GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId);
+
+    Long getDoctorPersonIdByTalonId(Long talonId);
+
+    Long getDoctorIdByTalonId(Long talonId);
 }
