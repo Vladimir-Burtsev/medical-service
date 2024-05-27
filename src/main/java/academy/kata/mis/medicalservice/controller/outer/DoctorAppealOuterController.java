@@ -6,6 +6,7 @@ import academy.kata.mis.medicalservice.model.dto.GetAppealShortInfo;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealShortInfoResponse;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.AppealBusinessService;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DiseaseDepBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
@@ -14,7 +15,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.UUID;
@@ -29,7 +35,7 @@ public class DoctorAppealOuterController {
     private final DiseaseDepBusinessService diseaseDepBusinessService;
     private final AppealBusinessService appealBusinessService;
     private final PatientBusinessService patientBusinessService;
-
+    private final AuditMessageService auditMessageService;
 
     /**
      * страница 3.2.1
@@ -56,35 +62,34 @@ public class DoctorAppealOuterController {
             Principal principal) {
 
         UUID doctorUUID = UUID.fromString(principal.getName());
-        log.info("Doctor try to make appeal for patient {}", principal.getName());
+        log.info("createAppealForPatient: doctor: {}, patientId = {}", principal.getName(), request.patientId());
 
         Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, request.doctorId());
-        checkIsDiseaseDepExistByDoctorId(request.diseaseDepId(), doctor.getId());
-        checkIsPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(), request.doctorId());
+        if (!diseaseDepBusinessService.checkIsExistByIdAndDoctorId(request.diseaseDepId(), doctor.getId())) {
+            log.debug("Заболевание с id {} и доктором с id {} не существует",
+                    request.diseaseDepId(), doctor.getId());
+            throw new LogicException("Заболевание не существует");
+        }
+
+        if (!patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(request.patientId(),
+                request.doctorId())) {
+            log.error("Пациент {}; не существует или находится с доктором в разных организациях",
+                    request.patientId());
+            throw new LogicException("Пациент не существует или находится с доктором в разных организациях");
+        }
 
         GetAppealShortInfo response = appealBusinessService
                 .createPatientVisit(doctor, request.diseaseDepId(), request.patientId(), request.insuranceType());
-        //todo напиши нормальный лог: principal{uuid} успешно создал обращение {обращение}
-        log.debug("Ответ на создание обращения: {}", response);
+
+        log.debug("createAppealForPatient: doctor: {}, patientId = {}; response={}", principal.getName(),
+                request.patientId(), response);
+
+        auditMessageService.sendAudit(doctorUUID.toString(), "create-appeal",
+                "success; appeal=" + response);
 
         return ResponseEntity.ok(response);
     }
 
-    private void checkIsDiseaseDepExistByDoctorId(long diseaseDepId, long doctorId) {
-        if (!diseaseDepBusinessService.checkIsExistByIdAndDoctorId(diseaseDepId, doctorId)) {
-            log.debug("Заболевание с id {} и доктором с id {} не существует",
-                    diseaseDepId, doctorId);
-            throw new LogicException("Заболевание не существует");
-        }
-    }
-
-    private void checkIsPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
-        if (!patientBusinessService.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId)) {
-            log.error("Пациент {}; не существует или находится с доктором в разных организациях",
-                    patientId);
-            throw new LogicException("Пациент не существует или находится с доктором в разных организациях");
-        }
-    }
 
     /**
      * страница 3.2.3

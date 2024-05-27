@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
-
     private final VisitRepository visitRepository;
 
     @Override

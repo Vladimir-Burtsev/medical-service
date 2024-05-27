@@ -15,4 +15,7 @@ public interface DiseaseDepRepository extends JpaRepository<DiseaseDep, Long> {
                     and dd.id = :diseaseDepId
             """)
     boolean checkIsExistByIdAndDoctorId(long diseaseDepId, long doctorId);
+
+    @Query("select d.disease.id from DiseaseDep d where d.id = :diseaseDepId")
+    long findDiseaseIdByDiseaseDepId(long diseaseDepId);
 }
