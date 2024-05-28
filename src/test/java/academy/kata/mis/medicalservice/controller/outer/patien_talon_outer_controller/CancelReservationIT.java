@@ -9,10 +9,6 @@ import academy.kata.mis.medicalservice.model.dto.department_organization.Departm
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.MessageServiceSender;
-import academy.kata.mis.medicalservice.service.ReportServiceSender;
-import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
-import academy.kata.mis.medicalservice.service.AuditMessageService;
-import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
 import org.mockito.Spy;
@@ -43,7 +39,7 @@ public class CancelReservationIT extends ContextIT {
     @MockBean
     private PersonFeignClient personFeignClient;
     @MockBean
-    StructureFeignClient structureFeignClient;
+    private StructureFeignClient structureFeignClient;
 
     private final String accessToken = "Bearer token";
 
