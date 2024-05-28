@@ -55,8 +55,9 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
         talon.setPatient(null);
         talonService.save(talon);
 
-        PersonDto personDto = personFeignClient.getPersonById(
-                doctorService.getDoctorPersonIdByTalonId(talonId));
+        PersonDto personDto = personFeignClient
+                .getPersonById(doctorService.getDoctorPersonIdByTalonId(talonId));
+
         DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
                 .getDepartmentAndOrganizationName(doctorService.getDoctorIdByTalonId(talonId));
 
