@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @ToString
 @Setter
 @Getter
 public class EventMessageParamsCancelTalon {
     @JsonProperty("subject") private String subject;
-    @JsonProperty("talon_time") private LocalDateTime talonTime;
+    @JsonProperty("talon_time") private String talonTime;
     @JsonProperty("doctor_first_name") private String doctorFirstName;
     @JsonProperty("doctor_last_name") private String doctorLastName;
     @JsonProperty("department_name") private String departmentName;
     @JsonProperty("organization_name") private String organizationName;
 
     public EventMessageParamsCancelTalon(String subject,
-                                         LocalDateTime talonTime,
+                                         String talonTime,
                                          String doctorFirstName,
                                          String doctorLastName,
                                          String departmentName,

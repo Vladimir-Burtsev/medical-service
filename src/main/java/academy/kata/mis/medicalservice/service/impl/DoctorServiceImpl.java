@@ -12,7 +12,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
-
     private DoctorRepository doctorRepository;
 
     @Autowired

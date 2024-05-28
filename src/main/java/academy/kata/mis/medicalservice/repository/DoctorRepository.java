@@ -12,15 +12,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Doctor findByUserId(UUID doctorId);
 
     @Query("""
-            SELECT t.doctor.id 
-            FROM Talon t 
+            SELECT t.doctor.id
+            FROM Talon t
             WHERE t.id = :talonId
             """)
     Long getDoctorIdByTalonId(@Param("talonId") Long talonId);
 
     @Query("""
-            SELECT d.personId 
-            FROM Talon t LEFT JOIN Doctor d ON t.doctor.id = d.id 
+            SELECT d.personId
+            FROM Talon t LEFT JOIN Doctor d ON t.doctor.id = d.id
             WHERE t.id = :talonId
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);

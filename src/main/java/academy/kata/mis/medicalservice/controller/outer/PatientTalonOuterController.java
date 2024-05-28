@@ -1,20 +1,13 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
-import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
-import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
-import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
-import academy.kata.mis.medicalservice.model.entity.Talon;
-import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
-import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +28,6 @@ public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
     private final PatientBusinessService patientBusinessService;
     private final AuditMessageService auditMessageService;
-    private final PersonFeignClient personFeignClient;
-    private final StructureFeignClient structureFeignClient;
-    private final ReportServiceSender reportServiceSender;
 
     /**
      * страница 2
@@ -100,7 +90,8 @@ public class PatientTalonOuterController {
 
         CancelTalonDto talonDto = talonBusinessService.cancelReservationTalon(talonId, userId);
 
-        auditMessageService.sendAudit(userId.toString(), operation,"Успешно: " + talonDto.toString());
+        auditMessageService.sendAudit(userId.toString(), operation,
+                operation + ". Успешно! " + talonDto.toString());
 
         log.debug("{}; Успешно; principal {}; talonID {}", operation, userId, talonId);
     }
