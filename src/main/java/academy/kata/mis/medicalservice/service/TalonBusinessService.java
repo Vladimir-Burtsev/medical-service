@@ -8,6 +8,5 @@ import java.util.UUID;
 public interface TalonBusinessService {
     CancelTalonDto cancelReservationTalon(Long talonId, UUID userId);
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
-    String getResponseTalonCancel(Long talonId);
     GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId);
 }
