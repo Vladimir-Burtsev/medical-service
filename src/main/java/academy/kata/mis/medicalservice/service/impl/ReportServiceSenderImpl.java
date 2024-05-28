@@ -1,27 +1,19 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
-import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
-import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessage;
-import academy.kata.mis.medicalservice.model.dto.kafka.message_service.EventMessageParamsCancelTalon;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
-import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ReportServiceSenderImpl implements ReportServiceSender {
-
     private final KafkaSenderService kafkaSenderService;
     private final PersonFeignClient personFeignClient;
 
@@ -47,7 +39,7 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
         return email ? personFeignClient.getPersonEmailByUserId(userId) : null;
     }
 
-    //todo убрать заглушки
+
     public String generateInfo(Appeal appeal) {
         return String.format("""
                         Диагноз: %s

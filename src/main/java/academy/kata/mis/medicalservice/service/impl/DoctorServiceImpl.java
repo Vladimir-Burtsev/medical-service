@@ -43,4 +43,5 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     // переедет из доктор сервиса в визит сервис createPatientVisit
+
 }

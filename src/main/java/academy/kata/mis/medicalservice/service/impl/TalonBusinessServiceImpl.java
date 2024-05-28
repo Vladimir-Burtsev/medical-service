@@ -19,13 +19,8 @@ import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.MessageServiceSender;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import academy.kata.mis.medicalservice.service.TalonService;
-import academy.kata.mis.medicalservice.service.*;
-import academy.kata.mis.medicalservice.service.KafkaSenderService;
-import academy.kata.mis.medicalservice.service.TalonBusinessService;
-import academy.kata.mis.medicalservice.service.TalonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
