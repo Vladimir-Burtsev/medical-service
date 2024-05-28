@@ -16,7 +16,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceSenderImpl implements ReportServiceSender {
-
     private final KafkaSenderService kafkaSenderService;
     private final PersonFeignClient personFeignClient;
 
