@@ -10,7 +10,6 @@ import java.util.Objects;
 /**
  * Талон на прием к врачу
  */
-@ToString
 @Entity
 @Getter
 @Setter
