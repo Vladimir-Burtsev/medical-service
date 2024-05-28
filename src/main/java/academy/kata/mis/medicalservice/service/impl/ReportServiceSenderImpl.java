@@ -1,10 +1,8 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.dto.appeal.AppealToMessageService;
 import academy.kata.mis.medicalservice.model.dto.appeal.RequestSendAppealToReportService;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
-import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceSenderImpl implements ReportServiceSender {
-
     private final KafkaSenderService kafkaSenderService;
     private final PersonFeignClient personFeignClient;
 
