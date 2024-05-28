@@ -61,7 +61,7 @@ public class CancelReservationIT extends ContextIT {
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-        when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
+        when(personFeignClient.getPersonEmailByUserId(any())).thenReturn("email");
         when(personFeignClient.getPersonById(anyLong()))
                 .thenReturn(new PersonDto(1L, "Fist Name", "Last Name"));
         when(structureFeignClient.getDepartmentAndOrganizationName(anyLong()))
@@ -92,7 +92,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 5L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не сущестует.",
+        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
                 talonId,
                 userId
         );
@@ -130,7 +130,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 2L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не сущестует.",
+        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
                 talonId,
                 userId
         );
@@ -167,7 +167,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 3L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не сущестует.",
+        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
                 talonId,
                 userId
         );

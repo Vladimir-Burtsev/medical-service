@@ -11,11 +11,7 @@ public interface ReportServiceSender {
 
     String generateInfo(Appeal appeal);
 
-//    void sendInReportService(UUID userId, String email, String info, UUID operationId);
-//    void sendInReportService(UUID userId, String email, String info, UUID operationId);
-//    void sendInMessageService(String type, String userEmail, String subject, String text);
-
-    public void sendInMessageService(CommandType commandType,
+    void sendInMessageService(CommandType commandType,
                                      String email,
                                      String subject,
                                      LocalDateTime talonTime,
