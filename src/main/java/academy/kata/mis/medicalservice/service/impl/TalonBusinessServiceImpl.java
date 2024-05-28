@@ -11,11 +11,14 @@ import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
-import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
+import academy.kata.mis.medicalservice.service.DoctorService;
+import academy.kata.mis.medicalservice.service.MessageServiceSender;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
+import academy.kata.mis.medicalservice.service.TalonService;
 import academy.kata.mis.medicalservice.service.*;
 import academy.kata.mis.medicalservice.service.KafkaSenderService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
@@ -61,7 +64,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
                 personFeignClient.getPersonEmailByUserId(userId),
                 "отмена записи на прием к врачу",
-                talon.getTime(),
+                talon.getTime().toString(),
                 personDto.firstName(),
                 personDto.lastName(),
                 departmentAndOrganizationDto.departmentName(),

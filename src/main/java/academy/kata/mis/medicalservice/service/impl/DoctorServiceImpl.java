@@ -15,7 +15,6 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
-
     private DoctorRepository doctorRepository;
 
     @Autowired
