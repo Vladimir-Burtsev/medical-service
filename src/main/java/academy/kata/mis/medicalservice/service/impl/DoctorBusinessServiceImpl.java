@@ -22,7 +22,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     @Override
     public Doctor getDoctorIfExists(UUID doctorUUID, long id) {
-        return doctorService.existsByUserIdAndId(doctorUUID, id);
+        return doctorService.getDoctorIfExistsByUserIdAndId(doctorUUID, id);
     }
 
     @Override
@@ -35,5 +35,10 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .positionsName(positionsNameAndCabinetDto.name())
                 .cabinet(positionsNameAndCabinetDto.cabinet())
                 .build();
+    }
+
+    @Override
+    public boolean isExistDoctor(UUID doctorUUID, long id) {
+        return doctorService.isExistsByUserIdAndId(doctorUUID, id);
     }
 }

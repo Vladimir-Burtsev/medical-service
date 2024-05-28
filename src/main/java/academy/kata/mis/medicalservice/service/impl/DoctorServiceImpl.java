@@ -1,10 +1,5 @@
 package academy.kata.mis.medicalservice.service.impl;
 
-<<<<<<< HEAD
-import academy.kata.mis.medicalservice.repository.DoctorRepository;
-import academy.kata.mis.medicalservice.service.DoctorService;
-import lombok.RequiredArgsConstructor;
-=======
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.repository.DoctorRepository;
@@ -29,12 +24,17 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor existsByUserIdAndId(UUID doctorUUID, long id) {
+    public Doctor getDoctorIfExistsByUserIdAndId(UUID doctorUUID, long id) {
         if (!doctorRepository.existsByUserIdAndId(doctorUUID, id)) {
             log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
                     doctorUUID);
             throw new LogicException("Доктор не найден");
         }
         return doctorRepository.findByUserId(doctorUUID);
+    }
+
+    @Override
+    public boolean isExistsByUserIdAndId(UUID doctorUUID, long id) {
+        return doctorRepository.existsByUserIdAndId(doctorUUID, id);
     }
 }

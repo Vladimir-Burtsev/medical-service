@@ -5,6 +5,7 @@ import academy.kata.mis.medicalservice.model.entity.Doctor;
 import java.util.UUID;
 
 public interface DoctorService {
-    Doctor existsByUserIdAndId(UUID doctorUUID, long id);
+    Doctor getDoctorIfExistsByUserIdAndId(UUID doctorUUID, long id);
 
+    boolean isExistsByUserIdAndId(UUID doctorUUID, long id);
 }
