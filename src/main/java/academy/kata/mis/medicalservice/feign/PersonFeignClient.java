@@ -83,7 +83,7 @@ public interface PersonFeignClient {
         @Override
         public String getPersonEmailByUserId(UUID userId) {
             String responseMessage = """
-                    Контакт не найден для переданного userId: %s; message: %s
+                    Не найден email адрес у пользователя с ID = %s
                     """.formatted(userId, reason);
 
             throw new FeignRequestException(responseMessage);
