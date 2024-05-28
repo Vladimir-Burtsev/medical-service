@@ -8,6 +8,7 @@ import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
+import academy.kata.mis.medicalservice.service.MessageServiceSender;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ public class CancelReservationIT extends ContextIT {
     @MockBean
     private AuditMessageService auditMessageService;
     @Spy
-    private ReportServiceSender reportServiceSender;
+    private MessageServiceSender messageServiceSender;
     @MockBean
     private PersonFeignClient personFeignClient;
     @MockBean
@@ -68,7 +69,7 @@ public class CancelReservationIT extends ContextIT {
                         1L,
                         "Organization Name1"));
 
-        doNothing().when(reportServiceSender)
+        doNothing().when(messageServiceSender)
                 .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         mockMvc.perform(
@@ -89,10 +90,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 5L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
-                talonId,
-                userId
-        );
+        String answerException = "У авторизованного пользователя отсутствует указанный талон на прием к врачу.";
 
         //задаем нужное нам поведение при проверке токена
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
@@ -113,7 +111,7 @@ public class CancelReservationIT extends ContextIT {
                 .andExpect(content().string(answerException));
 
         //проверяем что не было попыток отправить запрос в message service
-        verify(reportServiceSender, times(0))
+        verify(messageServiceSender, times(0))
                 .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
@@ -127,10 +125,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 2L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
-                talonId,
-                userId
-        );
+        String answerException = "У авторизованного пользователя отсутствует указанный талон на прием к врачу.";
 
         //задаем нужное нам поведение при проверке токена
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
@@ -150,7 +145,7 @@ public class CancelReservationIT extends ContextIT {
                 .andExpect(content().string(answerException));
 
         //проверяем что не было попыток отправить запрос в message service
-        verify(reportServiceSender, times(0))
+        verify(messageServiceSender, times(0))
                 .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
@@ -164,10 +159,7 @@ public class CancelReservationIT extends ContextIT {
 
         String userId = "cf29361a-c9ed-4644-a6dc-db639774850e";
         long talonId = 3L;
-        String answerException = String.format("Талон с Id = %s у пользователя с userId = %s не существует.",
-                talonId,
-                userId
-        );
+        String answerException = "У авторизованного пользователя отсутствует указанный талон на прием к врачу.";
 
         //задаем нужное нам поведение при проверке токена
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
@@ -187,7 +179,7 @@ public class CancelReservationIT extends ContextIT {
                 .andExpect(content().string(answerException));
 
         //проверяем что не было попыток отправить запрос в message service
-        verify(reportServiceSender, times(0))
+        verify(messageServiceSender, times(0))
                 .sendInMessageService(any(), any(), any(), any(), any(), any(), any(), any());
 
         //проверяем что не было попыток отправить запрос в аудит сервис
