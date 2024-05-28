@@ -4,12 +4,14 @@ import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesRe
 import academy.kata.mis.medicalservice.model.dto.sample.DiseaseSampleConverter;
 import academy.kata.mis.medicalservice.service.DiseaseSampleService;
 import academy.kata.mis.medicalservice.service.DoctorSamplesBusinessService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
 @Service
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessService {
     private final DiseaseSampleService diseaseSampleService;
@@ -18,9 +20,11 @@ public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessSe
     @Override
     public GetDiseaseSamplesWithServicesResponse getDiseaseSamplesWithServicesByDiseaseDepAndDoctor(long doctorId,
                                                                                                     long diseaseDepId) {
-        return new GetDiseaseSamplesWithServicesResponse(
-                diseaseSampleService.getByDoctorAndDiseaseDep(doctorId, diseaseDepId).stream()
-                        .map(diseaseSampleConverter::entityToDiseaseSampleDto)
-                        .collect(Collectors.toList()));
+        diseaseSampleConverter.loadMedicalServiceWithServiceDepIdMap(diseaseSampleService
+                .getServiceDepIdByDoctorIdAndDiseaseDepId(doctorId, diseaseDepId));
+        return new GetDiseaseSamplesWithServicesResponse(diseaseSampleService
+                .getDiseaseSamplesIdByDoctorIdAndDiseaseId(doctorId, diseaseDepId).stream()
+                .map(diseaseSampleConverter::diseaseSamplesIdToDiseaseSampleDto).toList());
+
     }
 }

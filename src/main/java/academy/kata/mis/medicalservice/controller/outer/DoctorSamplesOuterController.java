@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesResponse;
 import academy.kata.mis.medicalservice.service.DiseaseDepBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
@@ -39,8 +40,16 @@ public class DoctorSamplesOuterController {
         UUID authUserId = UUID.fromString(principal.getName());
         log.info("Пользователь: {}; {}; Заболевание: {}", authUserId, operation, diseaseDepId);
 
-        doctorBusinessService.checkDoctorExistAndCurrent(doctorId, authUserId, diseaseDepId);
-        diseaseDepBusinessService.checkDiseaseDepExist(diseaseDepId);
+        if (!doctorBusinessService.checkDoctorExistAndCurrent(doctorId, authUserId, diseaseDepId)) {
+            log.error(String.format("Доктор с id=%s не найден или заболевание с id=%s из другого отделения",
+                    doctorId,
+                    diseaseDepId));
+            throw new LogicException("Авторизованный пользователь не из указанного лечебного отделения");
+        }
+        if (!diseaseDepBusinessService.checkDiseaseDepExist(diseaseDepId)) {
+            log.error(String.format("Заболевание с id=%s, не найдено", diseaseDepId));
+            throw new LogicException("Заболевание не найдено");
+        }
 
         GetDiseaseSamplesWithServicesResponse response =
                 doctorSamplesBusinessService.getDiseaseSamplesWithServicesByDiseaseDepAndDoctor(doctorId, diseaseDepId);

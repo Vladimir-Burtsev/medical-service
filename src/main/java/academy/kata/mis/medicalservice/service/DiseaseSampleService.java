@@ -1,11 +1,12 @@
 package academy.kata.mis.medicalservice.service;
 
-import academy.kata.mis.medicalservice.model.entity.DiseaseSample;
-
 import java.util.Set;
 
 public interface DiseaseSampleService {
 
-    Set<DiseaseSample> getByDoctorAndDiseaseDep(long doctorId, long diseaseDepId);
+    Set<Long> getServiceDepIdByDoctorIdAndDiseaseDepId(long doctorId, long diseaseDepId);
 
+    Set<Long> getDiseaseSamplesIdByDoctorIdAndDiseaseId(long doctorId, long diseaseDepId);
+
+    Set<Long> getServiceDepIdByDiseaseSampleId(long diseaseSampleId);
 }
