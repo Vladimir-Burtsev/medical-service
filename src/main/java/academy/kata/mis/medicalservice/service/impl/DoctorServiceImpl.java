@@ -32,4 +32,17 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return doctorRepository.findByUserId(doctorUUID);
     }
+
+    @Override
+    public Long getDoctorPersonIdByTalonId(Long talonId) {
+        return doctorRepository.getDoctorPersonIdByTalonId(talonId);
+    }
+
+    @Override
+    public Long getDoctorIdByTalonId(Long talonId) {
+        return doctorRepository.getDoctorIdByTalonId(talonId);
+    }
+
+    // переедет из доктор сервиса в визит сервис createPatientVisit
+
 }

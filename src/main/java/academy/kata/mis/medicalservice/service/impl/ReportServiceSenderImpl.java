@@ -27,8 +27,7 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
 
     @Value("${spring.kafka.producer.topic.report-message}")
     private String topic;
-    @Value("${spring.kafka.producer.topic.send-message}")
-    private String topicMessageService;
+
 
     @Override
     public void sendInReportService(UUID userId, boolean isEmail, Appeal appeal, UUID operationId) {
@@ -73,30 +72,4 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
                 "doctorName"
         );
     }
-
-    @Override
-    public void sendInMessageService(CommandType commandType,
-                                     String email,
-                                     String subject,
-                                     LocalDateTime talonTime,
-                                     String doctorFirstName,
-                                     String doctorLastName,
-                                     String departmentName,
-                                     String organizationName) {
-        kafkaSenderService.sendToKafkaAsync(
-                topicMessageService,
-                new EventMessage(
-                        commandType,
-                        email,
-                        new EventMessageParamsCancelTalon(
-                                subject,
-                                talonTime,
-                                doctorFirstName,
-                                doctorLastName,
-                                departmentName,
-                                organizationName)
-                )
-        );
-    }
-
 }

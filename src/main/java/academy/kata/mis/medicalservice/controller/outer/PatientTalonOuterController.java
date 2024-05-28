@@ -9,6 +9,7 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientRespo
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
+import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
@@ -90,40 +91,20 @@ public class PatientTalonOuterController {
     public void cancelReservation(@RequestParam(name = "talon_id") Long talonId,
                                   Principal principal) {
         String operation = "Отмена записи на прием к врачу";
-        log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
+        UUID userId = UUID.fromString(principal.getName());
+        log.info("{}; principal {}; talonID {}", operation, userId, talonId);
 
-        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()))) {
-            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId = {}; UserId = {}",
-                    operation, talonId, principal.getName());
-            throw new LogicException(String.format(
-                    "Талон с Id = %s у пользователя с userId = %s не существует.",
-                    talonId,
-                    principal.getName()
-            ));
+        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, userId)) {
+            log.error("{}; ошибка: талон с Id = {} у пользователя с userId = {} не существует.",
+                    operation, talonId, userId);
+            throw new LogicException("У авторизованного пользователя отсутствует указанный талон на прием к врачу.");
         }
 
-        Talon talon = talonBusinessService.cancelReservationTalon(talonId);
-        PersonDto personDto = personFeignClient.getPersonById(
-                talonBusinessService.getDoctorPersonIdByTalonId(talonId));
-        DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
-                .getDepartmentAndOrganizationName(talonBusinessService.getDoctorIdByTalonId(talonId));
+        CancelTalonDto talonDto = talonBusinessService.cancelReservationTalon(talonId, userId);
 
-        reportServiceSender.sendInMessageService(
-                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
-                personFeignClient.getPersonEmailByUserId((UUID.fromString(principal.getName()))),
-                "отмена записи на прием к врачу",
-                talon.getTime(),
-                personDto.firstName(),
-                personDto.lastName(),
-                departmentAndOrganizationDto.departmentName(),
-                departmentAndOrganizationDto.organizationName()
-        );
+        auditMessageService.sendAudit(userId.toString(), operation,"Успешно: " + talonDto.toString());
 
-        auditMessageService.sendAudit(principal.getName(),
-                operation,
-                "успешная отмена записи на прием к врачу");
-
-        log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
+        log.debug("{}; Успешно; principal {}; talonID {}", operation, userId, talonId);
     }
 
     @PatchMapping("/assign")
