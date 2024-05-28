@@ -21,11 +21,26 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public Boolean existsPatientByUserIdAndOrganizationId(UUID userId, long organizationId) {
-        return patientRepository.existsPatientByUserIdAndOrganizationId(userId,organizationId);
+        return patientRepository.existsPatientByUserIdAndOrganizationId(userId, organizationId);
     }
 
     @Override
     public Patient getPatientById(long patientId) {
         return patientRepository.getPatientById(patientId);
+    }
+
+    @Override
+    public boolean isPatientExistsAndFromSameOrganizationAsDoctor(long patientId, long doctorId) {
+        return patientRepository.isPatientExistsAndFromSameOrganizationAsDoctor(patientId, doctorId);
+    }
+
+    @Override
+    public UUID getPatientUserIdByPatientId(long patientId) {
+        return patientRepository.findUserIdByPatientId(patientId);
+    }
+
+    @Override
+    public boolean isPatientExistAndUserIdIsPatientUserId(long patientId, UUID userId) {
+        return patientRepository.isPatientExistAndUserIdIsPatientUserId(patientId, userId);
     }
 }

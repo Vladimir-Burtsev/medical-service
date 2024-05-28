@@ -6,15 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DiseaseDepBusinessServiceImpl implements DiseaseDepBusinessService {
-
     private final DiseaseDepService diseaseDepService;
 
     @Override
-    public boolean checkDiseaseDepExist(long diseaseDepId) {
-        return diseaseDepService.isExistById(diseaseDepId);
+    public boolean checkIsExistByIdAndDoctorId(long diseaseDepId, long doctorId) {
+        return diseaseDepService.checkIsExistByIdAndDoctorId(diseaseDepId, doctorId);
     }
 }

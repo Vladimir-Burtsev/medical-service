@@ -1,29 +1,25 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.exceptions.LogicException;
-import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealFullInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetPatientAppealsResponse;
 import academy.kata.mis.medicalservice.model.entity.Appeal;
-import academy.kata.mis.medicalservice.model.entity.Patient;
-import academy.kata.mis.medicalservice.service.AppealService;
-import academy.kata.mis.medicalservice.service.PatientService;
-import academy.kata.mis.medicalservice.service.RandomGenerator;
+import academy.kata.mis.medicalservice.service.AppealBusinessService;
+import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.ReportServiceSender;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.Optional;
+import java.security.Principal;
 import java.util.UUID;
 
 @Slf4j
@@ -33,12 +29,9 @@ import java.util.UUID;
 @RequestMapping("/api/medical/patient/appeal")
 public class PatientAppealsOuterController {
 
-    private final PatientService patientService;
-    private final AppealService appealService;
+    private final PatientBusinessService patientBusinessService;
+    private final AppealBusinessService appealBusinessService;
     private final ReportServiceSender reportServiceSender;
-    private final PersonFeignClient personFeignClient;
-    private final RandomGenerator randomGenerator;
-
 
     @GetMapping("/all")
     public ResponseEntity<GetPatientAppealsResponse> getAppeals(
@@ -65,43 +58,31 @@ public class PatientAppealsOuterController {
         return ResponseEntity.ok(null);
     }
 
+    @SneakyThrows
     @GetMapping("/report")
     public ResponseEntity<String> downloadAppealReport(
             @RequestParam(name = "patient_id") long patientId,
             @RequestParam(name = "appeal_id") long appealId,
-            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail)
-            throws InterruptedException {
+            @RequestParam(name = "send_email", required = false, defaultValue = "false") boolean sendEmail,
+            Principal principal) {
+        UUID currentUserId = UUID.fromString(principal.getName());
+        log.info("downloadAppealReport: userId = {}, sendEmail = {}", patientId, sendEmail);
 
-        //todo
-        // обработать InterruptedException и кидать что-то, что пользователь прочитает
-        // надо положить в бизнес логику в бизнес сервис
+        if (!patientBusinessService.isPatientExistAndAuthenticatedUserPatient(patientId, currentUserId)) {
+            throw new LogicException(
+                    String.format("%s %s %s", "Пациент с ID:", patientId, "- не найден, или у вас нет прав доступа"));
+        }
 
-        UUID operationId = randomGenerator.generate();
-        UUID userId = isPatientExistAndAuthenticatedUserPatient(patientId);
-        Appeal appeal = isAppealExistAndPatientOwner(appealId, patientId);
-        String email = sendEmail ? personFeignClient.getPersonContactByUserId(userId) : null;
+        //todo перенести несколько обращений к расным бизнес сервисам в один бизнес сервис
+        // который внутри работает с разными сервисами
+        UUID userId = patientBusinessService.getUserId(patientId);
+        Appeal appeal = appealBusinessService.isAppealExistAndPatientOwner(appealId, patientId);
 
-
-        String info = String.format("""
-                        Диагноз: %s
-                        Стаус обращения: %s
-                        Способ оплаты: %s
-                        Сумма лечения: %s
-                                       
-                        Дата открытия: %s
-                        Врач: %s
-                        Услуги: %s
-                                       
-                        Дата закрытия: %s
-                        Врач: %s""", appeal.getDiseaseDep().getDisease().getName(), appeal.getStatus(),
-                appeal.getInsuranceType(), "moneyForAppeal", "1000", appeal.getOpenDate(), "doctorName",
-                "apealServices", appeal.getClosedDate(), "doctorName");
-        //todo убрать загушки
-
-        reportServiceSender.sendInReportService(userId, email, info, operationId);
-        //todo
-        // помним! шедулед таска будет запускаться в каждом инстансе а нам надо только один запуск (подойти к ментору)
+        UUID operationId = UUID.randomUUID();
+        reportServiceSender.sendInReportService(userId, sendEmail, appeal, operationId);
         Thread.sleep(3000);
+
+        log.debug("downloadAppealReport: userId = {}, sendEmail = {}", userId, sendEmail);
 
         return !sendEmail ?
                 ResponseEntity
@@ -110,49 +91,7 @@ public class PatientAppealsOuterController {
                         .build() :
                 ResponseEntity
                         .status(HttpStatus.OK)
-                        .body("Отчет отпвлен на почту");
+                        .body("Отчет отправлен на почту");
     }
-
-    //todo
-    // переработать метод - лишние запросы
-    // проверить работу метода
-    private UUID isPatientExistAndAuthenticatedUserPatient(long patientId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Patient patient1 = patientService.getPatientById(patientId);
-
-        Optional.ofNullable(patientService.getPatientById(patientId))
-                .filter(patient -> patient.getUserId().equals(UUID.fromString(authentication.getName())))
-
-                .orElseThrow(() -> {
-                    if (patientService.getPatientById(patientId) == null) {
-                        log.error("Пациент не найден; patientId:{};", patientId);
-                        return new LogicException(String.format("Patient with id %d not found", patientId));
-                    } else {
-                        log.error("Авторезированный пользователь не является текущим пациентом; patientId:{};", patientId);
-                        return new LogicException(String.format("Current user is not patient with id %d", patientId));
-                    }
-                });
-
-        return UUID.fromString(authentication.getName());
-    }
-
-    //todo
-    // переработать метод - лишние запросы
-    // проверить работу метода
-    private Appeal isAppealExistAndPatientOwner(long appealId, long patientId) {
-        Optional.ofNullable(appealService.getAppealById(appealId))
-                .filter(appeal -> appeal.getPatient().getId() == patientId)
-                .orElseThrow(() -> {
-                    if (appealService.getAppealById(appealId) == null) {
-                        log.error("Заболевание не найдено; appealId:{};", appealId);
-                        return new LogicException(String.format("Appeal with id %d not found", appealId));
-                    } else {
-                        log.error("Авторезированный пользователь не является владельцем заболевания; appealId:{};", appealId);
-                        return new LogicException(String.format("Current user is not owner of appeal with id %d", appealId));
-                    }
-                });
-        return appealService.getAppealById(appealId);
-    }
-
 }
 
