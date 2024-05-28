@@ -14,7 +14,7 @@ import java.util.UUID;
 public class EventMessage {
     @JsonProperty("type") private CommandType type;
     @JsonProperty("email") private String email;
-    @JsonProperty("param") private Object params;
+    @JsonProperty("params") private Object params;
     @JsonProperty("operation_id") private UUID operationId;
 
     public EventMessage(CommandType type,

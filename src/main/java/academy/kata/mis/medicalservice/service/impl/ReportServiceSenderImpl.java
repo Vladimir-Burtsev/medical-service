@@ -42,7 +42,7 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
     }
 
     private String checkExistEmail(boolean email, UUID userId) {
-        return email ? personFeignClient.getPersonContactByUserId(userId) : null;
+        return email ? personFeignClient.getPersonEmailByUserId(userId) : null;
     }
 
 
@@ -71,22 +71,6 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
         );
     }
 
-    /*
-        @Override
-        public void sendInMessageService(String type,
-                                         String userEmail,
-                                         String subject,
-                                         String text) {
-            kafkaSenderService.sendToKafkaAsync(topicMessageService,
-                    AppealToMessageService.builder()
-                            .type(type)
-                            .userEmail(userEmail)
-                            .subject(subject)
-                            .text(text)
-                            .build()
-            );
-        }
-    */
     @Override
     public void sendInMessageService(CommandType commandType,
                                      String email,
@@ -113,13 +97,3 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
     }
 
 }
-/*
-        kafkaSenderService.sendToKafkaAsync(
-                topic,
-                new SaveAuditEvent(
-                        CommandType.SAVE_AUDIT_EVENT,
-                        new AuditEventMessage(systemName, initiator, operation, LocalDateTime.now(), message)
-                )
-        );
-    }
- */

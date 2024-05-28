@@ -139,7 +139,7 @@ public class PatientAppealsOuterControllerTests extends ContextIT {
         when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-        when(personFeignClient.getPersonContactByUserId(any())).thenReturn("email");
+        when(personFeignClient.getPersonEmailByUserId(any())).thenReturn("email");
 
         doNothing().when(reportServiceSender).sendInReportService(any(), anyBoolean(), any(), any());
 

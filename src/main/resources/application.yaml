@@ -40,7 +40,6 @@ spring:
         save-audit: ${KAFKA_PRODUCER_SAVE_AUDIT_TOPIC:mis_audit_local}
         report-message: ${KAFKA_CONSUMER_REPORT_MESSAGE_TOPIC:mis_report_local}
         send-message: ${KAFKA_PRODUCER_SEND_MESSAGE:mis_message_local}
-#        send-message-cancel-talon: ${KAFKA_PRODUCER_SEND_MESSAGE_CANCEL_TALON_TOPIC:mis_message_cancel_talon_local}
     consumer:
       group-id: medical_service_group
       topic:

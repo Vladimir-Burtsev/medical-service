@@ -94,7 +94,7 @@ public class PatientTalonOuterController {
             log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId = {}; UserId = {}",
                     operation, talonId, principal.getName());
             throw new LogicException(String.format(
-                    "Талон с Id = %s у пользователя с userId = %s не сущестует.",
+                    "Талон с Id = %s у пользователя с userId = %s не существует.",
                     talonId,
                     principal.getName()
             ));
@@ -108,7 +108,7 @@ public class PatientTalonOuterController {
 
         reportServiceSender.sendInMessageService(
                 CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
-                personFeignClient.getPersonContactByUserId((UUID.fromString(principal.getName()))),
+                personFeignClient.getPersonEmailByUserId((UUID.fromString(principal.getName()))),
                 "отмена записи на прием к врачу",
                 talon.getTime(),
                 personDto.firstName(),
@@ -117,14 +117,9 @@ public class PatientTalonOuterController {
                 departmentAndOrganizationDto.organizationName()
         );
 
-//        reportServiceSender.sendInMessageService(
-//                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON.toString(),
-//                personFeignClient.getPersonContactByUserId(UUID.fromString(principal.getName())),
-//                "отмена записи на прием к врачу",
-//                talonBusinessService.getResponseTalonCancel(talonId)
-//        );
-
-        auditMessageService.sendAudit(principal.getName(), operation, "успешная отмена записи на прием к врачу");
+        auditMessageService.sendAudit(principal.getName(),
+                operation,
+                "успешная отмена записи на прием к врачу");
 
         log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
     }
