@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface DoctorBusinessService {
     Doctor getDoctorIfExists(UUID doctorUUID, long id);
+
     DoctorFullNameAndPositionsAndCabinetDto getDoctorFullNameAndPositionsAndCabinet(PersonFullNameDto personFullNameDto,
                                                                                     PositionsNameAndCabinetDto positionsNameAndCabinetDto);
 

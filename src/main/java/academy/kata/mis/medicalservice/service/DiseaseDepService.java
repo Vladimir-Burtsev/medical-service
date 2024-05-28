@@ -4,5 +4,6 @@ import academy.kata.mis.medicalservice.model.entity.DiseaseDep;
 
 public interface DiseaseDepService {
     DiseaseDep getById(long diseaseDepId);
+
     boolean checkIsExistByIdAndDoctorId(long diseaseDepId, long doctorId);
 }
