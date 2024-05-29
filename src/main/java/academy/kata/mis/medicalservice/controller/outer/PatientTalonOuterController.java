@@ -78,7 +78,7 @@ public class PatientTalonOuterController {
     @PatchMapping("/unassign")
     public void cancelReservation(@RequestParam(name = "talon_id") Long talonId,
                                   Principal principal) {
-        String operation = "Отмена записи на прием к врачу";
+        String operation = "Отмена записи на прием к врачу. CancelReservation.";
         UUID userId = UUID.fromString(principal.getName());
         log.info("{}; principal {}; talonID {}", operation, userId, talonId);
 
