@@ -30,8 +30,8 @@ public interface PersonFeignClient {
     @GetMapping("/internal/person/information/currentdoctorinformation")
     DoctorShortDto getCurrentDoctorById(@RequestParam(name = "person_id") long personId);
 
-    @GetMapping("internal/person/information/contact")
-    String getPersonContactByUserId(@RequestParam(name = "user_id") UUID userId);
+    @GetMapping("internal/person/information/email")
+    String getPersonEmailByUserId(@RequestParam(name = "user_id") UUID userId);
 
     @Component
     class PersonServiceFallbackFactory implements FallbackFactory<FallbackWithFactory> {
@@ -81,9 +81,9 @@ public interface PersonFeignClient {
         }
 
         @Override
-        public String getPersonContactByUserId(UUID userId) {
+        public String getPersonEmailByUserId(UUID userId) {
             String responseMessage = """
-                    Контакт не найден для переданного userId: %s; message: %s
+                    Не найден email адрес у пользователя с ID = %s
                     """.formatted(userId, reason);
 
             throw new FeignRequestException(responseMessage);

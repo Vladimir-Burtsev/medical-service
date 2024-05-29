@@ -9,11 +9,13 @@ import java.util.UUID;
 
 public interface TalonRepository extends JpaRepository<Talon, Long> {
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID id);
+
     @Query("""
-        select t 
-        from Talon t 
-        join fetch t.doctor 
+        select t
+        from Talon t
+        join fetch t.doctor
         where t.patient.id = :patientId
         """)
     Set<Talon> findAllByPatientId(long patientId);
+
 }
