@@ -28,9 +28,10 @@ public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
                                                                          int page,
                                                                          int size) {
 
+//        (page - 1) * size
         Page<DiseaseShortInfoDto> response = diseaseService.getDiseaseShortInfoPagination(
                 doctorId, diseaseName, identifier,
-                PageRequest.of((page - 1) * size, size, orderBy.getOrderBy()));
+                PageRequest.of(page - 1, size, orderBy.getOrderBy()));
 
         return new GetDiseaseDepShortInfoResponse(response.getContent());
     }

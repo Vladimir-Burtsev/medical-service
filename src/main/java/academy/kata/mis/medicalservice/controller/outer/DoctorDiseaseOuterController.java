@@ -5,6 +5,8 @@ import academy.kata.mis.medicalservice.model.dto.GetDiseaseDepShortInfoResponse;
 import academy.kata.mis.medicalservice.model.enums.DiseaseOrder;
 import academy.kata.mis.medicalservice.service.DiseaseBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -36,8 +38,8 @@ public class DoctorDiseaseOuterController {
             @RequestParam(name = "disease_name", required = false, defaultValue = "") String diseaseName,
             @RequestParam(name = "identifier", required = false, defaultValue = "") String identifier,
             @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") DiseaseOrder order,
-            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(name = "page", required = false, defaultValue = "1") @Min(1) int page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(30) int size,
             Principal principal) {
         String operation = "Возвращение всех заболеваний отделения.";
         UUID userId = UUID.fromString(principal.getName());
