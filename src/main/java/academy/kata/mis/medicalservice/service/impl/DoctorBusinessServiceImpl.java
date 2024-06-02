@@ -36,4 +36,9 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .cabinet(positionsNameAndCabinetDto.cabinet())
                 .build();
     }
+
+    @Override
+    public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
+        return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
+    }
 }
