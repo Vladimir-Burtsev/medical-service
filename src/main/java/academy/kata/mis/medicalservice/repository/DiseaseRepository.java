@@ -13,7 +13,8 @@ public interface DiseaseRepository extends JpaRepository<Disease, Long> {
     Disease getDiseaseById(long diseaseId);
 
     @Query("""
-            SELECT new academy.kata.mis.medicalservice.model.dto.disease.DiseaseShortInfoDto(dd.id, d.name, d.identifier)
+            SELECT new academy.kata.mis.medicalservice.model.dto.disease.DiseaseShortInfoDto(
+                        dd.id, d.name, d.identifier)
             FROM Disease d
                 JOIN DiseaseDep dd ON dd.disease.id = d.id
                 JOIN Doctor doc ON doc.department.id = dd.department.id
