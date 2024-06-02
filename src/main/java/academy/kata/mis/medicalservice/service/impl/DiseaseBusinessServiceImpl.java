@@ -27,12 +27,13 @@ public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
                                                                          DiseaseOrder orderBy,
                                                                          int page,
                                                                          int size) {
-
-//        (page - 1) * size
-        Page<DiseaseShortInfoDto> response = diseaseService.getDiseaseShortInfoPagination(
-                doctorId, diseaseName, identifier,
-                PageRequest.of(page - 1, size, orderBy.getOrderBy()));
-
-        return new GetDiseaseDepShortInfoResponse(response.getContent());
+        return new GetDiseaseDepShortInfoResponse(
+                diseaseService
+                        .getDiseaseShortInfoPagination(
+                                doctorId, diseaseName, identifier,
+                                PageRequest.of(page - 1, size, orderBy.getOrderBy())
+                        )
+                        .getContent()
+        );
     }
 }
