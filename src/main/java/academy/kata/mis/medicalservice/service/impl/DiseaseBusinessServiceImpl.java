@@ -1,12 +1,10 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseDepShortInfoResponse;
-import academy.kata.mis.medicalservice.model.dto.disease.DiseaseShortInfoDto;
 import academy.kata.mis.medicalservice.model.enums.DiseaseOrder;
 import academy.kata.mis.medicalservice.service.DiseaseBusinessService;
 import academy.kata.mis.medicalservice.service.DiseaseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 

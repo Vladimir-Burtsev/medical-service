@@ -43,21 +43,22 @@ public class DoctorDiseaseOuterController {
             Principal principal) {
         String operation = "Возвращение всех заболеваний отделения.";
         UUID userId = UUID.fromString(principal.getName());
-        log.info("{}, doctorId = {}, userId = {}. Сортировка: diseaseName - {}, identifier - {}, order - {}." +
+        log.info("{} doctorId = {}, userId = {}. Сортировка: diseaseName - {}, identifier - {}, order - {}." +
                  " Пагинация: page - {}, size - {}",
                  operation, doctorId, userId, diseaseName, identifier, order, page, size);
 
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(userId, doctorId)) {
-            log.debug("{}. Ошибка! Доктор с doctorId = {} и userId = {} не существует.", operation, doctorId, userId);
+            log.error("{} Ошибка! Доктор с doctorId = {} и userId = {} не существует.", operation, doctorId, userId);
             throw new LogicException("Доктор не найден!");
         }
 
         GetDiseaseDepShortInfoResponse response = diseaseBusinessService
                 .getDiseaseDepShortInfoResponse(doctorId, diseaseName, identifier, order, page, size);
 
-        log.debug("{}, doctorId = {}, userId = {}. Успешно! " +
-                  "Сортировка: diseaseName - {}, identifier - {}, order - {}. Пагинация: page - {}, size - {}",
-                  operation, doctorId, userId, diseaseName, identifier, order, page, size);
+        log.debug("{} doctorId = {}, userId = {}. Успешно! " +
+                  "Сортировка: diseaseName - {}, identifier - {}, order - {}. " +
+                  "Пагинация: page - {}, size - {}. Response: {}.",
+                  operation, doctorId, userId, diseaseName, identifier, order, page, size, response);
 
         // проверить что доктор существует +
         // проверить что авторизованный пользователь является доктором +
