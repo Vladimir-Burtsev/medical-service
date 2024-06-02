@@ -7,6 +7,7 @@ import academy.kata.mis.medicalservice.service.DiseaseBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +36,8 @@ public class DoctorDiseaseOuterController {
             @RequestParam(name = "disease_name", required = false, defaultValue = "") String diseaseName,
             @RequestParam(name = "identifier", required = false, defaultValue = "") String identifier,
             @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") DiseaseOrder order,
-            @RequestParam(name = "page", required = false, defaultValue = "1") long page,
-            @RequestParam(name = "size", required = false, defaultValue = "10") long size,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             Principal principal) {
         String operation = "Возвращение всех заболеваний отделения.";
         UUID userId = UUID.fromString(principal.getName());
@@ -49,7 +50,8 @@ public class DoctorDiseaseOuterController {
             throw new LogicException("Доктор не найден!");
         }
 
-
+        GetDiseaseDepShortInfoResponse response = diseaseBusinessService
+                .getDiseaseDepShortInfoResponse(doctorId, diseaseName, identifier, order, page, size);
 
         log.debug("{}, doctorId = {}, userId = {}. Успешно! " +
                   "Сортировка: diseaseName - {}, identifier - {}, order - {}. Пагинация: page - {}, size - {}",
@@ -67,6 +69,6 @@ public class DoctorDiseaseOuterController {
         // учесть что надо выводить с учетом сортировки
         // так же надо учесть что все выводится с учетом пагинации
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(response);
     }
 }

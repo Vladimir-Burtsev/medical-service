@@ -11,11 +11,8 @@ public interface DiseaseService {
 
     long getDiseaseByDiseaseDepId(long diseaseDepId);
 
-    Page<DiseaseShortInfoDto> getDiseaseShortInfoPagination(@Param("departmentId") Long departmentId,
-                                                            @Param("diseaseName") String diseaseName,
-                                                            @Param("identifier") String identifier,
-                                                            @Param("order") String orderBy,
-//                                                            @Param("pageSize") long pageSize,
-//                                                            @Param("pageNumber") long pageNumber,
+    Page<DiseaseShortInfoDto> getDiseaseShortInfoPagination(long doctorId,
+                                                            String diseaseName,
+                                                            String identifier,
                                                             Pageable pageable);
 }

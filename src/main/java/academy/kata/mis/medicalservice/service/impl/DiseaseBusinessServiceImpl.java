@@ -1,17 +1,19 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseDepShortInfoResponse;
-import academy.kata.mis.medicalservice.service.DepartmentService;
+import academy.kata.mis.medicalservice.model.dto.disease.DiseaseShortInfoDto;
+import academy.kata.mis.medicalservice.model.enums.DiseaseOrder;
 import academy.kata.mis.medicalservice.service.DiseaseBusinessService;
 import academy.kata.mis.medicalservice.service.DiseaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
     private final DiseaseService diseaseService;
-    private final DepartmentService departmentService;
 
     @Override
     public String getDiseaseIdentifier(long diseaseDepId) {
@@ -19,9 +21,17 @@ public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
         return diseaseService.getById(diseaseId).getIdentifier();
     }
 
-    public GetDiseaseDepShortInfoResponse getDiseaseDepShortInfoResponse(Long doctorId) {
-        Long departmentId = departmentService.getDepartmentIdByDoctorId(doctorId);
-//        diseaseService.getDiseaseShortInfoPagination();
-        return null;
+    public GetDiseaseDepShortInfoResponse getDiseaseDepShortInfoResponse(long doctorId,
+                                                                         String diseaseName,
+                                                                         String identifier,
+                                                                         DiseaseOrder orderBy,
+                                                                         int page,
+                                                                         int size) {
+
+        Page<DiseaseShortInfoDto> response = diseaseService.getDiseaseShortInfoPagination(
+                doctorId, diseaseName, identifier,
+                PageRequest.of((page - 1) * size, size, orderBy.getOrderBy()));
+
+        return new GetDiseaseDepShortInfoResponse(response.getContent());
     }
 }
