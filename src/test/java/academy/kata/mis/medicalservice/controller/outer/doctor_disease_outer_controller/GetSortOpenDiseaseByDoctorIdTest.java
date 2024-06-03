@@ -7,15 +7,13 @@ import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Sql(executionPhase = Sql.ExecutionPhase
         .BEFORE_TEST_METHOD, value = "/scripts/controller/outer/doctor_disease_outer_controller/getSortOpenDiseaseByDoctorId.sql")
@@ -75,13 +73,14 @@ public class GetSortOpenDiseaseByDoctorIdTest extends ContextIT {
                                 .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases.length()").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseDepId").value(14))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseName").value("Bsc_disease4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseIdentifier").value("B4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseDepId").value(16))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseName").value("Bsc_disease6"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseIdentifier").value("B6"))
+                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
+                .andExpect(jsonPath("diseases.length()").value(2))
+                .andExpect(jsonPath("diseases[0].diseaseDepId").value(14))
+                .andExpect(jsonPath("diseases[0].diseaseName").value("Bsc_disease4"))
+                .andExpect(jsonPath("diseases[0].diseaseIdentifier").value("B4"))
+                .andExpect(jsonPath("diseases[1].diseaseDepId").value(16))
+                .andExpect(jsonPath("diseases[1].diseaseName").value("Bsc_disease6"))
+                .andExpect(jsonPath("diseases[1].diseaseIdentifier").value("B6"))
         ;
     }
 
@@ -113,16 +112,16 @@ public class GetSortOpenDiseaseByDoctorIdTest extends ContextIT {
                                 .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases.length()").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseDepId").value(16))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseName").value("Bsc_disease6"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseIdentifier").value("B6"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseDepId").value(14))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseName").value("Bsc_disease4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseIdentifier").value("B4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[2].diseaseDepId").value(13))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[2].diseaseName").value("Bsc_disease3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[2].diseaseIdentifier").value("B3"))
+                .andExpect(jsonPath("diseases.length()").value(3))
+                .andExpect(jsonPath("diseases[0].diseaseDepId").value(16))
+                .andExpect(jsonPath("diseases[0].diseaseName").value("Bsc_disease6"))
+                .andExpect(jsonPath("diseases[0].diseaseIdentifier").value("B6"))
+                .andExpect(jsonPath("diseases[1].diseaseDepId").value(14))
+                .andExpect(jsonPath("diseases[1].diseaseName").value("Bsc_disease4"))
+                .andExpect(jsonPath("diseases[1].diseaseIdentifier").value("B4"))
+                .andExpect(jsonPath("diseases[2].diseaseDepId").value(13))
+                .andExpect(jsonPath("diseases[2].diseaseName").value("Bsc_disease3"))
+                .andExpect(jsonPath("diseases[2].diseaseIdentifier").value("B3"))
         ;
     }
 
@@ -156,13 +155,13 @@ public class GetSortOpenDiseaseByDoctorIdTest extends ContextIT {
                                 .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases.length()").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseDepId").value(9))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseName").value("Asc_disease5.4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseIdentifier").value("A1.5.4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseDepId").value(10))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseName").value("Asc_disease5.5"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseIdentifier").value("A1.5.5"))
+                .andExpect(jsonPath("diseases.length()").value(2))
+                .andExpect(jsonPath("diseases[0].diseaseDepId").value(9))
+                .andExpect(jsonPath("diseases[0].diseaseName").value("Asc_disease5.4"))
+                .andExpect(jsonPath("diseases[0].diseaseIdentifier").value("A1.5.4"))
+                .andExpect(jsonPath("diseases[1].diseaseDepId").value(10))
+                .andExpect(jsonPath("diseases[1].diseaseName").value("Asc_disease5.5"))
+                .andExpect(jsonPath("diseases[1].diseaseIdentifier").value("A1.5.5"))
         ;
     }
 
@@ -196,13 +195,13 @@ public class GetSortOpenDiseaseByDoctorIdTest extends ContextIT {
                                 .header("Authorization", accessToken)
                 )
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases.length()").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseDepId").value(8))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseName").value("Asc_disease5.3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[0].diseaseIdentifier").value("A1.5.3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseDepId").value(7))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseName").value("Asc_disease5.2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("diseases[1].diseaseIdentifier").value("A1.5.2"))
+                .andExpect(jsonPath("diseases.length()").value(2))
+                .andExpect(jsonPath("diseases[0].diseaseDepId").value(8))
+                .andExpect(jsonPath("diseases[0].diseaseName").value("Asc_disease5.3"))
+                .andExpect(jsonPath("diseases[0].diseaseIdentifier").value("A1.5.3"))
+                .andExpect(jsonPath("diseases[1].diseaseDepId").value(7))
+                .andExpect(jsonPath("diseases[1].diseaseName").value("Asc_disease5.2"))
+                .andExpect(jsonPath("diseases[1].diseaseIdentifier").value("A1.5.2"))
         ;
     }
 }
