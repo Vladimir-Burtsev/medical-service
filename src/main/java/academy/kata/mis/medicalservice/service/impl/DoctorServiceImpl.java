@@ -24,16 +24,6 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor getDoctorIfExistsByUserIdAndId(UUID doctorUUID, long id) {
-        if (!doctorRepository.existsByUserIdAndId(doctorUUID, id)) {
-            log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
-                    doctorUUID);
-            throw new LogicException("Доктор не найден");
-        }
-        return doctorRepository.findByUserId(doctorUUID);
-    }
-
-    @Override
     public boolean isExistsByUserIdAndId(UUID doctorUUID, long id) {
         return doctorRepository.existsByUserIdAndId(doctorUUID, id);
     }
