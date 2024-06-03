@@ -12,6 +12,5 @@ public interface DoctorBusinessService {
 
     DoctorFullNameAndPositionsAndCabinetDto getDoctorFullNameAndPositionsAndCabinet(PersonFullNameDto personFullNameDto,
                                                                                     PositionsNameAndCabinetDto positionsNameAndCabinetDto);
-
-    boolean isExistDoctor(UUID doctorUUID, long id);
+    boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 }

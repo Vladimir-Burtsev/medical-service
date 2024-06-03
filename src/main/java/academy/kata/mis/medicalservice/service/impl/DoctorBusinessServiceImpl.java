@@ -38,7 +38,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     }
 
     @Override
-    public boolean isExistDoctor(UUID doctorUUID, long id) {
-        return doctorService.isExistsByUserIdAndId(doctorUUID, id);
+    public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
+        return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
     }
 }
