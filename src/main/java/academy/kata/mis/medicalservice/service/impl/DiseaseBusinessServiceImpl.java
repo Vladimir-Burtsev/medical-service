@@ -14,11 +14,6 @@ public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
     private final DiseaseService diseaseService;
 
     @Override
-    public String getDiseaseIdentifier(long diseaseDepId) {
-        long diseaseId = diseaseService.getDiseaseByDiseaseDepId(diseaseDepId);
-        return diseaseService.getById(diseaseId).getIdentifier();
-    }
-
     public GetDiseaseDepShortInfoResponse getDiseaseDepShortInfoResponse(long doctorId,
                                                                          String diseaseName,
                                                                          String identifier,
@@ -26,12 +21,9 @@ public class DiseaseBusinessServiceImpl implements DiseaseBusinessService {
                                                                          int page,
                                                                          int size) {
         return new GetDiseaseDepShortInfoResponse(
-                diseaseService
-                        .getDiseaseShortInfoPagination(
-                                doctorId, diseaseName, identifier,
-                                PageRequest.of(page - 1, size, orderBy.getOrderBy())
-                        )
-                        .getContent()
-        );
+                diseaseService.getDiseaseShortInfoPagination(
+                        doctorId, diseaseName, identifier,
+                        PageRequest.of(page - 1, size, orderBy.getOrderBy())
+                ).getContent());
     }
 }
