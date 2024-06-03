@@ -37,8 +37,8 @@ public class DoctorDiseaseOuterController {
             @RequestParam(name = "disease_name", required = false, defaultValue = "") String diseaseName,
             @RequestParam(name = "identifier", required = false, defaultValue = "") String identifier,
             @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") DiseaseOrder order,
-            @RequestParam(name = "page", required = false, defaultValue = "1") @Min(1) int page,
-            @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(30) int size,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") int size,
             Principal principal) {
         String operation = "Возвращение всех заболеваний отделения.";
         UUID userId = UUID.fromString(principal.getName());
@@ -58,18 +58,6 @@ public class DoctorDiseaseOuterController {
                   "Сортировка: diseaseName - {}, identifier - {}, order - {}. " +
                   "Пагинация: page - {}, size - {}. Response: {}.",
                   operation, doctorId, userId, diseaseName, identifier, order, page, size, response);
-
-        // проверить что доктор существует +
-        // проверить что авторизованный пользователь является доктором +
-        // вернуть все заболевания отделения доктора которые имеют статус 'open' и попадают под два строковых паттерна
-        // пример:
-        // доктор может передать либо ни одного паттерна поиска, либо один либо два
-        // если паттерн имени имеет значение "кар" то будут найдены все заболевания у которых имя начинается на "кар"
-        // если паттерн идентификатора равен "А.01" то аналогично с идентификаторами
-        // если оба паттерна то будут найдены результаты которые удовлетворяют обоим условиям
-        // если нет ни одного то выведены все
-        // учесть что надо выводить с учетом сортировки
-        // так же надо учесть что все выводится с учетом пагинации
 
         return ResponseEntity.ok(response);
     }
