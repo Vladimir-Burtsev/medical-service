@@ -40,7 +40,7 @@ public class DoctorSamplesOuterController {
         UUID authUserId = UUID.fromString(principal.getName());
         log.info("Пользователь: {}; {}; Заболевание: {}", authUserId, operation, diseaseDepId);
 
-        if (!doctorBusinessService.isExistDoctor(authUserId, doctorId)) {
+        if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error(String.format("Доктор с id=%s не найден",
                     doctorId));
             throw new LogicException("Авторизованный пользователь не является доктором");
