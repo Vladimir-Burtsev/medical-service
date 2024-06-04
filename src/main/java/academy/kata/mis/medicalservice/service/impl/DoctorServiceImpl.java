@@ -23,6 +23,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public boolean isExistsByUserIdAndId(UUID doctorUUID, long id) {
+        return doctorRepository.existsByUserIdAndId(doctorUUID, id);
+    }
+
+    @Override
+    public Long getDoctorPersonIdByTalonId(Long talonId) {
+        return doctorRepository.getDoctorPersonIdByTalonId(talonId);
+    }
+
+    @Override
     public Doctor existsByUserIdAndId(UUID doctorUUID, long id) {
         if (!doctorRepository.existsByUserIdAndId(doctorUUID, id)) {
             log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
@@ -30,11 +40,6 @@ public class DoctorServiceImpl implements DoctorService {
             throw new LogicException("Доктор не найден");
         }
         return doctorRepository.findByUserId(doctorUUID);
-    }
-
-    @Override
-    public Long getDoctorPersonIdByTalonId(Long talonId) {
-        return doctorRepository.getDoctorPersonIdByTalonId(talonId);
     }
 
     @Override
