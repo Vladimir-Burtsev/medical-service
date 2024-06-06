@@ -32,9 +32,4 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return doctorRepository.findByUserId(doctorUUID);
     }
-
-    @Override
-    public Doctor getDoctorById(long id) {
-        return doctorRepository.getReferenceById(id);
-    }
 }

@@ -1,9 +1,7 @@
 package academy.kata.mis.medicalservice.controller.internal;
 
 import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
-import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
-import academy.kata.mis.medicalservice.service.TalonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

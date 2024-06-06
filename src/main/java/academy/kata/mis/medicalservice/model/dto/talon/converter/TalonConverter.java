@@ -5,8 +5,6 @@ import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositio
 import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
-import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import org.springframework.stereotype.Component;
 

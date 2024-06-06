@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.Doc;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -86,7 +85,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     public List<TalonDto> getAllByTomorrow() {
         List<Talon> talons = talonService.getAllByTomorrow();
         List<Doctor> doctors = talons.stream()
-                .map(t -> t.getDoctor())
+                .map(Talon::getDoctor)
                 .toList();
 
         Map<Long, PatientAndPersonIdDto> patientAndPersonIdDtoByPatientId = talons.stream()
@@ -99,13 +98,11 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 .collect(Collectors.toMap(Doctor::getId,
                         doctor -> doctorConverter.entityToDoctorDto(doctor, departmentDtoByDoctorId.get(doctor.getId()))));
 
-        List<TalonDto> result = talons.stream()
+        return talons.stream()
                 .map(talon -> talonConverter.entityToTalonDto(talon,
                         doctorDtoByDoctorId.get(talon.getDoctor().getId()),
                         patientAndPersonIdDtoByPatientId.get(talon.getPatient().getId())))
                 .toList();
-
-        return result;
     }
 
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(
