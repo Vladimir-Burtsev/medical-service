@@ -1,5 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
+import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.repository.TalonRepository;
 import academy.kata.mis.medicalservice.service.TalonService;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TalonServiceImpl implements TalonService {
     private final TalonRepository talonRepository;
+    private final TalonConverter talonConverter;
 
     @Override
     public Optional<Talon> findById(Long talonId) {
@@ -39,6 +42,7 @@ public class TalonServiceImpl implements TalonService {
     }
 
     @Override
+    @Transactional
     public List<Talon> getAllByTomorrow() {
         return talonRepository.findAllByTomorrow();
     }

@@ -1,6 +1,8 @@
 package academy.kata.mis.medicalservice.controller.internal;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import academy.kata.mis.medicalservice.service.TalonService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/internal/medical/talons")
 public class TalonsInternalController {
-    private final TalonService talonService;
+    private final TalonBusinessService talonBusinessService;
 
     @GetMapping
-    public ResponseEntity<List<Talon>> findAllByTomorrow() {
+    public ResponseEntity<List<TalonDto>> findAllByTomorrow() {
         log.info("findAllByTomorrow");
 
-        List<Talon> response = talonService.getAllByTomorrow();
+        List<TalonDto> response = talonBusinessService.getAllByTomorrow();
 
         log.debug("findAllByTomorrow; response: {}", response);
 

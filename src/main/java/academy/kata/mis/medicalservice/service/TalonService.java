@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.service;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 
 import java.util.List;

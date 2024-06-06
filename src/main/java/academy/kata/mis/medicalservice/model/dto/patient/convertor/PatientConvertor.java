@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.model.dto.patient.convertor;
 
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,13 @@ public class PatientConvertor {
                 .patientLastname(currentPatient.lastName())
                 .patientPatronymic(currentPatient.patronymic())
                 .birthday(currentPatient.birthday())
+                .build();
+    }
+
+    public PatientAndPersonIdDto entityToPatientAndPersonIdDto(Patient patient) {
+        return PatientAndPersonIdDto.builder()
+                .id(patient.getId())
+                .personId(patient.getPersonId())
                 .build();
     }
 }

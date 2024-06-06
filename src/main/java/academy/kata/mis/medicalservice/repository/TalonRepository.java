@@ -18,6 +18,14 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
         """)
     Set<Talon> findAllByPatientId(long patientId);
 
-    @Query("select t from Talon t where cast(t.time as date) = current_date + 1")
+    @Query("""
+        select t 
+        from Talon t 
+        join fetch t.doctor
+        join fetch t.doctor.department
+        join fetch t.doctor.department.organization
+        join fetch t.patient
+        where cast(t.time as date) = current_date + 1 DAY 
+        """)
     List<Talon> findAllByTomorrow();
 }

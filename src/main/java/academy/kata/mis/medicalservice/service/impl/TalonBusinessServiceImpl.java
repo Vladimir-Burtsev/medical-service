@@ -3,10 +3,16 @@ package academy.kata.mis.medicalservice.service.impl;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
+import academy.kata.mis.medicalservice.model.dto.department.DepartmentDto;
+import academy.kata.mis.medicalservice.model.dto.department.converter.DepartmentConverter;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
+import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -17,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +37,9 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final DoctorConvertor doctorConvertor;
     private final PersonFeignClient personFeignClient;
     private final StructureFeignClient structureFeignClient;
+    private final DepartmentConverter departmentConverter;
+    private final DoctorConvertor doctorConverter;
+    private final PatientConvertor patientConvertor;
 
     @Override
     @Transactional
@@ -70,6 +80,32 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 );
 
         return new GetAssignedTalonsByPatientResponse(talonWithDoctorShortDtos);
+    }
+
+    @Override
+    public List<TalonDto> getAllByTomorrow() {
+        List<Talon> talons = talonService.getAllByTomorrow();
+        List<Doctor> doctors = talons.stream()
+                .map(t -> t.getDoctor())
+                .toList();
+
+        Map<Long, PatientAndPersonIdDto> patientAndPersonIdDtoByPatientId = talons.stream()
+                .collect(Collectors.toMap(talon -> talon.getPatient().getId(),
+                        talon -> patientConvertor.entityToPatientAndPersonIdDto(talon.getPatient())));
+        Map<Long, DepartmentDto> departmentDtoByDoctorId = doctors.stream()
+                .collect(Collectors.toMap(Doctor::getId,
+                        doctor -> departmentConverter.entityToDepartmentDto(doctor.getDepartment())));
+        Map<Long, DoctorDto> doctorDtoByDoctorId = doctors.stream()
+                .collect(Collectors.toMap(Doctor::getId,
+                        doctor -> doctorConverter.entityToDoctorDto(doctor, departmentDtoByDoctorId.get(doctor.getId()))));
+
+        List<TalonDto> result = talons.stream()
+                .map(talon -> talonConverter.entityToTalonDto(talon,
+                        doctorDtoByDoctorId.get(talon.getDoctor().getId()),
+                        patientAndPersonIdDtoByPatientId.get(talon.getPatient().getId())))
+                .toList();
+
+        return result;
     }
 
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(
