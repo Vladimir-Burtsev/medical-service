@@ -35,6 +35,7 @@ public class DoctorOuterController {
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
         // вернуть всех докторов которыми является авторизованный пользователь
 
+
         return ResponseEntity.ok(null);
     }
 
@@ -51,15 +52,8 @@ public class DoctorOuterController {
 
         Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, doctorId);
 
-        GetCurrentDoctorPersonalInfoResponse response = GetCurrentDoctorPersonalInfoResponse
-                .builder()
-                .doctor(doctor)
-                .build();
 
 
-        // проверить что доктор существует
-        // проверить что текущий авторизованный доктор соответствует авторизованному пользователю
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(null);
     }
 }
