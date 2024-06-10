@@ -24,6 +24,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public boolean isExistsByUserIdAndId(UUID doctorUUID, long id) {
+        return doctorRepository.existsByUserIdAndId(doctorUUID, id);
+    }
+
+    @Override
+    public Long getDoctorPersonIdByTalonId(Long talonId) {
+        return doctorRepository.getDoctorPersonIdByTalonId(talonId);
+    }
+
+    @Override
     public Doctor existsByUserIdAndId(UUID doctorUUID, long id) {
         if (!doctorRepository.existsByUserIdAndId(doctorUUID, id)) {
             log.error("Доктор с id:{}; не найден или авторизованный пользователь не является переданным доктором.",
@@ -34,13 +44,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Long getDoctorPersonIdByTalonId(Long talonId) {
-        return doctorRepository.getDoctorPersonIdByTalonId(talonId);
+    public Long getDoctorIdByTalonId(Long talonId) {
+        return doctorRepository.getDoctorIdByTalonId(talonId);
     }
 
     @Override
-    public Long getDoctorIdByTalonId(Long talonId) {
-        return doctorRepository.getDoctorIdByTalonId(talonId);
+    public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
+        return doctorRepository.existsByUserIdAndId(userId, doctorId);
     }
 
     // переедет из доктор сервиса в визит сервис createPatientVisit

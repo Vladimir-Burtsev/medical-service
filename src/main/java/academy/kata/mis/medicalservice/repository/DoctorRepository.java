@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
-    Doctor findByUserId(UUID doctorId);
+    Doctor findByUserId(UUID doctorUUID);
 
     List<Doctor> findAllByUserId(UUID userId);
 

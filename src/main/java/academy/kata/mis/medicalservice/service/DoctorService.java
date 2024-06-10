@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DoctorService {
+    boolean isExistsByUserIdAndId(UUID doctorUUID, long id);
     Doctor existsByUserIdAndId(UUID doctorUUID, long id);
     Long getDoctorIdByTalonId(Long talonId);
     Long getDoctorPersonIdByTalonId(Long talonId);
     List<Doctor> findAllByUserId(UUID userId);
     Long getOrganizationIdByDepartmentId(long departmentId);
+    boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 }
