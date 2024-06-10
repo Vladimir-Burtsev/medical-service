@@ -1,5 +1,7 @@
 package academy.kata.mis.medicalservice.service;
 
+
+import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -11,4 +13,7 @@ public interface DoctorBusinessService {
     Doctor getDoctorIfExists(UUID doctorUUID, long id);
     DoctorFullNameAndPositionsAndCabinetDto getDoctorFullNameAndPositionsAndCabinet(PersonFullNameDto personFullNameDto,
                                                                                     PositionsNameAndCabinetDto positionsNameAndCabinetDto);
+
+
+    GetDoctorPersonalInfoResponse getDoctorInformationByUser(UUID userId);
 }

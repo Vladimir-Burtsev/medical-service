@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,5 +44,14 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     // переедет из доктор сервиса в визит сервис createPatientVisit
+    @Override
+    public List<Doctor> findAllByUserId(UUID userId) {
+        return doctorRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public Long getOrganizationIdByDepartmentId(long departmentId) {
+        return doctorRepository.getOrganizationIdByDepartmentId(departmentId);
+    }
 
 }

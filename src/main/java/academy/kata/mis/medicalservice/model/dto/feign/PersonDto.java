@@ -1,7 +1,9 @@
 package academy.kata.mis.medicalservice.model.dto.feign;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
+
+@Builder
 public record PersonDto(long id, String firstName, String lastName) {
 }
+

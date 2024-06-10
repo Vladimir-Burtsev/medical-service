@@ -1,12 +1,8 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
-import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
-import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
-import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +24,15 @@ public class DoctorOuterController {
 
     private final DoctorBusinessService doctorBusinessService;
 
-    private final AuditMessageService auditMessageService;
-    private final UUID doctorUUID = UUID.fromString(log.getName());
 
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
         // вернуть всех докторов которыми является авторизованный пользователь
 
+        GetDoctorPersonalInfoResponse response =
+                doctorBusinessService.getDoctorInformationByUser(UUID.fromString(principal.getName()));
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -47,12 +43,6 @@ public class DoctorOuterController {
             @RequestParam(name = "doctor_id") long doctorId) {
         // проверить что доктор существует
         // проверить что текущий авторизованный доктор соответствует переданному доктору
-
-
-
-        Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, doctorId);
-
-
 
         return ResponseEntity.ok(null);
     }

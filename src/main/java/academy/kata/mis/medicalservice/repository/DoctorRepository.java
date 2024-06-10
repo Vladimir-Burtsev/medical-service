@@ -5,11 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     Doctor findByUserId(UUID doctorId);
+
+    List<Doctor> findAllByUserId(UUID userId);
 
     @Query("SELECT CASE WHEN COUNT(d) > 0 AND (SELECT d2.id FROM Doctor d2 WHERE d2.userId = :doctorId) = :id " +
             "THEN TRUE ELSE FALSE END " +
@@ -29,4 +32,12 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             WHERE t.id = :talonId
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);
+
+    @Query("""
+            SELECT t.organization.id
+            FROM Department t
+            WHERE t.id = :departmentId
+            """)
+    Long getOrganizationIdByDepartmentId(@Param("departmentId") long departmentId);
+
 }
