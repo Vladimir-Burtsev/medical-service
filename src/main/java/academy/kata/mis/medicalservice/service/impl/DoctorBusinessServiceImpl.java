@@ -87,9 +87,9 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
         Long organizationId = organizationService.getOrganizationIdByDepartmentId(departmentId);
 
-        DepartmentShortDto departmentDto = DepartmentConvertor.entityToDepartmentShortDto(departmentId, null);
+        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, null);
 
-        OrganizationShortDto organizationDto = OrganizationConvertor.entityToOrganizationShortDto(organizationId, null);
+        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, null);
 
         return EmployeeShortInfoInOrganizationDto.builder()
                 .employeeId(doctor.getId())
