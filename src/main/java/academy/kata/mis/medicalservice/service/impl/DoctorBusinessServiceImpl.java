@@ -2,15 +2,19 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
+import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
 import academy.kata.mis.medicalservice.model.dto.employee.EmployeeShortInfoInOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
+import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
+import academy.kata.mis.medicalservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     private final DoctorService doctorService;
+    private final OrganizationService organizationService;
+    private final DoctorConvertor doctorConvertor;
+    private final DepartmentConvertor departmentConvertor;
+    private final OrganizationConvertor organizationConvertor;
+
 
 
     @Override
@@ -43,14 +52,12 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .build();
     }
 
+    @Override
     public GetDoctorPersonalInfoResponse getDoctorInformationByUser(UUID userId) {
         List<Doctor> doctors = doctorService.findAllByUserId(userId);
 
-
         if (doctors.isEmpty()) {
             return GetDoctorPersonalInfoResponse.builder()
-                    .person(null)
-                    .doctors(null)
                     .build();
         }
 
@@ -68,27 +75,21 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .build();
     }
 
-    List<EmployeeShortInfoInOrganizationDto> createDoctors(List<Doctor> doctors) {
+    private List<EmployeeShortInfoInOrganizationDto> createDoctors(List<Doctor> doctors) {
         return doctors.stream()
                 .map(this::create)
                 .toList();
     }
 
-    EmployeeShortInfoInOrganizationDto create(Doctor doctor) {
+    private EmployeeShortInfoInOrganizationDto create(Doctor doctor) {
 
+        Long departmentId = doctor.getDepartment().getId();
 
-        long organizationId = doctorService.getOrganizationIdByDepartmentId(doctor.getDepartment().getId());
+        Long organizationId = organizationService.getOrganizationIdByDepartmentId(departmentId);
 
-        OrganizationShortDto organizationDto = OrganizationShortDto.builder()
-                .organizationId(organizationId)
-                .organizationName(null)
-                .build();
+        DepartmentShortDto departmentDto = DepartmentConvertor.entityToDepartmentShortDto(departmentId, null);
 
-        DepartmentShortDto departmentDto = DepartmentShortDto.builder()
-                .departmentId(doctor.getDepartment().getId())
-                .departmentName(null)
-                .build();
-
+        OrganizationShortDto organizationDto = OrganizationConvertor.entityToOrganizationShortDto(organizationId, null);
 
         return EmployeeShortInfoInOrganizationDto.builder()
                 .employeeId(doctor.getId())
@@ -96,6 +97,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .organization(organizationDto)
                 .department(departmentDto)
                 .build();
+
     }
 
 

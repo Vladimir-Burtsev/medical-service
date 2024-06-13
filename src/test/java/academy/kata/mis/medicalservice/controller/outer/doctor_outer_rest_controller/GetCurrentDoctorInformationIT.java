@@ -57,7 +57,7 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
                 .andExpect(jsonPath("$.person.firstName").doesNotExist())
                 .andExpect(jsonPath("$.person.lastName").doesNotExist())
 
-                .andExpect(jsonPath("$.doctors.length()", Is.is(2)))
+                .andExpect(jsonPath("$.doctors.length()", Is.is(3)))
 
                 .andExpect(jsonPath("$.doctors[0].employeeId", Is.is(501)))
                 .andExpect(jsonPath("$.doctors[0].positionName").doesNotExist())
@@ -69,11 +69,17 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
 
                 .andExpect(jsonPath("$.doctors[1].employeeId", Is.is(502)))
                 .andExpect(jsonPath("$.doctors[1].positionName").doesNotExist())
-
-                .andExpect(jsonPath("$.doctors[1].organization.organizationId", Is.is(1002)))
+                .andExpect(jsonPath("$.doctors[1].organization.organizationId", Is.is(1001)))
                 .andExpect(jsonPath("$.doctors[1].organization.name").doesNotExist())
                 .andExpect(jsonPath("$.doctors[1].department.departmentId", Is.is(302)))
                 .andExpect(jsonPath("$.doctors[1].department.name").doesNotExist())
+
+                .andExpect(jsonPath("$.doctors[2].employeeId", Is.is(503)))
+                .andExpect(jsonPath("$.doctors[2].positionName").doesNotExist())
+                .andExpect(jsonPath("$.doctors[2].organization.organizationId", Is.is(1002)))
+                .andExpect(jsonPath("$.doctors[2].organization.name").doesNotExist())
+                .andExpect(jsonPath("$.doctors[2].department.departmentId", Is.is(401)))
+                .andExpect(jsonPath("$.doctors[2].department.name").doesNotExist())
         ;
 
 

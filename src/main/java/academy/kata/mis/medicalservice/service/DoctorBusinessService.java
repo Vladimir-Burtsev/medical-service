@@ -17,5 +17,6 @@ public interface DoctorBusinessService {
 
 
     GetDoctorPersonalInfoResponse getDoctorInformationByUser(UUID userId);
+
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 }

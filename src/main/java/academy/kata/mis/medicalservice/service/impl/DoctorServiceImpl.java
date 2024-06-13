@@ -16,6 +16,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class DoctorServiceImpl implements DoctorService {
+
     private DoctorRepository doctorRepository;
 
     @Autowired
@@ -53,15 +54,17 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.existsByUserIdAndId(userId, doctorId);
     }
 
-    // переедет из доктор сервиса в визит сервис createPatientVisit
+//    @Override
+//    public List<DoctorAndOrganizationDTOAndDepartmentDTO> getDoctorAndOrganizationAndDepartmentByUserId(UUID userId) {
+//        return doctorRepository.GetDoctorAndOrganizationAndDepartmentByUserId(userId);
+//    }
+
+
     @Override
     public List<Doctor> findAllByUserId(UUID userId) {
         return doctorRepository.findAllByUserId(userId);
     }
 
-    @Override
-    public Long getOrganizationIdByDepartmentId(long departmentId) {
-        return doctorRepository.getOrganizationIdByDepartmentId(departmentId);
-    }
+
 
 }

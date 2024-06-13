@@ -28,9 +28,13 @@ public class DoctorOuterController {
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
         // вернуть всех докторов которыми является авторизованный пользователь
+        String operation = "Получение информации о докторах, которыми является авторизованный пользователь";
+        log.info("{}; principal {}", operation, principal);
 
         GetDoctorPersonalInfoResponse response =
                 doctorBusinessService.getDoctorInformationByUser(UUID.fromString(principal.getName()));
+
+        log.debug("{}; Успешно; principal {}", operation, principal);
 
         return ResponseEntity.ok(response);
     }

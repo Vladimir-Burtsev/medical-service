@@ -33,11 +33,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);
 
-    @Query("""
-            SELECT t.organization.id
-            FROM Department t
-            WHERE t.id = :departmentId
-            """)
-    Long getOrganizationIdByDepartmentId(@Param("departmentId") long departmentId);
+
 
 }

@@ -11,6 +11,7 @@ public interface DoctorService {
     Long getDoctorIdByTalonId(Long talonId);
     Long getDoctorPersonIdByTalonId(Long talonId);
     List<Doctor> findAllByUserId(UUID userId);
-    Long getOrganizationIdByDepartmentId(long departmentId);
+    //Long getOrganizationIdByDepartmentId(long departmentId);
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
+    //List<DoctorAndOrganizationAndDepartmentDTO> getDoctorAndOrganizationAndDepartmentByUserId(UUID userId);
 }
