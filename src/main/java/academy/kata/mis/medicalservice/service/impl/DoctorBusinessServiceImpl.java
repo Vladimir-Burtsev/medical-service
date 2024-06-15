@@ -11,7 +11,9 @@ import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortD
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
+import academy.kata.mis.medicalservice.model.entity.Department;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
+import academy.kata.mis.medicalservice.model.entity.Organization;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.OrganizationService;
@@ -34,7 +36,6 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     private final OrganizationConvertor organizationConvertor;
 
 
-
     @Override
     public Doctor existsByUserIdAndId(UUID doctorUUID, long id) {
         return doctorService.existsByUserIdAndId(doctorUUID, id);
@@ -54,15 +55,20 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     @Override
     public GetDoctorPersonalInfoResponse getDoctorInformationByUser(UUID userId) {
-        List<Doctor> doctors = doctorService.findAllByUserId(userId);
+        List<Doctor> doctors = doctorService.findAllWithDepartmentsAndOrganizations(userId);
 
         if (doctors.isEmpty()) {
             return GetDoctorPersonalInfoResponse.builder()
                     .build();
         }
 
+        long personId = doctors.stream()
+                .findFirst()
+                .map(Doctor::getPersonId)
+                .orElse(0L);
+
         PersonDto personDto = PersonDto.builder()
-                .id(doctors.get(0).getPersonId())
+                .id(personId)
                 .firstName(null)
                 .lastName(null)
                 .build();
@@ -83,9 +89,10 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     private EmployeeShortInfoInOrganizationDto create(Doctor doctor) {
 
-        Long departmentId = doctor.getDepartment().getId();
-
-        Long organizationId = organizationService.getOrganizationIdByDepartmentId(departmentId);
+        Department department = doctor.getDepartment();
+        Organization organization = department.getOrganization();
+        Long departmentId = department.getId();
+        Long organizationId = organization.getId();
 
         DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, null);
 
@@ -100,12 +107,9 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     }
 
-
-
     @Override
     public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
         return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
     }
 }
-
 

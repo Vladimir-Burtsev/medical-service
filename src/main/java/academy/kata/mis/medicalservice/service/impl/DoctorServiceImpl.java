@@ -54,17 +54,14 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.existsByUserIdAndId(userId, doctorId);
     }
 
-//    @Override
-//    public List<DoctorAndOrganizationDTOAndDepartmentDTO> getDoctorAndOrganizationAndDepartmentByUserId(UUID userId) {
-//        return doctorRepository.GetDoctorAndOrganizationAndDepartmentByUserId(userId);
-//    }
-
-
     @Override
     public List<Doctor> findAllByUserId(UUID userId) {
         return doctorRepository.findAllByUserId(userId);
     }
 
-
+    @Override
+    public List<Doctor> findAllWithDepartmentsAndOrganizations(UUID userId) {
+        return doctorRepository.findAllWithDepartmentsAndOrganizations(userId);
+    }
 
 }

@@ -33,6 +33,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);
 
+    @Query("""
+            SELECT d FROM Doctor d
+            JOIN FETCH d.department dep
+            JOIN FETCH dep.organization org
+            WHERE d.userId = :userId
+            """)
+    List<Doctor> findAllWithDepartmentsAndOrganizations(@Param("userId") UUID userId);
 
 
 }
