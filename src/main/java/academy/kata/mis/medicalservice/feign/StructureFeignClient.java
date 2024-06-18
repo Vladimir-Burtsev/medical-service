@@ -2,6 +2,7 @@ package academy.kata.mis.medicalservice.feign;
 
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.DepartmentDto;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -18,6 +19,9 @@ public interface StructureFeignClient {
 
     @GetMapping("/internal/structure/organization")
     OrganizationDto getOrganizationById(@RequestParam(name = "organization_id") long organizationId);
+
+    @GetMapping("/internal/structure/organization/departmentname")
+    DepartmentDto getDepartmentById(@RequestParam(name = "department_id") long departmentId);
 
     @GetMapping("/internal/structure/positions")
     PositionsNameAndCabinetDto getPositionsNameAndCabinetById(@RequestParam(name = "position_id") long positionId);
@@ -46,6 +50,15 @@ public interface StructureFeignClient {
             String responseMessage = """
                     Медицинская организация не существует по переданному id %s
                     """.formatted(organizationId, reason);
+
+            throw new FeignRequestException(responseMessage);
+        }
+
+        @Override
+        public DepartmentDto getDepartmentById(long departmentId) {
+            String responseMessage = """
+                    Департамент не существует по переданному id = %s не найден
+                    """.formatted(departmentId, reason);
 
             throw new FeignRequestException(responseMessage);
         }

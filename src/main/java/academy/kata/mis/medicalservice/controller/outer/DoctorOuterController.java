@@ -2,6 +2,7 @@ package academy.kata.mis.medicalservice.controller.outer;
 
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class DoctorOuterController {
 
     private final DoctorBusinessService doctorBusinessService;
+    private final AuditMessageService auditMessageService;
 
 
     @GetMapping
@@ -36,10 +38,11 @@ public class DoctorOuterController {
 
         log.debug("{}; Успешно; principal {}", operation, principal);
 
+        auditMessageService.sendAudit(
+                principal.getName(), operation, "успешное получение информации о докторах");
+
         return ResponseEntity.ok(response);
     }
-
-
 
 
     @GetMapping("/current")

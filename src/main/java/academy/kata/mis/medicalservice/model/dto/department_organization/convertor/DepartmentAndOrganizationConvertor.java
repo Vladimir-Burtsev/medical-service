@@ -7,9 +7,9 @@ public class DepartmentAndOrganizationConvertor {
     public DepartmentAndOrganizationDto entityToDepartmentAndOrganizationDto(Long departmentId, String departmentName, Long organizationId, String organizationName) {
         return DepartmentAndOrganizationDto.builder()
                 .departmentId(departmentId)
-                .departmentName(null)
+                .departmentName(departmentName)
                 .organizationId(organizationId)
-                .organizationName(null)
+                .organizationName(organizationName)
                 .build();
     }
 }

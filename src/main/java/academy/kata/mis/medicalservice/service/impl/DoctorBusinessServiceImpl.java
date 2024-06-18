@@ -1,5 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
 import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
@@ -34,6 +36,8 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     private final DoctorConvertor doctorConvertor;
     private final DepartmentConvertor departmentConvertor;
     private final OrganizationConvertor organizationConvertor;
+    private final StructureFeignClient structureFeignClient;
+    private final PersonFeignClient personFeignClient;
 
 
     @Override
@@ -62,16 +66,11 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                     .build();
         }
 
-        long personId = doctors.stream()
-                .findFirst()
-                .map(Doctor::getPersonId)
-                .orElse(0L);
+        long personId = doctors.get(0).getPersonId();
 
-        PersonDto personDto = PersonDto.builder()
-                .id(personId)
-                .firstName(null)
-                .lastName(null)
-                .build();
+
+        PersonDto personDto = personFeignClient.getPersonById(personId);
+
 
         List<EmployeeShortInfoInOrganizationDto> doctorDtos = createDoctors(doctors);
 
@@ -91,16 +90,22 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
         Department department = doctor.getDepartment();
         Organization organization = department.getOrganization();
+
         Long departmentId = department.getId();
         Long organizationId = organization.getId();
 
-        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, null);
+        String departmentName = structureFeignClient.getDepartmentById(departmentId).getName();
+        String organizationName = structureFeignClient.getOrganizationById(organizationId).getName();
+        String positionName = structureFeignClient.getPositionNameById(doctor.getPositionId()).getName();
 
-        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, null);
+
+        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, departmentName);
+        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, organizationName);
+
 
         return EmployeeShortInfoInOrganizationDto.builder()
                 .employeeId(doctor.getId())
-                .positionName(null)
+                .positionName(positionName)
                 .organization(organizationDto)
                 .department(departmentDto)
                 .build();
