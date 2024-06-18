@@ -32,7 +32,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     private JwtProvider jwtProvider;
 
 
-    private String accessToken = "Bearer token";
+    private final String accessToken = "Bearer token";
 
     @Test
     public void GetCurrentDoctorInfo_success() throws Exception{
