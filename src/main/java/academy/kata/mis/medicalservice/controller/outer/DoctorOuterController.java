@@ -4,6 +4,7 @@ import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/doctor")
 public class DoctorOuterController {
+
     private final DoctorBusinessService doctorBusinessService;
+    private final AuditMessageService auditMessageService;
+
 
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
@@ -31,6 +35,7 @@ public class DoctorOuterController {
 
         return ResponseEntity.ok(null);
     }
+
 
     @GetMapping("/current")
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
@@ -46,18 +51,24 @@ public class DoctorOuterController {
 
         // проверить что текущий авторизованный доктор соответствует авторизованному пользователю
         UUID authUserId = UUID.fromString(principal.getName());
-        if(!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)){
+        if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} и userId = {}  не является авторизованным.",
                     operation, doctorId, authUserId);
             throw new AuthException("Доктор не авторизован!");
         }
 
-        //первая часть - получить инфу из текущего МС. Все чего нет - просисать null
+        //первая часть - получить инфу из текущего МС. Все чего нет - просисать null (done in Commit ca94f120)
+        //вторая часть - сходить во все микросервисы и получить недостающие чвсти и заменить null на данные
         GetCurrentDoctorPersonalInfoResponse response =
                 doctorBusinessService.getCurrentDoctorPersonalInfoById(doctorId);
 
+        log.debug("{} doctorId = {}, userId = {}. Успешно! " + "Сформирован Response: {}.",
+                operation, doctorId, authUserId, response);
 
-        //вторая часть - сходить во все микросервисы и получить недостающие чвсти и заменить null на данные
+        auditMessageService.sendAudit(
+                authUserId.toString(), operation, ": успешно!");
+        log.debug("{}; Успешно; UUID {}", operation, authUserId);
+
         return ResponseEntity.ok(response);
     }
 }
