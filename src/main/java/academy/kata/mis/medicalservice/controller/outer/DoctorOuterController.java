@@ -40,7 +40,7 @@ public class DoctorOuterController {
     @GetMapping("/current")
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
-        // проверить что доктор существует
+
         String operation = " Получение информации о докторе по его doctor_id";
         log.info("{}: {}", operation, doctorId);
 
@@ -49,7 +49,6 @@ public class DoctorOuterController {
             throw new LogicException("Доктор не найден!");
         }
 
-        // проверить что текущий авторизованный доктор соответствует авторизованному пользователю
         UUID authUserId = UUID.fromString(principal.getName());
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} и userId = {}  не является авторизованным.",
@@ -57,8 +56,6 @@ public class DoctorOuterController {
             throw new AuthException("Доктор не авторизован!");
         }
 
-        //первая часть - получить инфу из текущего МС. Все чего нет - просисать null (done in Commit ca94f120)
-        //вторая часть - сходить во все микросервисы и получить недостающие чвсти и заменить null на данные
         GetCurrentDoctorPersonalInfoResponse response =
                 doctorBusinessService.getCurrentDoctorPersonalInfoById(doctorId);
 
