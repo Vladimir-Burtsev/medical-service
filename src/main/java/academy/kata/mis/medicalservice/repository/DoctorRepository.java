@@ -29,4 +29,17 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             WHERE t.id = :talonId
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);
+
+    //novikov
+    @Query("""
+            SELECT case when (count(d.id) > 0) then true else false
+            END from Doctor d where d.id = :id
+            """)
+    boolean isDoctorExistsById(Long id);
+
+    //novikov
+    @Query("""
+            SELECT d.positionId FROM Doctor d WHERE d.id = :id
+            """)
+    long getPositionIdByDoctorId(long id);
 }
