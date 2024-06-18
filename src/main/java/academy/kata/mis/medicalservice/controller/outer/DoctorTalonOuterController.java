@@ -1,9 +1,12 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAllDoctorTalonsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorCurrentDayTalonsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetFullTalonInformationResponse;
+import academy.kata.mis.medicalservice.service.DoctorBusinessService;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Slf4j
 @PreAuthorize("hasAnyAuthority('DOCTOR', 'CHIEF_DOCTOR', 'DIRECTOR')")
@@ -19,6 +24,9 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/doctor/talon")
 public class DoctorTalonOuterController {
+
+    private final TalonBusinessService talonBusinessService;
+    private final DoctorBusinessService doctorBusinessService;
 
     /**
      * страница 3
@@ -61,15 +69,38 @@ public class DoctorTalonOuterController {
      */
     @GetMapping("/full/info")
     public ResponseEntity<GetFullTalonInformationResponse> getFullTalonInfo(
-            @RequestParam(name = "talon_id") long talonId) {
-        // проерить что талон существует
-        // проверить что талон принадлежит доктору который является авторизованным пользователем
-        // вернуть полную информацию о талоне (пациент может отсутсвовать)
+            @RequestParam(name = "talon_id") long talonId,
+            Principal principal) {
 
+        String operation = "Получение информации о талоне; getFullTalonInfo";
+        log.info("{}; talonId - {}", operation, talonId);
+
+        // проверить что талон существует
+        if (!talonBusinessService.isExistById(talonId)) {
+            log.error("{}; Талон с talonId = {} не существует.", operation, talonId);
+            throw new LogicException("Талон не найден!");
+        }
+
+        // проверить что талон принадлежит доктору, который является авторизованным пользователем:
+        UUID authUserId = UUID.fromString(principal.getName());
+        Long doctorId = doctorBusinessService.getDoctorIdByTalonId(talonId);
+
+        if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
+            log.error("{}; Авторизованный пользователь (userId = {}) не является доктором(doctorId = {}), " +
+                    "которому принадлежит талон (talonId = {})", operation, authUserId, doctorId, talonId);
+            throw new LogicException("Авторизованный пользователь не является доктором, которому принадлежит талон");
+        }
+
+        // вернуть полную информацию о талоне (пациент может отсутствовать)
         //1 часть получит только инфу из МС, все чего в нем нет возвращаешь null
-        //2 часть сделать запросы в другие МС и заменить null на данные
+        GetFullTalonInformationResponse response = talonBusinessService.getFullTalonInfoById(talonId);
 
-        return ResponseEntity.ok(null);
+
+        //2 часть сделать запросы в другие МС и заменить null на данные
+        
+        log.debug("{}; Успешно; talonID {}", operation, talonId);
+
+        return ResponseEntity.ok(response);
     }
 
     /**

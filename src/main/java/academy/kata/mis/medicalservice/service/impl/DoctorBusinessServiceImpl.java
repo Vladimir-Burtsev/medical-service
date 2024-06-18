@@ -41,4 +41,9 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
         return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
     }
+
+    @Override
+    public Long getDoctorIdByTalonId(Long talonId) {
+        return doctorService.getDoctorIdByTalonId(talonId);
+    }
 }

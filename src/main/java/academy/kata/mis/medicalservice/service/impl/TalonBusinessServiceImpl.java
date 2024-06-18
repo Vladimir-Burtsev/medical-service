@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.GetFullTalonInformationResponse;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
@@ -107,6 +108,17 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 );
 
         return new GetAssignedTalonsByPatientResponse(talonWithDoctorShortDtos);
+    }
+
+    @Override
+    public boolean isExistById(Long talonId) {
+        return talonService.findById(talonId).isPresent();
+    }
+
+    @Override
+    public GetFullTalonInformationResponse getFullTalonInfoById(Long talonId) {
+
+        return null;
     }
 
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(
