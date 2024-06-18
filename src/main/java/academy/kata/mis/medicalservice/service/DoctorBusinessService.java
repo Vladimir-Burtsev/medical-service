@@ -15,9 +15,7 @@ public interface DoctorBusinessService {
                                                                                     PositionsNameAndCabinetDto positionsNameAndCabinetDto);
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 
-    //novikov
     boolean isDoctorExistsById(Long id);
 
-    //novikov
     GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id);
 }

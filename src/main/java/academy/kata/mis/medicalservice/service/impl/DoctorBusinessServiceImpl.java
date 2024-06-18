@@ -59,13 +59,11 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
         return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
     }
 
-    //novikov
     @Override
     public boolean isDoctorExistsById(Long id) {
         return doctorService.isDoctorExistsById(id);
     }
 
-    //novikov
     @Override
     public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id) {
 

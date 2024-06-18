@@ -11,9 +11,7 @@ public interface DoctorService {
     Long getDoctorPersonIdByTalonId(Long talonId);
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 
-    //novikov
     boolean isDoctorExistsById(Long id);
 
-    //novikov
     long getPositionIdByDoctorId(long id);
 }

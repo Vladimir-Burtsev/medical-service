@@ -13,7 +13,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
-    //novikov
     @Override
     public long getDepartmentIdByDoctorId(long id) {
         return departmentRepository.getDepartmentIdByDoctorId(id);

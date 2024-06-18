@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
-    //novikov
     @Query("""
             SELECT d.department.id FROM Doctor d WHERE d.id = :id
             """)
