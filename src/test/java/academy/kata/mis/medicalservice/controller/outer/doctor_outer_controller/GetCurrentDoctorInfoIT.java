@@ -3,7 +3,6 @@ package academy.kata.mis.medicalservice.controller.outer.doctor_outer_controller
 import academy.kata.mis.medicalservice.ContextIT;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
-import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
@@ -61,24 +60,20 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
+        PositionsNameAndCabinetDto positionsNameAndCabinetDto = new PositionsNameAndCabinetDto(100,
+                "position name", "cabinet number");
+        when(structureFeignClient.getPositionsNameAndCabinetById(100)).thenReturn(positionsNameAndCabinetDto);
+
         DoctorShortDto feignDoctorShortDto = new DoctorShortDto(doctorId, "doctorFirstName",
                 "doctorLastName", "doctorPatronymic", null);
         when(personFeignClient.getCurrentDoctorById(doctorId))
                 .thenReturn(feignDoctorShortDto);
-
-        PositionDto feignPositionDto = new PositionDto(100, "position name");
-        when(structureFeignClient.getPositionNameById(100))
-                .thenReturn(feignPositionDto);
 
         DepartmentAndOrganizationDto departmentAndOrganizationDto = new DepartmentAndOrganizationDto(
                 10L, "department name10",
                 1L, "organization name1");
         when(structureFeignClient.getDepartmentAndOrganizationName(10L))
                 .thenReturn(departmentAndOrganizationDto);
-
-        PositionsNameAndCabinetDto positionsNameAndCabinetDto = new PositionsNameAndCabinetDto(100,
-                "position name", "cabinet number");
-        when(structureFeignClient.getPositionsNameAndCabinetById(100)).thenReturn(positionsNameAndCabinetDto);
 
         mockMvc.perform(
                         get("/api/medical/doctor/current")
@@ -101,11 +96,9 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 .andReturn();
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
-        verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
-        verify(structureFeignClient, times(1)).getPositionNameById(100);
-        verify(structureFeignClient, times(1)).getDepartmentAndOrganizationName(10L);
         verify(structureFeignClient, times(1)).getPositionsNameAndCabinetById(100);
-
+        verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
+        verify(structureFeignClient, times(1)).getDepartmentAndOrganizationName(10L);
     }
 
     @Test
@@ -129,7 +122,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", accessToken)
                 )
-                .andExpect(status().is(422))
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(answerException));
 
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
@@ -156,7 +149,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", accessToken)
                 )
-                .andExpect(status().is(403))
+                .andExpect(status().isForbidden())
+//                .is(403)
                 .andExpect(content().string(answerException));
 
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());

@@ -41,7 +41,7 @@ public class DoctorOuterController {
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
 
-        String operation = " Получение информации о докторе по его doctor_id";
+        String operation = " Получение инфо о докторе по doctor_id";
         log.info("{}: {}", operation, doctorId);
 
         if (!doctorBusinessService.isDoctorExistsById(doctorId)) {
@@ -59,8 +59,8 @@ public class DoctorOuterController {
         GetCurrentDoctorPersonalInfoResponse response =
                 doctorBusinessService.getCurrentDoctorPersonalInfoById(doctorId);
 
-        log.debug("{} doctorId = {}, userId = {}. Успешно! " + "Сформирован Response: {}.",
-                operation, doctorId, authUserId, response);
+        log.debug("Успешно! {} = {}, userId = {}. medical-service DoctorOuterController.getCurrentDoctorInfo().",
+                operation, doctorId, authUserId);
 
         auditMessageService.sendAudit(
                 authUserId.toString(), operation, ": успешно!");

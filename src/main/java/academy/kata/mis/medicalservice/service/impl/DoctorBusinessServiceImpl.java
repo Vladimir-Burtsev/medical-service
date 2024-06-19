@@ -67,11 +67,13 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     @Override
     public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id) {
 
+        PositionsNameAndCabinetDto positionsNameAndCabinetDto = structureFeignClient
+                .getPositionsNameAndCabinetById(doctorService.getPositionIdByDoctorId(id));
+
         DoctorShortDto doctorShortDto = doctorConvertor
                 .entityToDoctorShortDtoWithPositionName(
                         personFeignClient.getCurrentDoctorById(id),
-                        structureFeignClient.getPositionNameById(doctorService.getPositionIdByDoctorId(id))
-                );
+                        positionsNameAndCabinetDto);
 
         DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
                 .getDepartmentAndOrganizationName(departmentService.getDepartmentIdByDoctorId(id));
@@ -81,9 +83,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
         DepartmentShortDto departmentShortDto = departmentConvertor
                 .entityToDepartmentShortDto(departmentAndOrganizationDto);
 
-
-        String cabinetNumber = structureFeignClient
-                .getPositionsNameAndCabinetById(doctorService.getPositionIdByDoctorId(id)).cabinet();
+        String cabinetNumber = positionsNameAndCabinetDto.cabinet();
 
         return new GetCurrentDoctorPersonalInfoResponse(doctorShortDto, organizationShortDto,
                 departmentShortDto, cabinetNumber);
