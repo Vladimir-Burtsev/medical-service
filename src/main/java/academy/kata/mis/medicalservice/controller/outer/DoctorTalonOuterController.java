@@ -71,7 +71,6 @@ public class DoctorTalonOuterController {
     public ResponseEntity<GetFullTalonInformationResponse> getFullTalonInfo(
             @RequestParam(name = "talon_id") long talonId,
             Principal principal) {
-
         String operation = "Получение информации о талоне; getFullTalonInfo";
         log.info("{}; talonId - {}", operation, talonId);
 
@@ -90,16 +89,12 @@ public class DoctorTalonOuterController {
                     "которому принадлежит талон (talonId = {})", operation, authUserId, doctorId, talonId);
             throw new LogicException("Авторизованный пользователь не является доктором, которому принадлежит талон");
         }
-
         // вернуть полную информацию о талоне (пациент может отсутствовать)
-        //1 часть получит только инфу из МС, все чего в нем нет возвращаешь null
+        // + 1 часть получит только инфу из МС, все чего в нем нет возвращаешь null
+        // 2 часть сделать запросы в другие МС и заменить null на данные
         GetFullTalonInformationResponse response = talonBusinessService.getFullTalonInfoById(talonId);
 
-
-        //2 часть сделать запросы в другие МС и заменить null на данные
-        
         log.debug("{}; Успешно; talonID {}", operation, talonId);
-
         return ResponseEntity.ok(response);
     }
 
