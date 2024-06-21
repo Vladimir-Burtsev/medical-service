@@ -64,7 +64,7 @@ public class DoctorAppealOuterController {
         UUID doctorUUID = UUID.fromString(principal.getName());
         log.info("createAppealForPatient: doctor: {}, patientId = {}", principal.getName(), request.patientId());
 
-        Doctor doctor = doctorBusinessService.getDoctorIfExists(doctorUUID, request.doctorId());
+        Doctor doctor = doctorBusinessService.existsByUserIdAndId(doctorUUID, request.doctorId());
         if (!diseaseDepBusinessService.checkIsExistByIdAndDoctorId(request.diseaseDepId(), doctor.getId())) {
             log.debug("Заболевание с id {} и доктором с id {} не существует",
                     request.diseaseDepId(), doctor.getId());

@@ -36,6 +36,4 @@ public class PatientOuterController {
         log.debug("{}; Успешно; principal {}", operation, principal);
         return ResponseEntity.ok(response);
     }
-
-
 }

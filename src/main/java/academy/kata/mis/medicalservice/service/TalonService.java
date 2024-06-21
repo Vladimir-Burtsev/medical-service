@@ -9,11 +9,8 @@ import java.util.UUID;
 
 public interface TalonService {
     Optional<Talon> findById(Long talonId);
-
     void save(Talon talon);
-
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
-
     Set<Talon> allPatientTalonByPatientId(long patientId);
 
     List<Talon> getAllByTomorrow();

@@ -5,6 +5,8 @@ import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedPatientTalonsByDepartmentsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.GetTalonFullInformationResponse;
+import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.PatientBusinessService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class PatientTalonOuterController {
     private final TalonBusinessService talonBusinessService;
     private final PatientBusinessService patientBusinessService;
+    private final AuditMessageService auditMessageService;
 
     /**
      * страница 2
@@ -75,21 +78,22 @@ public class PatientTalonOuterController {
     @PatchMapping("/unassign")
     public void cancelReservation(@RequestParam(name = "talon_id") Long talonId,
                                   Principal principal) {
-        String operation = "Отмена записи на прием к врачу";
-        log.info("{}; principal {}; talonID {}", operation, principal.getName(), talonId);
+        String operation = "Отмена записи на прием к врачу. CancelReservation.";
+        UUID userId = UUID.fromString(principal.getName());
+        log.info("{}; principal {}; talonID {}", operation, userId, talonId);
 
-        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, UUID.fromString(principal.getName()))) {
-            log.error("{}; ошибка: талон с указанным Id не найден у пользователя с UserId; talonId {}; UserId {}",
-                    operation, talonId, principal.getName());
-            throw new LogicException("Талон с Id = " + talonId + " у пользователя с userId = "
-                    + principal.getName() + " не сущестует.");
+        if (!talonBusinessService.existsTalonByIdAndPatientUserId(talonId, userId)) {
+            log.error("{}; ошибка: талон с Id = {} у пользователя с userId = {} не существует.",
+                    operation, talonId, userId);
+            throw new LogicException("У авторизованного пользователя отсутствует указанный талон на прием к врачу.");
         }
 
-        talonBusinessService.cancelReservationTalon(talonId);
+        CancelTalonDto talonDto = talonBusinessService.cancelReservationTalon(talonId, userId);
 
-        log.debug("{}; Успешно; principal {}; talonID {}", operation, principal.getName(), talonId);
-        //todo
-        // отправить сообщение на почту пациенту что запись к врачу отменена пациентом
+        auditMessageService.sendAudit(userId.toString(), operation,
+                operation + ". Успешно! " + talonDto.toString());
+
+        log.debug("{}; Успешно; principal {}; talonID {}", operation, userId, talonId);
     }
 
     @PatchMapping("/assign")

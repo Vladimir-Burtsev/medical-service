@@ -14,7 +14,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceSenderImpl implements ReportServiceSender {
-
     private final KafkaSenderService kafkaSenderService;
     private final PersonFeignClient personFeignClient;
 
@@ -36,7 +35,7 @@ public class ReportServiceSenderImpl implements ReportServiceSender {
     }
 
     private String checkExistEmail(boolean email, UUID userId) {
-        return email ? personFeignClient.getPersonContactByUserId(userId) : null;
+        return email ? personFeignClient.getPersonEmailByUserId(userId) : null;
     }
 
     //todo убрать заглушки

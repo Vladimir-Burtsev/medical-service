@@ -1,8 +1,10 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
+import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentDto;
 import academy.kata.mis.medicalservice.model.dto.department.converter.DepartmentConverter;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorDto;
@@ -12,18 +14,27 @@ import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Talon;
-import academy.kata.mis.medicalservice.service.*;
+import academy.kata.mis.medicalservice.model.enums.CommandType;
+import academy.kata.mis.medicalservice.service.DoctorService;
+import academy.kata.mis.medicalservice.service.MessageServiceSender;
+import academy.kata.mis.medicalservice.service.TalonBusinessService;
+import academy.kata.mis.medicalservice.service.TalonService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,20 +43,46 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final TalonService talonService;
-    private final TalonConverter talonConverter;
-    private final DoctorConvertor doctorConvertor;
     private final PersonFeignClient personFeignClient;
+    private final TalonConverter talonConverter;
+    private final DoctorService doctorService;
+    private final DoctorConvertor doctorConvertor;
     private final StructureFeignClient structureFeignClient;
+    private final MessageServiceSender messageServiceSender;
     private final DepartmentConverter departmentConverter;
     private final DoctorConvertor doctorConverter;
     private final PatientConvertor patientConvertor;
 
     @Override
     @Transactional
-    public void cancelReservationTalon(Long talonId) {
+    public CancelTalonDto cancelReservationTalon(Long talonId, UUID userId) {
         Talon talon = talonService.findById(talonId).get();
         talon.setPatient(null);
         talonService.save(talon);
+
+        PersonDto personDto = personFeignClient
+                .getPersonById(doctorService.getDoctorPersonIdByTalonId(talonId));
+
+        DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
+                .getDepartmentAndOrganizationName(doctorService.getDoctorIdByTalonId(talonId));
+
+        messageServiceSender.sendInMessageService(
+                CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
+                personFeignClient.getPersonEmailByUserId(userId),
+                "отмена записи на прием к врачу",
+                talon.getTime().toString(),
+                personDto.firstName(),
+                personDto.lastName(),
+                departmentAndOrganizationDto.departmentName(),
+                departmentAndOrganizationDto.organizationName()
+        );
+
+        return CancelTalonDto.builder()
+                .talonId(talonId)
+                .doctorId(talon.getDoctor().getId())
+                .departmentId(departmentAndOrganizationDto.departmentId())
+                .organizationId(departmentAndOrganizationDto.organizationId())
+                .build();
     }
 
     @Override
@@ -138,7 +175,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
             PersonFullNameDto personFullNameDtoMap,
             PositionsNameAndCabinetDto positionsNameAndCabinetDtoMap) {
         return doctorConvertor.entityToDoctorFullNameAndPositionsAndCabinetDto(personFullNameDtoMap,
-                                                                                positionsNameAndCabinetDtoMap);
+                positionsNameAndCabinetDtoMap);
     }
 
     private Map<Long, DoctorFullNameAndPositionsAndCabinetDto> getDoctorFullNameAndPositionsAndCabinetDtoByDoctorsId(
