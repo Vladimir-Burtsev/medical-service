@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.GetTalonsTomorrow;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
@@ -15,7 +16,6 @@ import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConver
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
-import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -31,10 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -119,27 +116,46 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     }
 
     @Override
-    public List<TalonDto> getAllByTomorrow() {
+    public GetTalonsTomorrow getAllByTomorrow() {
         List<Talon> talons = talonService.getAllByTomorrow();
         List<Doctor> doctors = talons.stream()
                 .map(Talon::getDoctor)
                 .toList();
 
-        Map<Long, PatientAndPersonIdDto> patientAndPersonIdDtoByPatientId = talons.stream()
-                .collect(Collectors.toMap(talon -> talon.getPatient().getId(),
-                        talon -> patientConvertor.entityToPatientAndPersonIdDto(talon.getPatient())));
-        Map<Long, DepartmentDto> departmentDtoByDoctorId = doctors.stream()
-                .collect(Collectors.toMap(Doctor::getId,
-                        doctor -> departmentConverter.entityToDepartmentDto(doctor.getDepartment())));
-        Map<Long, DoctorDto> doctorDtoByDoctorId = doctors.stream()
-                .collect(Collectors.toMap(Doctor::getId,
-                        doctor -> doctorConverter.entityToDoctorDto(doctor, departmentDtoByDoctorId.get(doctor.getId()))));
+        Map<Long, PatientAndPersonIdDto> patientAndPersonIdDtoByPatientId = new HashMap<>();
+        talons.forEach(
+                talon -> patientAndPersonIdDtoByPatientId.computeIfAbsent(
+                        talon.getPatient().getId(),
+                        talonId -> patientConvertor.entityToPatientAndPersonIdDto(talon.getPatient())
+                )
+        );
 
-        return talons.stream()
+        Map<Long, DepartmentDto> departmentDtoByDoctorId = new HashMap<>();
+        doctors.forEach(
+                doctor -> departmentDtoByDoctorId.computeIfAbsent(
+                        doctor.getId(),
+                        doctorId -> departmentConverter.entityToDepartmentDto(doctor.getDepartment())
+                )
+        );
+
+        Map<Long, DoctorDto> doctorDtoByDoctorId = new HashMap<>();
+        doctors.forEach(
+                doctor -> doctorDtoByDoctorId.computeIfAbsent(
+                        doctor.getId(),
+                        doctorId -> doctorConverter.entityToDoctorDto(
+                                doctor,
+                                departmentDtoByDoctorId.get(doctor.getId())
+                        )
+                )
+        );
+
+        return new GetTalonsTomorrow(talons.stream()
                 .map(talon -> talonConverter.entityToTalonDto(talon,
                         doctorDtoByDoctorId.get(talon.getDoctor().getId()),
                         patientAndPersonIdDtoByPatientId.get(talon.getPatient().getId())))
-                .toList();
+                .toList()
+        );
+
     }
 
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(

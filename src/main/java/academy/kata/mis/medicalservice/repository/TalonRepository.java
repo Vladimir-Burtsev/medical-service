@@ -27,7 +27,8 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
         join fetch t.doctor.department
         join fetch t.doctor.department.organization
         join fetch t.patient
-        where cast(t.time as date) = current_date + 1 DAY 
+        where (cast(t.time as date) = current_date + 1 DAY)
+        and t.patient is not null
         """)
     List<Talon> findAllByTomorrow();
 }
