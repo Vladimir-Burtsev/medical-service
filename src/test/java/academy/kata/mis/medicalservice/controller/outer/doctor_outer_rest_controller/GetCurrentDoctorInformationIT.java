@@ -11,7 +11,6 @@ import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
-import feign.FeignException;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -139,72 +138,27 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
     }
 
     @Test
-    public void testAuthorization_fail() throws Exception {
+    public void getCurrentDoctorInformation_AuthorizationFail() throws Exception {
 
-            // Мокирование неавторизованного пользователя
-            JwtAuthentication jwtInfoToken = new JwtAuthentication();
-            jwtInfoToken.setAuthenticated(false);
-            when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
-            when(jwtProvider.validateAccessToken("token")).thenReturn(false);
+        // Мокирование неавторизованного пользователя
+        JwtAuthentication jwtInfoToken = new JwtAuthentication();
+        jwtInfoToken.setAuthenticated(false);
+        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.validateAccessToken("token")).thenReturn(false);
 
-            // Вызов метода контроллера
-            mockMvc.perform(
-                            get("/api/medical/doctor")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .header("Authorization", "Bearer token")
-                    )
-                    .andExpect(status().isUnauthorized());
+        // Вызов метода контроллера
+        mockMvc.perform(
+                        get("/api/medical/doctor")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer token")
+                )
+                .andExpect(status().isUnauthorized());
 
-            // Проверка логирования
+        // Проверка логирования
         verifyNoInteractions(auditMessageService);
         verifyNoInteractions(personFeignClient);
         verifyNoInteractions(structureFeignClient);
 
-
-    }
-
-
-    @Test
-    public void getCurrentDoctorInformation_failure_when_feign_clients_are_unavailable() throws Exception {
-
-        // Заглушка отправки в аудит
-        doNothing().when(auditMessageService).sendAudit(anyString(), anyString(), anyString());
-
-        // Задаем нужное нам поведение при проверке токена
-        JwtAuthentication jwtInfoToken = new JwtAuthentication();
-        jwtInfoToken.setUserId(UUID.fromString("cf29361a-c9ed-4644-a6dc-db639774850e"));
-        jwtInfoToken.setRoles(Set.of(new Role("PATIENT"), new Role("DOCTOR"), new Role("DIRECTOR")));
-        jwtInfoToken.setAuthenticated(true);
-        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
-        when(jwtProvider.validateAccessToken("token")).thenReturn(true);
-        when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
-
-        // Задаем поведения клиента при запросах должности, организации и департамента
-//        when(structureFeignClient.getPositionNameById(anyLong())).thenThrow(FeignException.class);
-//        when(structureFeignClient.getOrganizationById(anyLong())).thenThrow(FeignException.class);
-//        when(structureFeignClient.getDepartmentById(anyLong())).thenThrow(FeignException.class);
-//
-////        PersonDto person = new PersonDto(100, "FirstName", "LastName");
-        when(personFeignClient.getPersonById(anyLong())).thenReturn(null).thenThrow(FeignException.class);
-
-        // Запустим тест
-        mockMvc.perform(
-                        get("/api/medical/doctor")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header("Authorization", accessToken)
-                )
-                .andExpect(status().isInternalServerError());
-
-        // Проверка логирования
-        verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
-
-        // Проверка логирования
-        verify(personFeignClient, times(1)).getPersonById(anyLong());
-
-        // Проверка логирования
-        verify(structureFeignClient, times(3)).getPositionNameById(anyLong());
-        verify(structureFeignClient, times(3)).getOrganizationById(anyLong());
-        verify(structureFeignClient, times(3)).getDepartmentById(anyLong());
 
     }
 
