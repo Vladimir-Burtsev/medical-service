@@ -12,6 +12,7 @@ import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
+import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.entity.Department;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -19,6 +20,7 @@ import academy.kata.mis.medicalservice.model.entity.Organization;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.OrganizationService;
+import feign.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,20 +90,35 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     private EmployeeShortInfoInOrganizationDto create(Doctor doctor) {
 
-        Department department = doctor.getDepartment();
-        Organization organization = department.getOrganization();
+//        Department department = doctor.getDepartment();
+//        Organization organization = department.getOrganization();
 
-        Long departmentId = department.getId();
-        Long organizationId = organization.getId();
+//        Long departmentId = department.getId();
+//        Long organizationId = organization.getId();
 
-        String departmentName = structureFeignClient.getDepartmentById(departmentId).getName();
-        String organizationName = structureFeignClient.getOrganizationById(organizationId).getName();
-        String positionName = structureFeignClient.getPositionNameById(doctor.getPositionId()).getName();
+//        String departmentName = structureFeignClient.getDepartmentById(departmentId).getName();
+//        String organizationName = structureFeignClient.getOrganizationById(organizationId).getName();
+//        String positionName = structureFeignClient.getPositionNameById(doctor.getPositionId()).getName();
 
 
-        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, departmentName);
-        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, organizationName);
+//        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, departmentName);
+//        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, organizationName);
 
+        PositionsDepartmentOrganizationDto response = structureFeignClient.getPositionsDepartmentOrganizationByPositionId(doctor.getPositionId(), doctor.getDepartment().getId(), doctor.getDepartment().getOrganization().getId()).getBody();
+
+        String positionName = null;
+        if (response != null) {
+            positionName = response.getPositionName();
+        }
+
+        DepartmentShortDto departmentDto = null;
+        if (response != null) {
+            departmentDto = departmentConvertor.entityToDepartmentShortDto(response.getDepartmentId(), response.getDepartmentName());
+        }
+        OrganizationShortDto organizationDto = null;
+        if (response != null) {
+            organizationDto = organizationConvertor.entityToOrganizationShortDto(response.getOrganizationId(), response.getOrganizationName());
+        }
 
         return EmployeeShortInfoInOrganizationDto.builder()
                 .employeeId(doctor.getId())
