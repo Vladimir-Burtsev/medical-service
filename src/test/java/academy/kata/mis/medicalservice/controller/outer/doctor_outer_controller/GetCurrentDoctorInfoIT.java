@@ -6,6 +6,7 @@ import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
@@ -60,20 +61,20 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
-        PositionsNameAndCabinetDto positionsNameAndCabinetDto = new PositionsNameAndCabinetDto(100,
-                "position name", "cabinet number");
-        when(structureFeignClient.getPositionsNameAndCabinetById(100)).thenReturn(positionsNameAndCabinetDto);
+        DepartmentOrganizationPositionCabinetNameDto feignDepartmentOrganizationPositionCabinetNameDto =
+                new DepartmentOrganizationPositionCabinetNameDto(10,
+                                                                 "department name10",
+                                                                 1,
+                                                                 "organization name1",
+                                                                 "position name",
+                                                                 "cabinet number");
+        when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(100))
+                .thenReturn(feignDepartmentOrganizationPositionCabinetNameDto);
 
         DoctorShortDto feignDoctorShortDto = new DoctorShortDto(doctorId, "doctorFirstName",
                 "doctorLastName", "doctorPatronymic", null);
         when(personFeignClient.getCurrentDoctorById(doctorId))
                 .thenReturn(feignDoctorShortDto);
-
-        DepartmentAndOrganizationDto departmentAndOrganizationDto = new DepartmentAndOrganizationDto(
-                10L, "department name10",
-                1L, "organization name1");
-        when(structureFeignClient.getDepartmentAndOrganizationName(10L))
-                .thenReturn(departmentAndOrganizationDto);
 
         mockMvc.perform(
                         get("/api/medical/doctor/current")
@@ -96,9 +97,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 .andReturn();
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
-        verify(structureFeignClient, times(1)).getPositionsNameAndCabinetById(100);
+        verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(100);
         verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
-        verify(structureFeignClient, times(1)).getDepartmentAndOrganizationName(10L);
     }
 
     @Test
@@ -150,7 +150,6 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                                 .header("Authorization", accessToken)
                 )
                 .andExpect(status().isForbidden())
-//                .is(403)
                 .andExpect(content().string(answerException));
 
         verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());

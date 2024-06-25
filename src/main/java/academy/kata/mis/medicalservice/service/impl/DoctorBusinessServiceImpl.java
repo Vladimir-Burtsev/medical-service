@@ -5,7 +5,7 @@ import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
 import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
-import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
@@ -14,10 +14,8 @@ import academy.kata.mis.medicalservice.model.dto.organization.convertor.Organiza
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.service.DepartmentService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
-import academy.kata.mis.medicalservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,8 +27,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     private final DoctorService doctorService;
-    private final DepartmentService departmentService;
-    private final OrganizationService organizationService;
     private final StructureFeignClient structureFeignClient;
     private final OrganizationConvertor organizationConvertor;
     private final DepartmentConvertor departmentConvertor;
@@ -65,25 +61,21 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     }
 
     @Override
-    public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id) {
+    public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long doctorId) {
 
-        PositionsNameAndCabinetDto positionsNameAndCabinetDto = structureFeignClient
-                .getPositionsNameAndCabinetById(doctorService.getPositionIdByDoctorId(id));
+        DepartmentOrganizationPositionCabinetNameDto departmentOrganizationPositionCabinetNameDto = structureFeignClient
+                .getDepartmentOrganizationPositionCabinetNameDto(doctorService.getPositionIdByDoctorId(doctorId));
 
         DoctorShortDto doctorShortDto = doctorConvertor
-                .entityToDoctorShortDtoWithPositionName(
-                        personFeignClient.getCurrentDoctorById(id),
-                        positionsNameAndCabinetDto);
-
-        DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
-                .getDepartmentAndOrganizationName(departmentService.getDepartmentIdByDoctorId(id));
+                .entityToDoctorShortDtoWithPositionName(personFeignClient.getCurrentDoctorById(doctorId),
+                        departmentOrganizationPositionCabinetNameDto);
 
         OrganizationShortDto organizationShortDto = organizationConvertor
-                .entityToOrganizationShortDto(departmentAndOrganizationDto);
+                .entityToOrganizationShortDto(departmentOrganizationPositionCabinetNameDto);
         DepartmentShortDto departmentShortDto = departmentConvertor
-                .entityToDepartmentShortDto(departmentAndOrganizationDto);
+                .entityToDepartmentShortDto(departmentOrganizationPositionCabinetNameDto);
 
-        String cabinetNumber = positionsNameAndCabinetDto.cabinet();
+        String cabinetNumber = departmentOrganizationPositionCabinetNameDto.cabinetNumber();
 
         return new GetCurrentDoctorPersonalInfoResponse(doctorShortDto, organizationShortDto,
                 departmentShortDto, cabinetNumber);

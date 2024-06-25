@@ -2,6 +2,7 @@ package academy.kata.mis.medicalservice.feign;
 
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -29,6 +30,10 @@ public interface StructureFeignClient {
     @GetMapping("/internal/structure/department-organization")
     DepartmentAndOrganizationDto getDepartmentAndOrganizationName(
             @RequestParam(name = "department_id") Long departmentId);
+
+    @GetMapping("/internal/structure/department-organization-position-cabinet")
+    DepartmentOrganizationPositionCabinetNameDto getDepartmentOrganizationPositionCabinetNameDto(
+            @RequestParam(name = "position_id") long positionId);
 
     @Component
     class StructureServiceFallbackFactory implements FallbackFactory<FallbackWithFactory> {
@@ -73,6 +78,15 @@ public interface StructureFeignClient {
             String responseMassage = """
                     Департамент с указанным Id = %s не найден.
                     """.formatted(departmentId, reason);
+
+            throw new FeignRequestException(responseMassage);
+        }
+
+        @Override
+        public DepartmentOrganizationPositionCabinetNameDto getDepartmentOrganizationPositionCabinetNameDto(long positionId) {
+            String responseMassage = """
+                    Позиция с указанным Id = %s не найдена.
+                    """.formatted(positionId, reason);
 
             throw new FeignRequestException(responseMassage);
         }

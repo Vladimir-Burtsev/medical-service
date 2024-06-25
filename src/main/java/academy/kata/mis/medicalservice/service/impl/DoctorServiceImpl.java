@@ -53,7 +53,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public boolean isDoctorExistsById(Long id){
+    public boolean isDoctorExistsById(Long id) {
         return doctorRepository.isDoctorExistsById(id);
     }
 

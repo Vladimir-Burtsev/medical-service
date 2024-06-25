@@ -41,15 +41,16 @@ public class DoctorOuterController {
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
 
+        UUID authUserId = UUID.fromString(principal.getName());
         String operation = " Получение инфо о докторе по doctor_id";
-        log.info("{}: {}", operation, doctorId);
+        log.info("{}: doctorId = {}, userId = {}", operation, doctorId, authUserId);
 
         if (!doctorBusinessService.isDoctorExistsById(doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} не существует.", operation, doctorId);
             throw new LogicException("Доктор не найден!");
         }
 
-        UUID authUserId = UUID.fromString(principal.getName());
+
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} и userId = {}  не является авторизованным.",
                     operation, doctorId, authUserId);
@@ -64,7 +65,7 @@ public class DoctorOuterController {
 
         auditMessageService.sendAudit(
                 authUserId.toString(), operation, ": успешно!");
-        log.debug("{}; Успешно; UUID {}", operation, authUserId);
+        log.debug("{}; Успешно; response {}", operation, response);
 
         return ResponseEntity.ok(response);
     }
