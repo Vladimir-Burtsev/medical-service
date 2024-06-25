@@ -36,7 +36,7 @@ public class GetFullTalonInfoIT extends ContextIT {
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
-        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.getTokenFromRequest(accessToken)).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
@@ -48,9 +48,9 @@ public class GetFullTalonInfoIT extends ContextIT {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.talonId", Is.is(1)))
-                .andExpect(jsonPath("$.visitTime", Is.is("2024-06-26")))
-                .andExpect(jsonPath("$.organization").doesNotExist())
-                .andExpect(jsonPath("$.organization").doesNotExist())
+                .andExpect(jsonPath("$.visitTime", Is.is("2024-06-26T13:00:00")))
+                .andExpect(jsonPath("$.organization.organizationId", Is.is(1)))
+                .andExpect(jsonPath("$.organization.organizationName").doesNotExist())
                 .andExpect(jsonPath("$.department.departmentId", Is.is(1)))
                 .andExpect(jsonPath("$.department.departmentName").doesNotExist())
                 .andExpect(jsonPath("$.cabinetNumber").doesNotExist())
@@ -70,7 +70,7 @@ public class GetFullTalonInfoIT extends ContextIT {
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
-        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.getTokenFromRequest(accessToken)).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
@@ -91,7 +91,7 @@ public class GetFullTalonInfoIT extends ContextIT {
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
         jwtInfoToken.setAuthenticated(true);
-        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.getTokenFromRequest(accessToken)).thenReturn("token");
         when(jwtProvider.validateAccessToken("token")).thenReturn(true);
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
@@ -103,5 +103,6 @@ public class GetFullTalonInfoIT extends ContextIT {
                 )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string("Авторизованный пользователь не является доктором, которому принадлежит талон"));
+
     }
 }

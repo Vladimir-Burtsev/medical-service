@@ -10,12 +10,14 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientRespo
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
+import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
+import academy.kata.mis.medicalservice.model.entity.Department;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.model.entity.Talon;
@@ -123,10 +125,16 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     public GetFullTalonInformationResponse getFullTalonInfoById(Long talonId) {
         Talon talon = talonService.findById(talonId).get();
         Doctor doctor = talon.getDoctor();
+        Department department = doctor.getDepartment();
         Patient patient = talon.getPatient();
 
+        OrganizationShortDto organizationShortDto = OrganizationShortDto.builder()
+                .organizationId(department.getOrganization().getId())
+                .organizationName(null)
+                .build();
+
         DepartmentShortDto departmentShortDto = DepartmentShortDto.builder()
-                .departmentId(doctor.getDepartment().getId())
+                .departmentId(department.getId())
                 .departmentName(null)
                 .build();
 
@@ -149,8 +157,8 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
 
         return new GetFullTalonInformationResponse(
                 talonId,
-                talon.getTime().toLocalDate(),
-                null,
+                talon.getTime(),
+                organizationShortDto,
                 departmentShortDto,
                 null,
                 doctorShortDto,

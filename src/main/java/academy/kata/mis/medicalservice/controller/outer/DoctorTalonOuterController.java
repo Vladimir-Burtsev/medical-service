@@ -71,8 +71,10 @@ public class DoctorTalonOuterController {
     public ResponseEntity<GetFullTalonInformationResponse> getFullTalonInfo(
             @RequestParam(name = "talon_id") long talonId,
             Principal principal) {
+
+        UUID authUserId = UUID.fromString(principal.getName());
         String operation = "Получение информации о талоне; getFullTalonInfo";
-        log.info("{}; talonId - {}", operation, talonId);
+        log.info("{}; authUserId - {}, talonId - {}", operation, authUserId, talonId);
 
         // проверить что талон существует
         if (!talonBusinessService.isExistById(talonId)) {
@@ -81,14 +83,13 @@ public class DoctorTalonOuterController {
         }
 
         // проверить что талон принадлежит доктору, который является авторизованным пользователем:
-        UUID authUserId = UUID.fromString(principal.getName());
         Long doctorId = doctorBusinessService.getDoctorIdByTalonId(talonId);
-
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{}; Авторизованный пользователь (userId = {}) не является доктором(doctorId = {}), " +
                     "которому принадлежит талон (talonId = {})", operation, authUserId, doctorId, talonId);
             throw new LogicException("Авторизованный пользователь не является доктором, которому принадлежит талон");
         }
+
         // вернуть полную информацию о талоне (пациент может отсутствовать)
         // + 1 часть получит только инфу из МС, все чего в нем нет возвращаешь null
         // 2 часть сделать запросы в другие МС и заменить null на данные
