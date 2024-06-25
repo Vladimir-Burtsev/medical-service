@@ -4,7 +4,6 @@ import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
-import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +25,6 @@ import java.util.UUID;
 public class DoctorOuterController {
 
     private final DoctorBusinessService doctorBusinessService;
-    private final AuditMessageService auditMessageService;
-
 
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
@@ -36,20 +33,18 @@ public class DoctorOuterController {
         return ResponseEntity.ok(null);
     }
 
-
     @GetMapping("/current")
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
             @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
 
         UUID authUserId = UUID.fromString(principal.getName());
-        String operation = " Получение инфо о докторе по doctor_id";
+        String operation = "Получение инфо о докторе по doctor_id";
         log.info("{}: doctorId = {}, userId = {}", operation, doctorId, authUserId);
 
         if (!doctorBusinessService.isDoctorExistsById(doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} не существует.", operation, doctorId);
             throw new LogicException("Доктор не найден!");
         }
-
 
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{} Ошибка! Доктор с doctorId = {} и userId = {}  не является авторизованным.",
@@ -62,10 +57,6 @@ public class DoctorOuterController {
 
         log.debug("Успешно! {} = {}, userId = {}. medical-service DoctorOuterController.getCurrentDoctorInfo().",
                 operation, doctorId, authUserId);
-
-        auditMessageService.sendAudit(
-                authUserId.toString(), operation, ": успешно!");
-        log.debug("{}; Успешно; response {}", operation, response);
 
         return ResponseEntity.ok(response);
     }

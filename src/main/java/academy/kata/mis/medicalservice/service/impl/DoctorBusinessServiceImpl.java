@@ -17,6 +17,7 @@ import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -61,14 +62,15 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     }
 
     @Override
+    @SneakyThrows
     public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long doctorId) {
 
-        DepartmentOrganizationPositionCabinetNameDto departmentOrganizationPositionCabinetNameDto = structureFeignClient
-                .getDepartmentOrganizationPositionCabinetNameDto(doctorService.getPositionIdByDoctorId(doctorId));
+            DepartmentOrganizationPositionCabinetNameDto departmentOrganizationPositionCabinetNameDto = structureFeignClient
+                    .getDepartmentOrganizationPositionCabinetNameDto(doctorService.getPositionIdByDoctorId(doctorId));
 
-        DoctorShortDto doctorShortDto = doctorConvertor
-                .entityToDoctorShortDtoWithPositionName(personFeignClient.getCurrentDoctorById(doctorId),
-                        departmentOrganizationPositionCabinetNameDto);
+            DoctorShortDto doctorShortDto = doctorConvertor
+                    .entityToDoctorShortDtoWithPositionName(personFeignClient.getCurrentDoctorById(doctorId),
+                            departmentOrganizationPositionCabinetNameDto);
 
         OrganizationShortDto organizationShortDto = organizationConvertor
                 .entityToOrganizationShortDto(departmentOrganizationPositionCabinetNameDto);

@@ -5,11 +5,8 @@ import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
-import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
-import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
-import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -30,9 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GetCurrentDoctorInfoIT extends ContextIT {
 
     @MockBean
-    private AuditMessageService auditMessageService;
-
-    @MockBean
     private JwtProvider jwtProvider;
 
     @MockBean
@@ -45,11 +39,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     private final Set<Role> roles =
             Set.of(new Role("DOCTOR"), new Role("CHIEF_DOCTOR"), new Role("DIRECTOR"));
 
-
     @Test
     public void GetCurrentDoctorInfo_success() throws Exception {
-
-        doNothing().when(auditMessageService).sendAudit(anyString(), anyString(), anyString());
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
         Long doctorId = 1000L;
@@ -62,12 +53,13 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
         when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
 
         DepartmentOrganizationPositionCabinetNameDto feignDepartmentOrganizationPositionCabinetNameDto =
-                new DepartmentOrganizationPositionCabinetNameDto(10,
-                                                                 "department name10",
-                                                                 1,
-                                                                 "organization name1",
-                                                                 "position name",
-                                                                 "cabinet number");
+                new DepartmentOrganizationPositionCabinetNameDto(
+                        10,
+                        "department name10",
+                        1,
+                        "organization name1",
+                        "position name",
+                        "cabinet number");
         when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(100))
                 .thenReturn(feignDepartmentOrganizationPositionCabinetNameDto);
 
@@ -96,7 +88,6 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 .andExpect(jsonPath("$.cabinetNumber", Is.is("cabinet number")))
                 .andReturn();
 
-        verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
         verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(100);
         verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
     }
@@ -124,8 +115,6 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(answerException));
-
-        verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -151,7 +140,5 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 )
                 .andExpect(status().isForbidden())
                 .andExpect(content().string(answerException));
-
-        verify(auditMessageService, times(0)).sendAudit(anyString(), anyString(), anyString());
     }
 }
