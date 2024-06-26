@@ -1,6 +1,8 @@
 package academy.kata.mis.medicalservice.controller;
 
 import academy.kata.mis.medicalservice.exceptions.*;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.net.UnknownHostException;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -42,9 +44,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(UnknownHostException.class)
-    public ResponseEntity<String> handleFeignExc(UnknownHostException ex) {
-        return new ResponseEntity<>("В данный момент невозможно получить весь спектр запрашиваемых данных",
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<String> handleFeignExc(FeignException ex) {
+        log.error("Ошибка при запросе в другой сервис: {}", ex.getMessage());
+        return new ResponseEntity<>("В данный момент невозможно получить весь спектр запрашиваемых данных.",
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

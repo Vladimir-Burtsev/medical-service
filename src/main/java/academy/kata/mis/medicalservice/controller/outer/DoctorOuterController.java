@@ -38,16 +38,16 @@ public class DoctorOuterController {
             @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
 
         UUID authUserId = UUID.fromString(principal.getName());
-        String operation = "Получение инфо о докторе по doctor_id";
+        String operation = "DoctorOuterController.getCurrentDoctorInfo()";
         log.info("{}: doctorId = {}, userId = {}", operation, doctorId, authUserId);
 
         if (!doctorBusinessService.isDoctorExistsById(doctorId)) {
-            log.error("{} Ошибка! Доктор с doctorId = {} не существует.", operation, doctorId);
+            log.error("{}: Ошибка! Доктор с doctorId = {} не существует.", operation, doctorId);
             throw new LogicException("Доктор не найден!");
         }
 
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
-            log.error("{} Ошибка! Доктор с doctorId = {} и userId = {}  не является авторизованным.",
+            log.error("Ошибка в {}. Доктор с doctorId = {} и userId = {}  не является авторизованным.",
                     operation, doctorId, authUserId);
             throw new AuthException("Доктор не авторизован!");
         }
@@ -55,8 +55,8 @@ public class DoctorOuterController {
         GetCurrentDoctorPersonalInfoResponse response =
                 doctorBusinessService.getCurrentDoctorPersonalInfoById(doctorId);
 
-        log.debug("Успешно! {} = {}, userId = {}. medical-service DoctorOuterController.getCurrentDoctorInfo().",
-                operation, doctorId, authUserId);
+        log.debug("Успешно! medical-service {}: doctorId = {}, userId = {}; Response = {}",
+                operation, doctorId, authUserId, response);
 
         return ResponseEntity.ok(response);
     }

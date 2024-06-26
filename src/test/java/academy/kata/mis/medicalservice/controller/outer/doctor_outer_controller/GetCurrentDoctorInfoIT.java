@@ -8,6 +8,7 @@ import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.util.JwtProvider;
+import feign.FeignException;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -74,7 +75,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", accessToken)
                 )
-                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
+//                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.doctor.doctorId", Is.is(doctorId.intValue())))
                 .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("doctorFirstName")))
@@ -140,5 +141,70 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 )
                 .andExpect(status().isForbidden())
                 .andExpect(content().string(answerException));
+    }
+
+    @Test
+    public void GetCurrentDoctorInfo_positionNotExist() throws Exception {
+
+        String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
+        Long doctorId = 1000L;
+        JwtAuthentication jwtInfoToken = new JwtAuthentication();
+        jwtInfoToken.setUserId(UUID.fromString(user));
+        jwtInfoToken.setRoles(roles);
+        jwtInfoToken.setAuthenticated(true);
+        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.validateAccessToken("token")).thenReturn(true);
+        when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
+
+        when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(anyLong()))
+                .thenThrow(FeignException.class);
+
+        mockMvc.perform(
+                        get("/api/medical/doctor/current")
+                                .param("doctor_id", doctorId.toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                )
+                .andExpect(status().isUnprocessableEntity());
+
+        verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(anyLong());
+    }
+
+    @Test
+    public void GetCurrentDoctorInfo_personNotExist() throws Exception {
+
+        String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
+        Long doctorId = 1000L;
+        JwtAuthentication jwtInfoToken = new JwtAuthentication();
+        jwtInfoToken.setUserId(UUID.fromString(user));
+        jwtInfoToken.setRoles(roles);
+        jwtInfoToken.setAuthenticated(true);
+        when(jwtProvider.getTokenFromRequest("Bearer token")).thenReturn("token");
+        when(jwtProvider.validateAccessToken("token")).thenReturn(true);
+        when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
+
+        DepartmentOrganizationPositionCabinetNameDto feignDepartmentOrganizationPositionCabinetNameDto =
+                new DepartmentOrganizationPositionCabinetNameDto(
+                        10,
+                        "department name10",
+                        1,
+                        "organization name1",
+                        "position name",
+                        "cabinet number");
+        when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(anyLong()))
+                .thenReturn(feignDepartmentOrganizationPositionCabinetNameDto);
+
+        when(personFeignClient.getCurrentDoctorById(doctorId)).thenThrow(FeignException.class);
+
+        mockMvc.perform(
+                        get("/api/medical/doctor/current")
+                                .param("doctor_id", doctorId.toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                )
+                .andExpect(status().isUnprocessableEntity());
+
+        verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(anyLong());
+        verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
     }
 }
