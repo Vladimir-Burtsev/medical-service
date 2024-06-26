@@ -104,7 +104,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 //        DepartmentShortDto departmentDto = departmentConvertor.entityToDepartmentShortDto(departmentId, departmentName);
 //        OrganizationShortDto organizationDto = organizationConvertor.entityToOrganizationShortDto(organizationId, organizationName);
 
-        PositionsDepartmentOrganizationDto response = structureFeignClient.getPositionsDepartmentOrganizationByPositionId(doctor.getPositionId(), doctor.getDepartment().getId(), doctor.getDepartment().getOrganization().getId()).getBody();
+        PositionsDepartmentOrganizationDto response = structureFeignClient.getPositionsDepartmentOrganizationByPositionId(doctor.getPositionId(), doctor.getDepartment().getId(), doctor.getDepartment().getOrganization().getId());
 
         String positionName = null;
         if (response != null) {

@@ -6,7 +6,7 @@ import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
-import academy.kata.mis.medicalservice.model.dto.feign.PositionsDepartmentOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.hamcrest.core.Is;

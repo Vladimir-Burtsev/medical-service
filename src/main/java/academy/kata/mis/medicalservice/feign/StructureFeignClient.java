@@ -9,7 +9,6 @@ import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOr
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +36,7 @@ public interface StructureFeignClient {
             @RequestParam(name = "department_id") Long departmentId);
 
     @GetMapping("/internal/structure/organization/positionsdepartmentorganization")
-    public ResponseEntity<PositionsDepartmentOrganizationDto> getPositionsDepartmentOrganizationByPositionId(
+    PositionsDepartmentOrganizationDto getPositionsDepartmentOrganizationByPositionId(
             @RequestParam(name = "position_id") long positionId,
             @RequestParam(name = "department_id") long departmentId,
             @RequestParam(name = "organization_id") long organizationId);
@@ -65,7 +64,7 @@ public interface StructureFeignClient {
 
 
         @Override
-        public ResponseEntity<PositionsDepartmentOrganizationDto> getPositionsDepartmentOrganizationByPositionId(
+        public PositionsDepartmentOrganizationDto getPositionsDepartmentOrganizationByPositionId(
                 long positionId,
                 long departmentId,
                 long organizationId) {

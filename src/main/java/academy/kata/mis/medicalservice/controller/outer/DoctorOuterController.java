@@ -36,7 +36,7 @@ public class DoctorOuterController {
         GetDoctorPersonalInfoResponse response =
                 doctorBusinessService.getDoctorInformationByUser(UUID.fromString(principal.getName()));
 
-        log.debug("{}; Успешно; principal {}", operation, principal);
+        log.debug("{}; Успешное получение информации о докторе; principal {}; {}", operation, principal, response);
 
         auditMessageService.sendAudit(
                 principal.getName(), operation, "успешное получение информации о докторах");
