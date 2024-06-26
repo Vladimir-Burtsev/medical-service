@@ -1,7 +1,6 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
-import academy.kata.mis.medicalservice.model.GetTalonsTomorrow;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
@@ -16,6 +15,7 @@ import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConver
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -116,7 +116,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     }
 
     @Override
-    public GetTalonsTomorrow getAllByTomorrow() {
+    public List<TalonDto> getAllByTomorrow() {
         List<Talon> talons = talonService.getAllByTomorrow();
         List<Doctor> doctors = talons.stream()
                 .map(Talon::getDoctor)
@@ -149,12 +149,11 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 )
         );
 
-        return new GetTalonsTomorrow(talons.stream()
+        return talons.stream()
                 .map(talon -> talonConverter.entityToTalonDto(talon,
                         doctorDtoByDoctorId.get(talon.getDoctor().getId()),
                         patientAndPersonIdDtoByPatientId.get(talon.getPatient().getId())))
-                .toList()
-        );
+                .toList();
 
     }
 
