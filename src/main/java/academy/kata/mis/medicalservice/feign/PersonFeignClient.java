@@ -1,9 +1,9 @@
 package academy.kata.mis.medicalservice.feign;
 
+import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
-import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;

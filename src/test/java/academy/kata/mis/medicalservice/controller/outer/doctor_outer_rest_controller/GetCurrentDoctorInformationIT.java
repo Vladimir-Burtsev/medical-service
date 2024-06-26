@@ -6,7 +6,7 @@ import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
-import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.positions.RepPositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
 import org.hamcrest.core.Is;
@@ -64,32 +64,16 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
 
         //задаем поведения клиента при запросах должности, организации и департамента
 
+        RepPositionsDepartmentOrganizationDto RepPositionsDepartmentOrganization601 = new RepPositionsDepartmentOrganizationDto
+                (601L, "Position601 mock name", 301L, "Department301 mock name", 1001L, "Organization1001 mock name");
+        RepPositionsDepartmentOrganizationDto RepPositionsDepartmentOrganization602 = new RepPositionsDepartmentOrganizationDto
+                (602L, "Position602 mock name", 302L, "Department302 mock name", 1001L, "Organization1001 mock name");
+        RepPositionsDepartmentOrganizationDto RepPositionsDepartmentOrganization603 = new RepPositionsDepartmentOrganizationDto
+                (603L, "Position603 mock name", 401L, "Department401 mock name", 1002L, "Organization1002 mock name");
 
-//        PositionDto PositionDto602 = new PositionDto(602L, "Position602 mock name");
-//        PositionDto PositionDto603 = new PositionDto(603L, "Position603 mock name");
-////        when(structureFeignClient.getPositionNameById(601)).thenReturn(PositionDto601);
-////        when(structureFeignClient.getPositionNameById(602)).thenReturn(PositionDto602);
-////        when(structureFeignClient.getPositionNameById(603)).thenReturn(PositionDto603);
-////
-//        OrganizationDto organization1001 = new OrganizationDto(1001L, "Organization1001 mock name");
-//        OrganizationDto organization1002 = new OrganizationDto(1002L, "Organization1002 mock name");
-////        when(structureFeignClient.getOrganizationById(1001)).thenReturn(organization1001);
-////        when(structureFeignClient.getOrganizationById(1002)).thenReturn(organization1002);
-////
-//        DepartmentDto departmentDto301 = new DepartmentDto(301L, "Department301 mock name");
-//        DepartmentDto departmentDto302 = new DepartmentDto(302L, "Department302 mock name");
-//        DepartmentDto departmentDto401 = new DepartmentDto(401L, "Department401 mock name");
-////        when(structureFeignClient.getDepartmentById(301)).thenReturn(departmentDto301);
-////        when(structureFeignClient.getDepartmentById(302)).thenReturn(departmentDto302);
-////        when(structureFeignClient.getDepartmentById(401)).thenReturn(departmentDto401);
-
-        PositionsDepartmentOrganizationDto positionsDepartmentOrganization601 = new PositionsDepartmentOrganizationDto(601L, "Position601 mock name", 301L, "Department301 mock name", 1001L, "Organization1001 mock name");
-        PositionsDepartmentOrganizationDto positionsDepartmentOrganization602 = new PositionsDepartmentOrganizationDto(602L, "Position602 mock name", 302L, "Department302 mock name", 1001L, "Organization1001 mock name");
-        PositionsDepartmentOrganizationDto positionsDepartmentOrganization603 = new PositionsDepartmentOrganizationDto(603L, "Position603 mock name", 401L, "Department401 mock name", 1002L, "Organization1002 mock name");
-
-        when(structureFeignClient.getPositionsDepartmentOrganizationByPositionId(601L, 301L, 1001L)).thenReturn(positionsDepartmentOrganization601);
-        when(structureFeignClient.getPositionsDepartmentOrganizationByPositionId(602L, 302L, 1001L)).thenReturn(positionsDepartmentOrganization602);
-        when(structureFeignClient.getPositionsDepartmentOrganizationByPositionId(603L, 401L, 1002L)).thenReturn(positionsDepartmentOrganization603);
+        when(structureFeignClient.getRepPositionsDepartmentOrganizationByPositionId(601L)).thenReturn(RepPositionsDepartmentOrganization601);
+        when(structureFeignClient.getRepPositionsDepartmentOrganizationByPositionId(602L)).thenReturn(RepPositionsDepartmentOrganization602);
+        when(structureFeignClient.getRepPositionsDepartmentOrganizationByPositionId(603L)).thenReturn(RepPositionsDepartmentOrganization603);
 
         //запустим тест
         mockMvc.perform(
@@ -97,7 +81,7 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header("Authorization", accessToken)
                 )
-//                специально закомментировал строку ниже - помогает при разработке, но не забывайте комментировать а еще лучше - удалять
+//                специально закомментировал строку ниже - помогает при разработке, но не забывайте комментировать, а еще лучше - удалять
                 .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
 
@@ -137,7 +121,7 @@ public class GetCurrentDoctorInformationIT extends ContextIT {
         verify(personFeignClient, times(1)).getPersonById(100);
 
         //проверяем что была попытка отправить 3 попытки запроса структурного сервиса
-        verify(structureFeignClient, times(3)).getPositionsDepartmentOrganizationByPositionId(anyLong(), anyLong(), anyLong());
+        verify(structureFeignClient, times(3)).getRepPositionsDepartmentOrganizationByPositionId(anyLong());
 
 
     }
