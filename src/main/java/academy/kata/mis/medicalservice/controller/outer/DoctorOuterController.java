@@ -4,6 +4,7 @@ import academy.kata.mis.medicalservice.exceptions.AuthException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
+import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,23 @@ import java.util.UUID;
 public class DoctorOuterController {
 
     private final DoctorBusinessService doctorBusinessService;
+    private final AuditMessageService auditMessageService;
 
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
         // вернуть всех докторов которыми является авторизованный пользователь
+        String operation = "Получение информации о докторах, которыми является авторизованный пользователь";
+        log.info("{}; principal {}", operation, principal);
 
-        return ResponseEntity.ok(null);
+        GetDoctorPersonalInfoResponse response =
+                doctorBusinessService.getDoctorInformationByUser(UUID.fromString(principal.getName()));
+
+        log.debug("{}; Успешное получение информации о докторе; principal {}; {}", operation, principal, response);
+
+        auditMessageService.sendAudit(
+                principal.getName(), operation, "успешное получение информации о докторах");
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/current")

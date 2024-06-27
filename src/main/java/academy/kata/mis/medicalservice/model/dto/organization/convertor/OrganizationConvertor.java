@@ -8,6 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrganizationConvertor {
 
+    public OrganizationShortDto entityToOrganizationShortDto(Long organizationId, String organizationName){
+        return OrganizationShortDto.builder()
+                .organizationId(organizationId)
+                .organizationName(organizationName)
+                .build();
+    }
+
     public OrganizationShortDto entityToOrganizationShortDto(DepartmentAndOrganizationDto daoDto) {
         return OrganizationShortDto.builder()
                 .organizationId(daoDto.organizationId())
@@ -21,6 +28,4 @@ public class OrganizationConvertor {
                 .organizationName(docDto.organizationName())
                 .build();
     }
-
-
 }

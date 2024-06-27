@@ -3,16 +3,20 @@ package academy.kata.mis.medicalservice.service.impl;
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
+import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
 import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
 import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
+import academy.kata.mis.medicalservice.model.dto.employee.EmployeeShortInfoInOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.positions.RepPositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
@@ -20,17 +24,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
+
     private final DoctorService doctorService;
-    private final StructureFeignClient structureFeignClient;
-    private final OrganizationConvertor organizationConvertor;
     private final DepartmentConvertor departmentConvertor;
+    private final OrganizationConvertor organizationConvertor;
     private final DoctorConvertor doctorConvertor;
+    private final StructureFeignClient structureFeignClient;
     private final PersonFeignClient personFeignClient;
 
     @Override
@@ -48,6 +54,59 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .positionsName(positionsNameAndCabinetDto.name())
                 .cabinet(positionsNameAndCabinetDto.cabinet())
                 .build();
+    }
+
+    @Override
+    public GetDoctorPersonalInfoResponse getDoctorInformationByUser(UUID userId) {
+        List<Doctor> doctors = doctorService.findAllWithDepartmentsAndOrganizations(userId);
+
+        if (doctors.isEmpty()) {
+            return GetDoctorPersonalInfoResponse.builder()
+                    .build();
+        }
+
+        long personId = doctors.get(0).getPersonId();
+        PersonDto personDto = personFeignClient.getPersonById(personId);
+
+        List<EmployeeShortInfoInOrganizationDto> doctorDtos = createDoctors(doctors);
+
+        return GetDoctorPersonalInfoResponse.builder()
+                .person(personDto)
+                .doctors(doctorDtos)
+                .build();
+    }
+
+    private List<EmployeeShortInfoInOrganizationDto> createDoctors(List<Doctor> doctors) {
+        return doctors.stream()
+                .map(this::create)
+                .toList();
+    }
+
+    private EmployeeShortInfoInOrganizationDto create(Doctor doctor) {
+
+        RepPositionsDepartmentOrganizationDto response = structureFeignClient.getRepPositionsDepartmentOrganizationByPositionId(doctor.getPositionId());
+
+        String positionName = null;
+        if (response != null) {
+            positionName = response.getPositionName();
+        }
+
+        DepartmentShortDto departmentDto = null;
+        if (response != null) {
+            departmentDto = departmentConvertor.entityToDepartmentShortDto(response.getDepartmentId(), response.getDepartmentName());
+        }
+        OrganizationShortDto organizationDto = null;
+        if (response != null) {
+            organizationDto = organizationConvertor.entityToOrganizationShortDto(response.getOrganizationId(), response.getOrganizationName());
+        }
+
+        return EmployeeShortInfoInOrganizationDto.builder()
+                .employeeId(doctor.getId())
+                .positionName(positionName)
+                .organization(organizationDto)
+                .department(departmentDto)
+                .build();
+
     }
 
     @Override

@@ -7,6 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DepartmentConvertor {
+
+    public DepartmentShortDto entityToDepartmentShortDto(Long departmentId, String departmentName) {
+        return DepartmentShortDto.builder()
+                .departmentId(departmentId)
+                .departmentName(departmentName)
+                .build();
+    }
+
     public DepartmentShortDto entityToDepartmentShortDto(DepartmentAndOrganizationDto daoDto) {
         return DepartmentShortDto.builder()
                 .departmentId(daoDto.departmentId())
