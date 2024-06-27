@@ -1,7 +1,6 @@
 package academy.kata.mis.medicalservice.controller;
 
 import academy.kata.mis.medicalservice.exceptions.AuthException;
-import academy.kata.mis.medicalservice.exceptions.FeignRequestException;
 import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.exceptions.TokenException;
 import org.springframework.http.HttpHeaders;
