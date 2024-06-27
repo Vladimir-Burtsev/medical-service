@@ -11,7 +11,6 @@ import java.util.Set;
 
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
 
-
     @Query("""
             SELECT t.organization.id
             FROM Department t
@@ -26,4 +25,9 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
             WHERE t.organization.id = :organizationId
             """)
     Set<Department> findAllByOrganizationId(@Param("organizationId") Long organizationId);
+
+    @Query("""
+            SELECT d.department.organization.id FROM Doctor d WHERE d.id = :id
+            """)
+    long getOrganizationIdByDoctorId(long id);
 }

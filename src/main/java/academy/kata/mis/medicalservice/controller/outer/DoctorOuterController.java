@@ -1,5 +1,7 @@
 package academy.kata.mis.medicalservice.controller.outer;
 
+import academy.kata.mis.medicalservice.exceptions.AuthException;
+import academy.kata.mis.medicalservice.exceptions.LogicException;
 import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
@@ -26,7 +28,6 @@ public class DoctorOuterController {
     private final DoctorBusinessService doctorBusinessService;
     private final AuditMessageService auditMessageService;
 
-
     @GetMapping
     public ResponseEntity<GetDoctorPersonalInfoResponse> getCurrentDoctorInformation(Principal principal) {
         // вернуть всех докторов которыми является авторизованный пользователь
@@ -44,15 +45,31 @@ public class DoctorOuterController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/current")
     public ResponseEntity<GetCurrentDoctorPersonalInfoResponse> getCurrentDoctorInfo(
-            @RequestParam(name = "doctor_id") long doctorId) {
-        // проверить что доктор существует
-        // проверить что текущий авторизованный доктор соответствует переданному доктору
+            @RequestParam(name = "doctor_id") long doctorId, Principal principal) {
 
-        //первая часть - получить инфу из текущего МС. Все чего нет - просисать null
-        //вторая часть - сходить во все микросервисы и получить недостающие чвсти и заменить null на данные
-        return ResponseEntity.ok(null);
+        UUID authUserId = UUID.fromString(principal.getName());
+        String operation = "DoctorOuterController.getCurrentDoctorInfo()";
+        log.info("{}: doctorId = {}, userId = {}", operation, doctorId, authUserId);
+
+        if (!doctorBusinessService.isDoctorExistsById(doctorId)) {
+            log.error("{}: Ошибка! Доктор с doctorId = {} не существует.", operation, doctorId);
+            throw new LogicException("Доктор не найден!");
+        }
+
+        if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
+            log.error("Ошибка в {}. Доктор с doctorId = {} и userId = {}  не является авторизованным.",
+                    operation, doctorId, authUserId);
+            throw new AuthException("Доктор не авторизован!");
+        }
+
+        GetCurrentDoctorPersonalInfoResponse response =
+                doctorBusinessService.getCurrentDoctorPersonalInfoById(doctorId);
+
+        log.debug("Успешно! medical-service {}: doctorId = {}, userId = {}; Response = {}",
+                operation, doctorId, authUserId, response);
+
+        return ResponseEntity.ok(response);
     }
 }

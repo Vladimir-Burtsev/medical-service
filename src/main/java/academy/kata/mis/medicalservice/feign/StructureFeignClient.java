@@ -8,6 +8,7 @@ import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.positions.RepPositionsDepartmentOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,10 @@ public interface StructureFeignClient {
 
     @GetMapping("/internal/structure/organization/reppositionsdepartmentorganization")
     RepPositionsDepartmentOrganizationDto getRepPositionsDepartmentOrganizationByPositionId(
+            @RequestParam(name = "position_id") long positionId);
+
+    @GetMapping("/internal/structure/department-organization-position-cabinet")
+    DepartmentOrganizationPositionCabinetNameDto getDepartmentOrganizationPositionCabinetNameDto(
             @RequestParam(name = "position_id") long positionId);
 
     @Component
@@ -119,6 +124,15 @@ public interface StructureFeignClient {
             String responseMassage = """
                     Департамент с указанным Id = %s не найден.
                     """.formatted(departmentId, reason);
+
+            throw new FeignRequestException(responseMassage);
+        }
+
+        @Override
+        public DepartmentOrganizationPositionCabinetNameDto getDepartmentOrganizationPositionCabinetNameDto(long positionId) {
+            String responseMassage = """
+                    Позиция с указанным Id = %s не найдена.
+                    """.formatted(positionId, reason);
 
             throw new FeignRequestException(responseMassage);
         }

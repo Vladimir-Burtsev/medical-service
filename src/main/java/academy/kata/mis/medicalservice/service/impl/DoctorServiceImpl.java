@@ -64,4 +64,13 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.findAllWithDepartmentsAndOrganizations(userId);
     }
 
+    @Override
+    public boolean isDoctorExistsById(Long id) {
+        return doctorRepository.isDoctorExistsById(id);
+    }
+
+    @Override
+    public long getPositionIdByDoctorId(long id) {
+        return doctorRepository.getPositionIdByDoctorId(id);
+    }
 }

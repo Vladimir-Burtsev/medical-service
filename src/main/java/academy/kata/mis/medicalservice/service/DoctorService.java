@@ -19,4 +19,8 @@ public interface DoctorService {
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
 
     List<Doctor> findAllWithDepartmentsAndOrganizations(UUID userId);
+
+    boolean isDoctorExistsById(Long id);
+
+    long getPositionIdByDoctorId(long id);
 }

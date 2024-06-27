@@ -2,10 +2,14 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
+import academy.kata.mis.medicalservice.model.dto.GetCurrentDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorPersonalInfoResponse;
 import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
 import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
 import academy.kata.mis.medicalservice.model.dto.employee.EmployeeShortInfoInOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
@@ -23,17 +27,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
+
     private final DoctorService doctorService;
     private final DepartmentConvertor departmentConvertor;
     private final OrganizationConvertor organizationConvertor;
+    private final DoctorConvertor doctorConvertor;
     private final StructureFeignClient structureFeignClient;
     private final PersonFeignClient personFeignClient;
-
 
     @Override
     public Doctor existsByUserIdAndId(UUID doctorUUID, long id) {
@@ -109,5 +113,30 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
         return doctorService.existDoctorByUserIdAndDoctorId(userId, doctorId);
     }
-}
 
+    @Override
+    public boolean isDoctorExistsById(Long id) {
+        return doctorService.isDoctorExistsById(id);
+    }
+
+    @Override
+    public GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long doctorId) {
+
+        DepartmentOrganizationPositionCabinetNameDto departmentOrganizationPositionCabinetNameDto = structureFeignClient
+                .getDepartmentOrganizationPositionCabinetNameDto(doctorService.getPositionIdByDoctorId(doctorId));
+
+        DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
+                personFeignClient.getCurrentDoctorById(doctorId),
+                departmentOrganizationPositionCabinetNameDto);
+
+        OrganizationShortDto organizationShortDto = organizationConvertor
+                .entityToOrganizationShortDto(departmentOrganizationPositionCabinetNameDto);
+        DepartmentShortDto departmentShortDto = departmentConvertor
+                .entityToDepartmentShortDto(departmentOrganizationPositionCabinetNameDto);
+
+        String cabinetNumber = departmentOrganizationPositionCabinetNameDto.cabinetNumber();
+
+        return new GetCurrentDoctorPersonalInfoResponse(doctorShortDto, organizationShortDto,
+                departmentShortDto, cabinetNumber);
+    }
+}

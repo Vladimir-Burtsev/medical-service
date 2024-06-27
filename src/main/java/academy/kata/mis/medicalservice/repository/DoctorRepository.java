@@ -41,5 +41,14 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             """)
     List<Doctor> findAllWithDepartmentsAndOrganizations(@Param("userId") UUID userId);
 
+    @Query("""
+            SELECT case when (count(d.id) > 0) then true else false
+            END from Doctor d where d.id = :id
+            """)
+    boolean isDoctorExistsById(Long id);
 
+    @Query("""
+            SELECT d.positionId FROM Doctor d WHERE d.id = :id
+            """)
+    long getPositionIdByDoctorId(long id);
 }

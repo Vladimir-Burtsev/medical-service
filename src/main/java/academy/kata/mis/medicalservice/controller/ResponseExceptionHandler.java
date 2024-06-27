@@ -1,8 +1,8 @@
 package academy.kata.mis.medicalservice.controller;
 
-import academy.kata.mis.medicalservice.exceptions.AuthException;
-import academy.kata.mis.medicalservice.exceptions.LogicException;
-import academy.kata.mis.medicalservice.exceptions.TokenException;
+import academy.kata.mis.medicalservice.exceptions.*;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.NoSuchElementException;
 
+@Slf4j
 @RestControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -41,5 +42,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleAuthExc(NoSuchElementException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<String> handleFeignExc(FeignException ex) {
+        log.error("Ошибка при запросе в другой сервис: {}", ex.getMessage());
+        return new ResponseEntity<>("В данный момент невозможно получить весь спектр запрашиваемых данных.",
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
