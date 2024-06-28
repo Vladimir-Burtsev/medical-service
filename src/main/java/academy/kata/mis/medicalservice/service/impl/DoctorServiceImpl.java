@@ -52,6 +52,16 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.existsByUserIdAndId(userId, doctorId);
     }
 
+    @Override
+    public Long getDepartmentIdByDoctorId(Long doctorId) {
+        return doctorRepository.getDepartmentIdByDoctorId(doctorId);
+    }
+
+    @Override
+    public Long getPositionIdByDoctorId(Long doctorId) {
+        return doctorRepository.getPositionIdByDoctorId(doctorId);
+    }
+
     // переедет из доктор сервиса в визит сервис createPatientVisit
 
 }

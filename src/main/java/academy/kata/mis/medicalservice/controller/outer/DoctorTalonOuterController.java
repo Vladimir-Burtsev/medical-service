@@ -76,13 +76,11 @@ public class DoctorTalonOuterController {
         String operation = "Получение информации о талоне; getFullTalonInfo";
         log.info("{}; authUserId - {}, talonId - {}", operation, authUserId, talonId);
 
-        // проверить что талон существует
         if (!talonBusinessService.isExistById(talonId)) {
             log.error("{}; Талон с talonId = {} не существует.", operation, talonId);
             throw new LogicException("Талон не найден!");
         }
 
-        // проверить что талон принадлежит доктору, который является авторизованным пользователем:
         Long doctorId = doctorBusinessService.getDoctorIdByTalonId(talonId);
         if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
             log.error("{}; Авторизованный пользователь (userId = {}) не является доктором(doctorId = {}), " +
@@ -91,11 +89,10 @@ public class DoctorTalonOuterController {
         }
 
         // вернуть полную информацию о талоне (пациент может отсутствовать)
-        // + 1 часть получит только инфу из МС, все чего в нем нет возвращаешь null
-        // 2 часть сделать запросы в другие МС и заменить null на данные
-        GetFullTalonInformationResponse response = talonBusinessService.getFullTalonInfoById(talonId);
+        GetFullTalonInformationResponse response = talonBusinessService
+                .getFullTalonInfoByIdAndDoctorId(talonId, doctorId);
 
-        log.debug("{}; Успешно; talonID {}", operation, talonId);
+        log.debug("{}; Успешно; response - {}", operation, response);
         return ResponseEntity.ok(response);
     }
 

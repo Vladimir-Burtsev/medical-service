@@ -10,4 +10,6 @@ public interface DoctorService {
     Long getDoctorIdByTalonId(Long talonId);
     Long getDoctorPersonIdByTalonId(Long talonId);
     boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId);
+    Long getDepartmentIdByDoctorId(Long doctorId);
+    Long getPositionIdByDoctorId(Long doctorId);
 }

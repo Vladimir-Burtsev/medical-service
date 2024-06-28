@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -35,5 +36,15 @@ public class TalonServiceImpl implements TalonService {
     @Override
     public Set<Talon> allPatientTalonByPatientId(long patientId) {
         return talonRepository.findAllByPatientId(patientId);
+    }
+
+    @Override
+    public LocalDateTime getTalonTimeByTalonId(Long talonId) {
+        return talonRepository.getTalonTimeByTalonId(talonId);
+    }
+
+    @Override
+    public Optional<Long> getPatientPersonIdByTalonId(Long talonId) {
+        return talonRepository.getPatientPersonIdByTalonId(talonId);
     }
 }

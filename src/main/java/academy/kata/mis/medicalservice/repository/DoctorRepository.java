@@ -29,4 +29,22 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             WHERE t.id = :talonId
             """)
     Long getDoctorPersonIdByTalonId(@Param("talonId") Long talonId);
+
+    @Query("""
+            SELECT d.positionId
+            FROM Doctor d
+            WHERE d.id = :doctorId
+            """)
+    Long getPositionIdByDoctorId(Long doctorId);
+
+//    Long getPositionIdById(Long doctorId);
+//    Long getDoctorPositionIdById(Long doctorId);
+//    Long getPositionIdById(Long doctorId);
+
+    @Query("""
+            SELECT d.department.id
+            FROM Doctor d
+            WHERE d.id = :doctorId
+            """)
+    Long getDepartmentIdByDoctorId(Long doctorId);
 }
