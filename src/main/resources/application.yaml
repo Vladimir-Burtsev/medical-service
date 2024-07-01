@@ -66,3 +66,14 @@ jwt:
 
 app:
   init-fake-data: ${INIT_FAKE_DATA:false}
+
+springdoc:
+  default-produces-media-type: application/json
+  api-docs:
+    resolve-schema-properties: true
+    path: /api
+  swagger-ui:
+    path: /api/doc
+    display-request-duration: true
+    show-extensions: true
+    show-common-extensions: true
