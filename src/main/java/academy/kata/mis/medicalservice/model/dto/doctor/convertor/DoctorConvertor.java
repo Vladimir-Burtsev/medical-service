@@ -1,6 +1,7 @@
 package academy.kata.mis.medicalservice.model.dto.doctor.convertor;
 
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
@@ -27,6 +28,28 @@ public class DoctorConvertor {
                 .doctorLastName(doctorShortDto.doctorLastName())
                 .patronymic(doctorShortDto.patronymic())
                 .doctorPositionName(positionDto.name())
+                .build();
+    }
+
+    public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto,
+                                                                 PositionsNameAndCabinetDto positionsNameAndCabinetDto) {
+        return DoctorShortDto.builder()
+                .doctorId(doctorShortDto.doctorId())
+                .doctorFirstName(doctorShortDto.doctorFirstName())
+                .doctorLastName(doctorShortDto.doctorLastName())
+                .patronymic(doctorShortDto.patronymic())
+                .doctorPositionName(positionsNameAndCabinetDto.name())
+                .build();
+    }
+
+    public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto,
+                                                                 DepartmentOrganizationPositionCabinetNameDto dopDto) {
+        return DoctorShortDto.builder()
+                .doctorId(doctorShortDto.doctorId())
+                .doctorFirstName(doctorShortDto.doctorFirstName())
+                .doctorLastName(doctorShortDto.doctorLastName())
+                .patronymic(doctorShortDto.patronymic())
+                .doctorPositionName(dopDto.positionName())
                 .build();
     }
 }
