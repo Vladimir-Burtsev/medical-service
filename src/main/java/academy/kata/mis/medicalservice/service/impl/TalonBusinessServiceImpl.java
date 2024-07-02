@@ -2,9 +2,8 @@ package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetFullTalonInformationResponse;
-import academy.kata.mis.medicalservice.model.dto.PositionDto;
-import academy.kata.mis.medicalservice.model.dto.department.DepartmentShortDto;
 import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
@@ -12,7 +11,6 @@ import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientRespo
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
-import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
@@ -116,35 +114,22 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     }
 
     @Override
-    public boolean isExistById(Long talonId) {
-        return talonService.findById(talonId).isPresent();
+    public boolean existsTalonById(Long talonId) {
+        return talonService.existsTalonById(talonId);
     }
 
     @Override
     public GetFullTalonInformationResponse getFullTalonInfoByIdAndDoctorId(Long talonId, Long doctorId) {
-        DepartmentAndOrganizationDto departmentAndOrganizationDto =
-                structureFeignClient.getDepartmentAndOrganizationName(
-                        doctorService.getDepartmentIdByDoctorId(doctorId)
+        DepartmentOrganizationPositionCabinetNameDto depOrgPosCabDto =
+                structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(
+                        doctorService.getPositionIdByDoctorId(doctorId)
                 );
-
-        DepartmentShortDto departmentShortDto =
-                departmentConvertor.entityToDepartmentShortDto(departmentAndOrganizationDto);
-
-        OrganizationShortDto organizationShortDto =
-                organizationConvertor.entityToOrganizationShortDto(departmentAndOrganizationDto);
-
-        Long doctorPositionId = doctorService.getPositionIdByDoctorId(doctorId);
-        PositionsNameAndCabinetDto positionsNameAndCabinetDto =
-                structureFeignClient.getPositionsNameAndCabinetById(doctorPositionId);
 
         DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
                 personFeignClient.getCurrentDoctorById(
                         doctorService.getDoctorPersonIdByTalonId(talonId)
                 ),
-                PositionDto.builder()
-                        .id(doctorPositionId)
-                        .name(positionsNameAndCabinetDto.name())
-                        .build()
+                depOrgPosCabDto.positionName()
         );
 
         PatientShortDto patientShortDto = talonService.getPatientPersonIdByTalonId(talonId)
@@ -155,9 +140,9 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
         return new GetFullTalonInformationResponse(
                 talonId,
                 talonService.getTalonTimeByTalonId(talonId),
-                organizationShortDto,
-                departmentShortDto,
-                positionsNameAndCabinetDto.cabinet(),
+                organizationConvertor.entityToOrganizationShortDto(depOrgPosCabDto),
+                departmentConvertor.entityToDepartmentShortDto(depOrgPosCabDto),
+                depOrgPosCabDto.cabinetNumber(),
                 doctorShortDto,
                 patientShortDto
         );

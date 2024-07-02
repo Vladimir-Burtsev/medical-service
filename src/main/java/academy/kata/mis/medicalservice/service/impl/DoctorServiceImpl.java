@@ -63,15 +63,6 @@ public class DoctorServiceImpl implements DoctorService {
     public List<Doctor> findAllWithDepartmentsAndOrganizations(UUID userId) {
         return doctorRepository.findAllWithDepartmentsAndOrganizations(userId);
     }
-    @Override
-    public Long getDepartmentIdByDoctorId(Long doctorId) {
-        return doctorRepository.getDepartmentIdByDoctorId(doctorId);
-    }
-
-    @Override
-    public Long getPositionIdByDoctorId(Long doctorId) {
-        return doctorRepository.getPositionIdByDoctorId(doctorId);
-    }
 
     @Override
     public boolean isDoctorExistsById(Long id) {

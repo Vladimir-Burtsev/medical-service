@@ -76,7 +76,7 @@ public class DoctorTalonOuterController {
         String operation = "Получение информации о талоне; getFullTalonInfo";
         log.info("{}; authUserId - {}, talonId - {}", operation, authUserId, talonId);
 
-        if (!talonBusinessService.isExistById(talonId)) {
+        if (!talonBusinessService.existsTalonById(talonId)) {
             log.error("{}; Талон с talonId = {} не существует.", operation, talonId);
             throw new LogicException("Талон не найден!");
         }

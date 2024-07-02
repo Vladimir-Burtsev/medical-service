@@ -23,8 +23,4 @@ public interface DoctorService {
     boolean isDoctorExistsById(Long id);
 
     long getPositionIdByDoctorId(long id);
-
-    Long getDepartmentIdByDoctorId(Long doctorId);
-
-    Long getPositionIdByDoctorId(Long doctorId);
 }

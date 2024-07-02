@@ -25,7 +25,7 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
             FROM Talon t
             WHERE t.id = :talonId
             """)
-    LocalDateTime getTalonTimeByTalonId(long talonId);
+    LocalDateTime getTalonTimeByTalonId(Long talonId);
 
     @Query("""
             SELECT t.patient.personId

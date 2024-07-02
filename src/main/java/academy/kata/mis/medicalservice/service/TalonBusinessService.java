@@ -10,6 +10,6 @@ public interface TalonBusinessService {
     CancelTalonDto cancelReservationTalon(Long talonId, UUID userId);
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
     GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId);
-    boolean isExistById(Long talonId);
+    boolean existsTalonById(Long talonId);
     GetFullTalonInformationResponse getFullTalonInfoByIdAndDoctorId(Long talonId, Long doctorId);
 }

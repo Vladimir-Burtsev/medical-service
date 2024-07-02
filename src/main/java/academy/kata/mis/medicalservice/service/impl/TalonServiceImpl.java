@@ -23,6 +23,11 @@ public class TalonServiceImpl implements TalonService {
     }
 
     @Override
+    public boolean existsTalonById(Long talonId) {
+        return talonRepository.existsById(talonId);
+    }
+
+    @Override
     @Transactional
     public void save(Talon talon) {
         talonRepository.save(talon);

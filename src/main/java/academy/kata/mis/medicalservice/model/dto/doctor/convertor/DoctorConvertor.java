@@ -31,6 +31,16 @@ public class DoctorConvertor {
                 .build();
     }
 
+    public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto, String positionName) {
+        return DoctorShortDto.builder()
+                .doctorId(doctorShortDto.doctorId())
+                .doctorFirstName(doctorShortDto.doctorFirstName())
+                .doctorLastName(doctorShortDto.doctorLastName())
+                .patronymic(doctorShortDto.patronymic())
+                .doctorPositionName(positionName)
+                .build();
+    }
+
     public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto,
                                                                  PositionsNameAndCabinetDto positionsNameAndCabinetDto) {
         return DoctorShortDto.builder()
