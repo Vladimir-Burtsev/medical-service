@@ -17,4 +17,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     public long getDepartmentIdByDoctorId(long id) {
         return departmentRepository.getDepartmentIdByDoctorId(id);
     }
+
+    @Override
+    public Long getDepartmentIdByTalonId(Long talonId) {
+        return departmentRepository.getDepartmentIdByTalonId(talonId);
+    }
 }

@@ -5,7 +5,6 @@ import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.feign.DepartmentDto;
 import academy.kata.mis.medicalservice.model.dto.feign.OrganizationDto;
-import academy.kata.mis.medicalservice.model.dto.positions.PositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.positions.RepPositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
@@ -37,12 +36,6 @@ public interface StructureFeignClient {
     DepartmentAndOrganizationDto getDepartmentAndOrganizationName(
             @RequestParam(name = "department_id") Long departmentId);
 
-    @GetMapping("/internal/structure/organization/positionsdepartmentorganization")
-    PositionsDepartmentOrganizationDto getPositionsDepartmentOrganizationByPositionId(
-            @RequestParam(name = "position_id") long positionId,
-            @RequestParam(name = "department_id") long departmentId,
-            @RequestParam(name = "organization_id") long organizationId);
-
     @GetMapping("/internal/structure/organization/reppositionsdepartmentorganization")
     RepPositionsDepartmentOrganizationDto getRepPositionsDepartmentOrganizationByPositionId(
             @RequestParam(name = "position_id") long positionId);
@@ -68,18 +61,6 @@ public interface StructureFeignClient {
                     Медицинская организация не существует по переданному id %s
                     """.formatted(organizationId, reason);
 
-            throw new FeignRequestException(responseMessage);
-        }
-
-
-        @Override
-        public PositionsDepartmentOrganizationDto getPositionsDepartmentOrganizationByPositionId(
-                long positionId,
-                long departmentId,
-                long organizationId) {
-            String responseMessage = """
-                    Позиция не существует по переданному id %s
-                    """.formatted(positionId, reason);
             throw new FeignRequestException(responseMessage);
         }
 

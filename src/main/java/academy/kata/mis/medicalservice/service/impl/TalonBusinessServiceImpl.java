@@ -15,10 +15,7 @@ import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.model.enums.CommandType;
-import academy.kata.mis.medicalservice.service.DoctorService;
-import academy.kata.mis.medicalservice.service.MessageServiceSender;
-import academy.kata.mis.medicalservice.service.TalonBusinessService;
-import academy.kata.mis.medicalservice.service.TalonService;
+import academy.kata.mis.medicalservice.service.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +40,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final DoctorConvertor doctorConvertor;
     private final StructureFeignClient structureFeignClient;
     private final MessageServiceSender messageServiceSender;
+    private final DepartmentService departmentService;
 
     @Override
     @Transactional
@@ -55,7 +53,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 .getPersonById(doctorService.getDoctorPersonIdByTalonId(talonId));
 
         DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
-                .getDepartmentAndOrganizationName(doctorService.getDoctorIdByTalonId(talonId));
+                .getDepartmentAndOrganizationName(departmentService.getDepartmentIdByTalonId(talonId));
 
         messageServiceSender.sendInMessageService(
                 CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,
