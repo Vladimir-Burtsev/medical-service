@@ -15,6 +15,7 @@ import academy.kata.mis.medicalservice.model.dto.organization.convertor.Organiza
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
+import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
@@ -113,41 +114,6 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
         return new GetAssignedTalonsByPatientResponse(talonWithDoctorShortDtos);
     }
 
-    @Override
-    public boolean existsTalonById(Long talonId) {
-        return talonService.existsTalonById(talonId);
-    }
-
-    @Override
-    public GetFullTalonInformationResponse getFullTalonInfoByIdAndDoctorId(Long talonId, Long doctorId) {
-        DepartmentOrganizationPositionCabinetNameDto depOrgPosCabDto =
-                structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(
-                        doctorService.getPositionIdByDoctorId(doctorId)
-                );
-
-        DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
-                personFeignClient.getCurrentDoctorById(
-                        doctorService.getDoctorPersonIdByTalonId(talonId)
-                ),
-                depOrgPosCabDto.positionName()
-        );
-
-        PatientShortDto patientShortDto = talonService.getPatientPersonIdByTalonId(talonId)
-                .map(patientPersonId -> patientConvertor.currentPatientToPatientShortDto(
-                        personFeignClient.getCurrentPersonById(patientPersonId)
-                )).orElse(null);
-
-        return new GetFullTalonInformationResponse(
-                talonId,
-                talonService.getTalonTimeByTalonId(talonId),
-                organizationConvertor.entityToOrganizationShortDto(depOrgPosCabDto),
-                departmentConvertor.entityToDepartmentShortDto(depOrgPosCabDto),
-                depOrgPosCabDto.cabinetNumber(),
-                doctorShortDto,
-                patientShortDto
-        );
-    }
-
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(
             Set<Talon> talons,
             Map<Long, DoctorFullNameAndPositionsAndCabinetDto> doctorsMap) {
@@ -198,5 +164,48 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                                 )
                         )
                 );
+    }
+
+    @Override
+    public boolean existsTalonById(Long talonId) {
+        return talonService.existsTalonById(talonId);
+    }
+
+    @Override
+    public GetFullTalonInformationResponse getFullTalonInfoByIdAndDoctorId(Long talonId, Long doctorId) {
+        DepartmentOrganizationPositionCabinetNameDto depOrgPosCabDto = structureFeignClient
+                .getDepartmentOrganizationPositionCabinetNameDto(
+                        doctorService.getPositionIdByDoctorId(doctorId)
+                );
+
+        Set<Long> personIds = new LinkedHashSet<>();
+        personIds.add(doctorService.getDoctorPersonIdByTalonId(talonId));
+        Optional<Long> patientPersonId = talonService.getPatientPersonIdByTalonId(talonId);
+        patientPersonId.ifPresent(personIds::add);
+
+        PersonsListDto personsListDto = personFeignClient.getPersonsListByIds(personIds);
+
+        DoctorShortDto doctorShortDto = doctorConvertor
+                .personToDoctorShortDtoWithPositionName(
+                        doctorId,
+                        personsListDto.persons().get(0),
+                        depOrgPosCabDto.positionName()
+                );
+
+        PatientShortDto patientShortDto = patientPersonId.isEmpty() ? null
+                : patientConvertor.personToPatientShortDto(
+                        talonService.getPatientIdByTalonId(talonId).get(),
+                        personsListDto.persons().get(1)
+                );
+
+        return new GetFullTalonInformationResponse(
+                talonId,
+                talonService.getTalonTimeByTalonId(talonId),
+                organizationConvertor.entityToOrganizationShortDto(depOrgPosCabDto),
+                departmentConvertor.entityToDepartmentShortDto(depOrgPosCabDto),
+                depOrgPosCabDto.cabinetNumber(),
+                doctorShortDto,
+                patientShortDto
+        );
     }
 }

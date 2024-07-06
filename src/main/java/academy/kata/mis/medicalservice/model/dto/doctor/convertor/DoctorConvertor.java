@@ -4,6 +4,7 @@ import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import org.springframework.stereotype.Component;
@@ -31,12 +32,14 @@ public class DoctorConvertor {
                 .build();
     }
 
-    public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto, String positionName) {
+    public DoctorShortDto personToDoctorShortDtoWithPositionName(Long doctorId,
+                                                                 PersonFullNameBirthdayDto doctorPerson,
+                                                                 String positionName) {
         return DoctorShortDto.builder()
-                .doctorId(doctorShortDto.doctorId())
-                .doctorFirstName(doctorShortDto.doctorFirstName())
-                .doctorLastName(doctorShortDto.doctorLastName())
-                .patronymic(doctorShortDto.patronymic())
+                .doctorId(doctorId)
+                .doctorFirstName(doctorPerson.firstName())
+                .doctorLastName(doctorPerson.lastName())
+                .patronymic(doctorPerson.patronymic())
                 .doctorPositionName(positionName)
                 .build();
     }

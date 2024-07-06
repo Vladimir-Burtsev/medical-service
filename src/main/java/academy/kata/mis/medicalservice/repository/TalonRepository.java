@@ -33,4 +33,11 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
             WHERE t.id = :talonId
             """)
     Optional<Long> getPatientPersonIdByTalonId(Long talonId);
+
+    @Query("""
+            SELECT t.patient.id
+            FROM Talon t
+            WHERE t.id = :talonId
+            """)
+    Optional<Long> getPatientIdByTalonId(Long talonId);
 }
