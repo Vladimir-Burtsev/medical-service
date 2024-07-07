@@ -48,6 +48,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final DoctorConvertor doctorConvertor;
     private final StructureFeignClient structureFeignClient;
     private final MessageServiceSender messageServiceSender;
+    private final DepartmentService departmentService;
 
     @Override
     @Transactional
@@ -60,7 +61,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 .getPersonById(doctorService.getDoctorPersonIdByTalonId(talonId));
 
         DepartmentAndOrganizationDto departmentAndOrganizationDto = structureFeignClient
-                .getDepartmentAndOrganizationName(doctorService.getDoctorIdByTalonId(talonId));
+                .getDepartmentAndOrganizationName(departmentService.getDepartmentIdByTalonId(talonId));
 
         messageServiceSender.sendInMessageService(
                 CommandType.RESPONSE_TO_EMAIL_ABOUT_CANCEL_TALON,

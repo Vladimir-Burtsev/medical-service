@@ -10,4 +10,9 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
             SELECT d.department.id FROM Doctor d WHERE d.id = :id
             """)
     long getDepartmentIdByDoctorId(long id);
+
+    @Query("""
+            SELECT t.doctor.department.id FROM Talon t WHERE t.id = :talonId
+            """)
+    Long getDepartmentIdByTalonId(Long talonId);
 }
