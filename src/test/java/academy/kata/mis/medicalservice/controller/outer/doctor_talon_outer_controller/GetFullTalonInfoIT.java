@@ -9,6 +9,7 @@ import academy.kata.mis.medicalservice.model.dto.department_organization_positio
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.util.JwtProvider;
+import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,8 +45,7 @@ public class GetFullTalonInfoIT extends ContextIT {
 
     @Test
     public void getFullTalonInfo_success() throws Exception {
-        Long talonId = 500L;
-
+        long talonId = 500L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(userId));
         jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
@@ -95,7 +95,7 @@ public class GetFullTalonInfoIT extends ContextIT {
                         .param("talon_id", Long.toString(talonId))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.talonId", Is.is(talonId.intValue())))
+                .andExpect(jsonPath("$.talonId", Is.is((int) talonId)))
                 .andExpect(jsonPath("$.visitTime", Is.is("2024-06-26T13:00:00")))
                 .andExpect(jsonPath("$.organization.organizationId", Is.is(100)))
                 .andExpect(jsonPath("$.organization.organizationName", Is.is("organization name1")))
@@ -116,6 +116,71 @@ public class GetFullTalonInfoIT extends ContextIT {
 
         verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(700L);
         verify(personFeignClient, times(1)).getPersonsListByIds(Set.of(602L, 600L));
+    }
+
+    @Test
+    public void getFullTalonInfo_success_talonWithoutPatient() throws Exception {
+        long talonId = 501L;
+
+        JwtAuthentication jwtInfoToken = new JwtAuthentication();
+        jwtInfoToken.setUserId(UUID.fromString(userId));
+        jwtInfoToken.setRoles(Set.of(new Role("DOCTOR")));
+        jwtInfoToken.setAuthenticated(true);
+        when(jwtProvider.getTokenFromRequest(accessToken)).thenReturn("token");
+        when(jwtProvider.validateAccessToken("token")).thenReturn(true);
+        when(jwtProvider.getAuthentication("token")).thenReturn(jwtInfoToken);
+
+        when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(700L))
+                .thenReturn(
+                        new DepartmentOrganizationPositionCabinetNameDto(
+                                200L,
+                                "department name1",
+                                100L,
+                                "organization name1",
+                                "position name1",
+                                "cabinet name6"
+                        )
+                );
+
+        when(personFeignClient.getPersonsListByIds(Set.of(602L)))
+                .thenReturn(
+                        new PersonsListDto(
+                                List.of(
+                                        new PersonFullNameBirthdayDto(
+                                                602L,
+                                                "doctor firstName",
+                                                "doctor lastName",
+                                                "doctor patronymic",
+                                                LocalDate.parse("1959-11-20")
+                                        )
+                                )
+                        )
+                );
+
+        mockMvc.perform(
+                        get("/api/medical/doctor/talon/full/info")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", accessToken)
+                                .param("talon_id", Long.toString(talonId))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.talonId", Is.is((int) talonId)))
+                .andExpect(jsonPath("$.visitTime", Is.is("2024-06-26T14:00:00")))
+                .andExpect(jsonPath("$.organization.organizationId", Is.is(100)))
+                .andExpect(jsonPath("$.organization.organizationName", Is.is("organization name1")))
+                .andExpect(jsonPath("$.department.departmentId", Is.is(200)))
+                .andExpect(jsonPath("$.department.departmentName", Is.is("department name1")))
+                .andExpect(jsonPath("$.cabinetNumber", Is.is("cabinet name6")))
+                .andExpect(jsonPath("$.doctor.doctorId", Is.is(400)))
+                .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("doctor firstName")))
+                .andExpect(jsonPath("$.doctor.doctorLastName", Is.is("doctor lastName")))
+                .andExpect(jsonPath("$.doctor.patronymic", Is.is("doctor patronymic")))
+                .andExpect(jsonPath("$.doctor.doctorPositionName", Is.is("position name1")))
+                .andExpect(jsonPath("$.patient", Matchers.nullValue()))
+                .andReturn();
+
+        verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(700L);
+        verify(personFeignClient, times(1)).getPersonsListByIds(Set.of(602L));
     }
 
     @Test

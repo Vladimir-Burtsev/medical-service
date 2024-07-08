@@ -115,11 +115,6 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
     }
 
     @Override
-    public Long getDoctorIdByTalonId(Long talonId) {
-        return doctorService.getDoctorIdByTalonId(talonId);
-    }
-
-    @Override
     public boolean isDoctorExistsById(Long id) {
         return doctorService.isDoctorExistsById(id);
     }

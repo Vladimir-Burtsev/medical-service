@@ -21,6 +21,4 @@ public interface DoctorBusinessService {
     boolean isDoctorExistsById(Long id);
 
     GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id);
-
-    Long getDoctorIdByTalonId(Long talonId);
 }

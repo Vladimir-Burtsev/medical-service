@@ -14,6 +14,7 @@ import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConverto
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
+import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -188,7 +189,7 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                         talonInfoDto.doctorPositionId()
                 );
 
-        Set<Long> personIds = new LinkedHashSet<>();
+        Set<Long> personIds = new HashSet<>();
         personIds.add(talonInfoDto.doctorPersonId());
 
         if (talonInfoDto.patientPersonId() != null) {
@@ -200,22 +201,14 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
         DoctorShortDto doctorShortDto = doctorConvertor
                 .personToDoctorShortDtoWithPositionName(
                         talonInfoDto.doctorId(),
-                        personsListDto.persons()
-                                .stream()
-                                .filter(p -> p.personId() == talonInfoDto.doctorPersonId())
-                                .findFirst()
-                                .get(),
+                        getPersonDtoFromListById(personsListDto, talonInfoDto.doctorPersonId()),
                         depOrgPosCabDto.positionName()
                 );
 
         PatientShortDto patientShortDto = (talonInfoDto.patientPersonId() == null) ? null
                 : patientConvertor.personToPatientShortDto(
                         talonInfoDto.patientId(),
-                        personsListDto.persons()
-                                .stream()
-                                .filter(p -> p.personId() == talonInfoDto.patientPersonId())
-                                .findFirst()
-                                .get()
+                        getPersonDtoFromListById(personsListDto, talonInfoDto.patientPersonId())
                 );
 
         return new GetFullTalonInformationResponse(
@@ -227,5 +220,13 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 doctorShortDto,
                 patientShortDto
         );
+    }
+
+    private PersonFullNameBirthdayDto getPersonDtoFromListById(PersonsListDto personsList, Long personId) {
+        return personsList.persons()
+                .stream()
+                .filter(p -> p.personId() == personId)
+                .findFirst()
+                .get();
     }
 }
