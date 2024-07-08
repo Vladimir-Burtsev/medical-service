@@ -23,7 +23,12 @@ public class DoctorVisitRestController {
     public ResponseEntity<VisitDto> getVisitInfo(
             @RequestParam(name = "visit_id") long visitId) {
         // проверить что посещение существует
+        // проверить что доктор и посещение из одного отделения
         // вернуть информацию о оказанных услугах
+
+        // первая задача - вернуть дто с инфой только из этого микросервиса
+        // ====
+        // вторая задача - через фейгн клиенты собрать доп инфу из других микросервисов
 
         return ResponseEntity.ok(null);
     }
