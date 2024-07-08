@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.repository.TalonRepository;
 import academy.kata.mis.medicalservice.service.TalonService;
@@ -7,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,17 +44,12 @@ public class TalonServiceImpl implements TalonService {
     }
 
     @Override
-    public LocalDateTime getTalonTimeByTalonId(Long talonId) {
-        return talonRepository.getTalonTimeByTalonId(talonId);
+    public boolean isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(UUID userId, Long talonId) {
+        return talonRepository.isDoctorAssignToTalonByUserIdAndTalonId(userId, talonId);
     }
 
     @Override
-    public Optional<Long> getPatientIdByTalonId(Long talonId) {
-        return talonRepository.getPatientIdByTalonId(talonId);
-    }
-
-    @Override
-    public Optional<Long> getPatientPersonIdByTalonId(Long talonId) {
-        return talonRepository.getPatientPersonIdByTalonId(talonId);
+    public TalonWithDoctorPatientInfoDto getTalonWithDoctorPatientPersonsById(Long talonId) {
+        return talonRepository.getTalonWithDoctorPatientPersonsById(talonId);
     }
 }

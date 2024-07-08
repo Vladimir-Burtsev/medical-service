@@ -11,5 +11,6 @@ public interface TalonBusinessService {
     boolean existsTalonByIdAndPatientUserId(Long talonId, UUID userId);
     GetAssignedTalonsByPatientResponse getAllPatientTalonByPatientId(long patientId);
     boolean existsTalonById(Long talonId);
-    GetFullTalonInformationResponse getFullTalonInfoByIdAndDoctorId(Long talonId, Long doctorId);
+    boolean isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(UUID userId, Long talonId);
+    GetFullTalonInformationResponse getFullTalonInfoById(Long talonId);
 }

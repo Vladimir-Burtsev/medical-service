@@ -5,7 +5,6 @@ import academy.kata.mis.medicalservice.model.dto.AssignPatientToTalonRequest;
 import academy.kata.mis.medicalservice.model.dto.GetAllDoctorTalonsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetDoctorCurrentDayTalonsResponse;
 import academy.kata.mis.medicalservice.model.dto.GetFullTalonInformationResponse;
-import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.TalonBusinessService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import java.util.UUID;
 public class DoctorTalonOuterController {
 
     private final TalonBusinessService talonBusinessService;
-    private final DoctorBusinessService doctorBusinessService;
 
     /**
      * страница 3
@@ -81,16 +79,14 @@ public class DoctorTalonOuterController {
             throw new LogicException("Талон не найден!");
         }
 
-        Long doctorId = doctorBusinessService.getDoctorIdByTalonId(talonId);
-        if (!doctorBusinessService.existDoctorByUserIdAndDoctorId(authUserId, doctorId)) {
-            log.error("{}; Авторизованный пользователь (userId = {}) не является доктором(doctorId = {}), " +
-                    "которому принадлежит талон (talonId = {})", operation, authUserId, doctorId, talonId);
+        if (!talonBusinessService.isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(authUserId, talonId)) {
+            log.error("{}; Авторизованный пользователь (userId = {}) не является доктором, " +
+                    "которому принадлежит талон (talonId = {})", operation, authUserId, talonId);
             throw new LogicException("Авторизованный пользователь не является доктором, которому принадлежит талон");
         }
 
         // вернуть полную информацию о талоне (пациент может отсутствовать)
-        GetFullTalonInformationResponse response = talonBusinessService
-                .getFullTalonInfoByIdAndDoctorId(talonId, doctorId);
+        GetFullTalonInformationResponse response = talonBusinessService.getFullTalonInfoById(talonId);
 
         log.debug("{}; Успешно; response - {}", operation, response);
         return ResponseEntity.ok(response);

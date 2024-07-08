@@ -1,11 +1,10 @@
 package academy.kata.mis.medicalservice.repository;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,23 +20,25 @@ public interface TalonRepository extends JpaRepository<Talon, Long> {
     Set<Talon> findAllByPatientId(long patientId);
 
     @Query("""
-            SELECT t.time
+            SELECT CASE WHEN COUNT(t) > 0 THEN TRUE ELSE FALSE END
             FROM Talon t
-            WHERE t.id = :talonId
+            WHERE t.id = :talonId AND t.doctor.userId = :userId
             """)
-    LocalDateTime getTalonTimeByTalonId(Long talonId);
+    boolean isDoctorAssignToTalonByUserIdAndTalonId(UUID userId, Long talonId);
 
     @Query("""
-            SELECT t.patient.personId
-            FROM Talon t
-            WHERE t.id = :talonId
-            """)
-    Optional<Long> getPatientPersonIdByTalonId(Long talonId);
-
-    @Query("""
-            SELECT t.patient.id
-            FROM Talon t
-            WHERE t.id = :talonId
-            """)
-    Optional<Long> getPatientIdByTalonId(Long talonId);
+           SELECT NEW academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto(
+                t.id,
+                t.doctor.id,
+                t.doctor.positionId,
+                t.doctor.personId,
+                p.id,
+                p.personId,
+                t.time
+           )
+           FROM Talon t
+            LEFT OUTER JOIN t.patient p
+           WHERE t.id = :talonId
+           """)
+    TalonWithDoctorPatientInfoDto getTalonWithDoctorPatientPersonsById(Long talonId);
 }
