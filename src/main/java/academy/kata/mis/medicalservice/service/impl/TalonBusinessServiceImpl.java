@@ -1,15 +1,25 @@
 package academy.kata.mis.medicalservice.service.impl;
 
 import academy.kata.mis.medicalservice.feign.PersonFeignClient;
+import academy.kata.mis.medicalservice.model.dto.GetFullTalonInformationResponse;
+import academy.kata.mis.medicalservice.model.dto.department.convertor.DepartmentConvertor;
+import academy.kata.mis.medicalservice.model.dto.department_organization_position_cabinet.DepartmentOrganizationPositionCabinetNameDto;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
+import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
+import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
+import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
+import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -22,10 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,6 +44,9 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final PersonFeignClient personFeignClient;
     private final TalonConverter talonConverter;
     private final DoctorService doctorService;
+    private final DepartmentConvertor departmentConvertor;
+    private final OrganizationConvertor organizationConvertor;
+    private final PatientConvertor patientConvertor;
     private final DoctorConvertor doctorConvertor;
     private final StructureFeignClient structureFeignClient;
     private final MessageServiceSender messageServiceSender;
@@ -157,5 +167,66 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                                 )
                         )
                 );
+    }
+
+    @Override
+    public boolean existsTalonById(Long talonId) {
+        return talonService.existsTalonById(talonId);
+    }
+
+    @Override
+    public boolean isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(UUID userId, Long talonId) {
+        return talonService.isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(userId, talonId);
+    }
+
+    @Override
+    public GetFullTalonInformationResponse getFullTalonInfoById(Long talonId) {
+        TalonWithDoctorPatientInfoDto talonInfoDto =
+                talonService.getTalonWithDoctorPatientPersonsById(talonId);
+
+        DepartmentOrganizationPositionCabinetNameDto depOrgPosCabDto = structureFeignClient
+                .getDepartmentOrganizationPositionCabinetNameDto(
+                        talonInfoDto.doctorPositionId()
+                );
+
+        Set<Long> personIds = new HashSet<>();
+        personIds.add(talonInfoDto.doctorPersonId());
+
+        if (talonInfoDto.patientPersonId() != null) {
+            personIds.add(talonInfoDto.patientPersonId());
+        }
+
+        PersonsListDto personsListDto = personFeignClient.getPersonsListByIds(personIds);
+
+        DoctorShortDto doctorShortDto = doctorConvertor
+                .personToDoctorShortDtoWithPositionName(
+                        talonInfoDto.doctorId(),
+                        getPersonDtoFromListById(personsListDto, talonInfoDto.doctorPersonId()),
+                        depOrgPosCabDto.positionName()
+                );
+
+        PatientShortDto patientShortDto = (talonInfoDto.patientPersonId() == null) ? null
+                : patientConvertor.personToPatientShortDto(
+                        talonInfoDto.patientId(),
+                        getPersonDtoFromListById(personsListDto, talonInfoDto.patientPersonId())
+                );
+
+        return new GetFullTalonInformationResponse(
+                talonId,
+                talonInfoDto.talonTime(),
+                organizationConvertor.entityToOrganizationShortDto(depOrgPosCabDto),
+                departmentConvertor.entityToDepartmentShortDto(depOrgPosCabDto),
+                depOrgPosCabDto.cabinetNumber(),
+                doctorShortDto,
+                patientShortDto
+        );
+    }
+
+    private PersonFullNameBirthdayDto getPersonDtoFromListById(PersonsListDto personsList, Long personId) {
+        return personsList.persons()
+                .stream()
+                .filter(p -> p.personId() == personId)
+                .findFirst()
+                .get();
     }
 }

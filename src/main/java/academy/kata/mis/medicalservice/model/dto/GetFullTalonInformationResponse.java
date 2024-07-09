@@ -5,10 +5,10 @@ import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.organization.OrganizationShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record GetFullTalonInformationResponse(long talonId,
-                                              LocalDate visitTime,
+                                              LocalDateTime visitTime,
                                               OrganizationShortDto organization,
                                               DepartmentShortDto department,
                                               String cabinetNumber,
