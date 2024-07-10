@@ -1,5 +1,6 @@
 package academy.kata.mis.medicalservice.service.impl;
 
+import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto;
 import academy.kata.mis.medicalservice.model.entity.Talon;
 import academy.kata.mis.medicalservice.repository.TalonRepository;
 import academy.kata.mis.medicalservice.service.TalonService;
@@ -23,6 +24,11 @@ public class TalonServiceImpl implements TalonService {
     }
 
     @Override
+    public boolean existsTalonById(Long talonId) {
+        return talonRepository.existsById(talonId);
+    }
+
+    @Override
     @Transactional
     public void save(Talon talon) {
         talonRepository.save(talon);
@@ -36,6 +42,16 @@ public class TalonServiceImpl implements TalonService {
     @Override
     public Set<Talon> allPatientTalonByPatientId(long patientId) {
         return talonRepository.findAllByPatientId(patientId);
+    }
+
+    @Override
+    public boolean isCurrentAuthDoctorAssignToTalonByUserIdAndTalonId(UUID userId, Long talonId) {
+        return talonRepository.isDoctorAssignToTalonByUserIdAndTalonId(userId, talonId);
+    }
+
+    @Override
+    public TalonWithDoctorPatientInfoDto getTalonWithDoctorPatientPersonsById(Long talonId) {
+        return talonRepository.getTalonWithDoctorPatientPersonsById(talonId);
     }
 
     @Override
