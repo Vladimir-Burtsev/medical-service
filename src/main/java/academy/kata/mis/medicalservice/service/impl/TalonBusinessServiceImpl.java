@@ -9,17 +9,22 @@ import academy.kata.mis.medicalservice.model.dto.feign.PersonDto;
 import academy.kata.mis.medicalservice.feign.StructureFeignClient;
 import academy.kata.mis.medicalservice.model.dto.GetAssignedTalonsByPatientResponse;
 import academy.kata.mis.medicalservice.model.dto.department_organization.DepartmentAndOrganizationDto;
+import academy.kata.mis.medicalservice.model.dto.department.DepartmentDto;
+import academy.kata.mis.medicalservice.model.dto.department.converter.DepartmentConverter;
+import academy.kata.mis.medicalservice.model.dto.doctor.DoctorDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.DoctorFullNameAndPositionsAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.doctor.convertor.DoctorConvertor;
 import academy.kata.mis.medicalservice.model.dto.organization.convertor.OrganizationConvertor;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
+import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.talon.CancelTalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorPatientInfoDto;
+import academy.kata.mis.medicalservice.model.dto.talon.TalonDto;
 import academy.kata.mis.medicalservice.model.dto.talon.TalonWithDoctorShortDto;
 import academy.kata.mis.medicalservice.model.dto.talon.converter.TalonConverter;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
@@ -51,6 +56,8 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final StructureFeignClient structureFeignClient;
     private final MessageServiceSender messageServiceSender;
     private final DepartmentService departmentService;
+    private final DepartmentConverter departmentConverter;
+    private final DoctorConvertor doctorConverter;
 
     @Override
     @Transactional
@@ -115,6 +122,48 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
                 );
 
         return new GetAssignedTalonsByPatientResponse(talonWithDoctorShortDtos);
+    }
+
+    @Override
+    public List<TalonDto> getAllByTomorrow() {
+        List<Talon> talons = talonService.getAllByTomorrow();
+        List<Doctor> doctors = talons.stream()
+                .map(Talon::getDoctor)
+                .toList();
+
+        Map<Long, PatientAndPersonIdDto> patientAndPersonIdDtoByPatientId = new HashMap<>();
+        talons.forEach(
+                talon -> patientAndPersonIdDtoByPatientId.computeIfAbsent(
+                        talon.getPatient().getId(),
+                        talonId -> patientConvertor.entityToPatientAndPersonIdDto(talon.getPatient())
+                )
+        );
+
+        Map<Long, DepartmentDto> departmentDtoByDoctorId = new HashMap<>();
+        doctors.forEach(
+                doctor -> departmentDtoByDoctorId.computeIfAbsent(
+                        doctor.getId(),
+                        doctorId -> departmentConverter.entityToDepartmentDto(doctor.getDepartment())
+                )
+        );
+
+        Map<Long, DoctorDto> doctorDtoByDoctorId = new HashMap<>();
+        doctors.forEach(
+                doctor -> doctorDtoByDoctorId.computeIfAbsent(
+                        doctor.getId(),
+                        doctorId -> doctorConverter.entityToDoctorDto(
+                                doctor,
+                                departmentDtoByDoctorId.get(doctor.getId())
+                        )
+                )
+        );
+
+        return talons.stream()
+                .map(talon -> talonConverter.entityToTalonDto(talon,
+                        doctorDtoByDoctorId.get(talon.getDoctor().getId()),
+                        patientAndPersonIdDtoByPatientId.get(talon.getPatient().getId())))
+                .toList();
+
     }
 
     private List<TalonWithDoctorShortDto> getTalonWithDoctorShortDto(

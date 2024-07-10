@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -51,5 +52,11 @@ public class TalonServiceImpl implements TalonService {
     @Override
     public TalonWithDoctorPatientInfoDto getTalonWithDoctorPatientPersonsById(Long talonId) {
         return talonRepository.getTalonWithDoctorPatientPersonsById(talonId);
+    }
+
+    @Override
+    @Transactional
+    public List<Talon> getAllByTomorrow() {
+        return talonRepository.findAllByTomorrow();
     }
 }
