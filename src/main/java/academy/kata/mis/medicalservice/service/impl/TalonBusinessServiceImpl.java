@@ -19,7 +19,6 @@ import academy.kata.mis.medicalservice.model.dto.patient.PatientShortDto;
 import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameBirthdayDto;
 import academy.kata.mis.medicalservice.model.dto.patient.PatientAndPersonIdDto;
-import academy.kata.mis.medicalservice.model.dto.patient.convertor.PatientConvertor;
 import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.person.PersonsListDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
@@ -59,7 +58,6 @@ public class TalonBusinessServiceImpl implements TalonBusinessService {
     private final DepartmentService departmentService;
     private final DepartmentConverter departmentConverter;
     private final DoctorConvertor doctorConverter;
-    private final PatientConvertor patientConvertor;
 
     @Override
     @Transactional
