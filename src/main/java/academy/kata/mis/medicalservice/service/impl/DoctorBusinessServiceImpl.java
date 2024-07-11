@@ -126,7 +126,7 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
                 .getDepartmentOrganizationPositionCabinetNameDto(doctorService.getPositionIdByDoctorId(doctorId));
 
         DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
-                personFeignClient.getCurrentDoctorById(doctorId),
+                personFeignClient.getDoctorShortDtoByPersonIdAndDoctorId(doctorService.getPersonIdByDoctorId(doctorId),doctorId),
                 departmentOrganizationPositionCabinetNameDto);
 
         OrganizationShortDto organizationShortDto = organizationConvertor
