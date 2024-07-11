@@ -30,7 +30,9 @@ public interface PersonFeignClient {
     GetCurrentPatientInformation getCurrentPersonById(@RequestParam(name = "person_id") long personId);
 
     @GetMapping("/internal/person/information/currentdoctorinformation")
-    DoctorShortDto getCurrentDoctorById(@RequestParam(name = "person_id") long personId);
+    DoctorShortDto getDoctorShortDtoByPersonIdAndDoctorId(
+            @RequestParam(name = "person_id") long personId,
+            @RequestParam(name = "doctor_id") long doctorId);
 
     @GetMapping("internal/person/information/email")
     String getPersonEmailByUserId(@RequestParam(name = "user_id") UUID userId);
@@ -77,7 +79,7 @@ public interface PersonFeignClient {
         }
 
         @Override
-        public DoctorShortDto getCurrentDoctorById(long personId) {
+        public DoctorShortDto getDoctorShortDtoByPersonIdAndDoctorId(long personId, long doctorId) {
             String responseMessage = """
                     Персона не существует по переданному personId: %s; message: %s
                     """.formatted(personId, reason);
@@ -88,7 +90,7 @@ public interface PersonFeignClient {
         @Override
         public String getPersonEmailByUserId(UUID userId) {
             String responseMessage = """
-                    Не найден email адрес у пользователя с ID = %s
+                    Не найден email адрес у пользователя с ID = %s, reason = %s
                     """.formatted(userId, reason);
 
             throw new FeignRequestException(responseMessage);
