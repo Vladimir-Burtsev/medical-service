@@ -23,12 +23,23 @@ public class DoctorMedicalServicesOuterController {
      */
     @GetMapping("/all")
     public ResponseEntity<GetMedicalServicesDepResponse> getMedicalServices(
-            @RequestParam(name = "doctor_id") long doctorId,
-            @RequestParam(name = "diseaseName", required = false, defaultValue = "") String diseaseName,
-            @RequestParam(name = "identifier", required = false, defaultValue = "") String identifier,
-            @RequestParam(name = "size", required = false, defaultValue = "10") long size,
-            @RequestParam(name = "page", required = false, defaultValue = "1") long page,
-            @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") MedicalServiceOrder order) {
+            @RequestParam(name = "doctor_id") long doctorId
+//            @RequestParam(name = "diseaseName", required = false, defaultValue = "") String diseaseName,
+//            @RequestParam(name = "identifier", required = false, defaultValue = "") String identifier,
+//            @RequestParam(name = "size", required = false, defaultValue = "10") long size,
+//            @RequestParam(name = "page", required = false, defaultValue = "1") long page,
+//            @RequestParam(name = "order", required = false, defaultValue = "IDENTIFIER_ASC") MedicalServiceOrder order
+    ) {
+        //1 часть вернуть все услуги отделения доктора без доп параметров
+        //2 часть вернуть с параметрами diseaseName и identifier (startWith) diseaseName=пере identifier=A17
+        //примеры:
+        // переодонтит обычный идент=A170001
+        // переодонтит слабый идент=A170102
+        // переодонтит сильный идент=A173003
+        // переопределенныйМетод сильный идент=A17123
+        //
+        //3 часть подключает пагинацию - size и page и сортировка
+
         // проверить что доктор существует и авторизованный пользователь это он
         // вернуть услуги которые может оказывать отделение доктора у которых статус 'open'
         // найти все услуги которые выполняют условия обоих паттернов поиска.
