@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,7 +45,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_success() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
+        Long doctorId = 1001L;
         Long personId = 1111L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
@@ -124,7 +125,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
         String answerException = "Доктор не авторизован!";
-        String doctorId = "2000";
+        String doctorId = "2002";
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
@@ -148,7 +149,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_positionNotExist() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
+        Long doctorId = 1001L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
         jwtInfoToken.setRoles(roles);
@@ -175,8 +176,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_personNotExist() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
-        Long personId = 666L;
+        Long doctorId = 1001L;
+        Long personId = 1111L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
         jwtInfoToken.setRoles(roles);
