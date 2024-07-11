@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,7 +45,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_success() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
+        Long doctorId = 1001L;
+        Long personId = 1111L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
         jwtInfoToken.setRoles(roles);
@@ -64,9 +66,9 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
         when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(100))
                 .thenReturn(feignDepartmentOrganizationPositionCabinetNameDto);
 
-        DoctorShortDto feignDoctorShortDto = new DoctorShortDto(doctorId, "doctorFirstName",
-                "doctorLastName", "doctorPatronymic", null);
-        when(personFeignClient.getCurrentDoctorById(doctorId))
+        DoctorShortDto feignDoctorShortDto = new DoctorShortDto(doctorId, "doctorFirstName1111",
+                "doctorLastName1111", "doctorPatronymic1111", null);
+        when(personFeignClient.getDoctorShortDtoByPersonIdAndDoctorId(personId, doctorId))
                 .thenReturn(feignDoctorShortDto);
 
         mockMvc.perform(
@@ -78,9 +80,9 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
 //                .andDo(mvcResult -> System.out.println(mvcResult.getResponse().getContentAsString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.doctor.doctorId", Is.is(doctorId.intValue())))
-                .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("doctorFirstName")))
-                .andExpect(jsonPath("$.doctor.doctorLastName", Is.is("doctorLastName")))
-                .andExpect(jsonPath("$.doctor.patronymic", Is.is("doctorPatronymic")))
+                .andExpect(jsonPath("$.doctor.doctorFirstName", Is.is("doctorFirstName1111")))
+                .andExpect(jsonPath("$.doctor.doctorLastName", Is.is("doctorLastName1111")))
+                .andExpect(jsonPath("$.doctor.patronymic", Is.is("doctorPatronymic1111")))
                 .andExpect(jsonPath("$.doctor.doctorPositionName", Is.is("position name")))
                 .andExpect(jsonPath("$.organization.organizationId", Is.is(1)))
                 .andExpect(jsonPath("$.organization.organizationName", Is.is("organization name1")))
@@ -90,7 +92,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 .andReturn();
 
         verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(100);
-        verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
+        verify(personFeignClient, times(1)).getDoctorShortDtoByPersonIdAndDoctorId(personId, doctorId);
     }
 
     @Test
@@ -123,7 +125,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
         String answerException = "Доктор не авторизован!";
-        String doctorId = "2000";
+        String doctorId = "2002";
 
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
@@ -147,7 +149,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_positionNotExist() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
+        Long doctorId = 1001L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
         jwtInfoToken.setRoles(roles);
@@ -174,7 +176,8 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
     public void GetCurrentDoctorInfo_personNotExist() throws Exception {
 
         String user = "63fcae3f-ae3c-48e8-b073-b91a2af624b5";
-        Long doctorId = 1000L;
+        Long doctorId = 1001L;
+        Long personId = 1111L;
         JwtAuthentication jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setUserId(UUID.fromString(user));
         jwtInfoToken.setRoles(roles);
@@ -194,7 +197,7 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
         when(structureFeignClient.getDepartmentOrganizationPositionCabinetNameDto(anyLong()))
                 .thenReturn(feignDepartmentOrganizationPositionCabinetNameDto);
 
-        when(personFeignClient.getCurrentDoctorById(doctorId)).thenThrow(FeignException.class);
+        when(personFeignClient.getDoctorShortDtoByPersonIdAndDoctorId(personId, doctorId)).thenThrow(FeignException.class);
 
         mockMvc.perform(
                         get("/api/medical/doctor/current")
@@ -205,6 +208,6 @@ public class GetCurrentDoctorInfoIT extends ContextIT {
                 .andExpect(status().isUnprocessableEntity());
 
         verify(structureFeignClient, times(1)).getDepartmentOrganizationPositionCabinetNameDto(anyLong());
-        verify(personFeignClient, times(1)).getCurrentDoctorById(doctorId);
+        verify(personFeignClient, times(1)).getDoctorShortDtoByPersonIdAndDoctorId(personId, doctorId);
     }
 }

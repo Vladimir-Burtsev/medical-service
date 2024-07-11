@@ -73,4 +73,9 @@ public class DoctorServiceImpl implements DoctorService {
     public long getPositionIdByDoctorId(long id) {
         return doctorRepository.getPositionIdByDoctorId(id);
     }
+
+    @Override
+    public Long getPersonIdByDoctorId(Long doctorId) {
+        return doctorRepository.getPersonIdByDoctorId(doctorId);
+    }
 }
