@@ -58,7 +58,8 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         GetCurrentPatientInformation currentPatient = personFeignClient.getCurrentPersonById(patient.getPersonId());
 
         DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
-                personFeignClient.getCurrentDoctorById(doctor.getPersonId()),
+                doctor.getId(),
+                personFeignClient.getPersonFullNameDtoById(doctor.getPersonId()),
                 structureFeignClient.getPositionNameById(doctor.getPositionId()));
 
         DiseaseShortInfoDto diseaseDepInfo = DiseaseShortInfoDto.builder()
@@ -71,7 +72,7 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         return GetAppealShortInfo.builder()
                 .appealId(appeal.getId())
                 .appealStatus(appeal.getStatus())
-                .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient))
+                .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient, patientId))
                 .disease(diseaseDepInfo)
                 .visits(List.of(visitConvertor.entityToVisitShortDto(visit, doctorShortDto)))
                 .build();
