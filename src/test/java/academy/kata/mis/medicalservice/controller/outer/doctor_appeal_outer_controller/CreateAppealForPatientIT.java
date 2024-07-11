@@ -8,7 +8,7 @@ import academy.kata.mis.medicalservice.model.dto.GetCurrentPatientInformation;
 import academy.kata.mis.medicalservice.model.dto.PositionDto;
 import academy.kata.mis.medicalservice.model.dto.auth.JwtAuthentication;
 import academy.kata.mis.medicalservice.model.dto.auth.Role;
-import academy.kata.mis.medicalservice.model.dto.doctor.DoctorShortDto;
+import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.enums.AppealStatus;
 import academy.kata.mis.medicalservice.service.AuditMessageService;
 import academy.kata.mis.medicalservice.util.JwtProvider;
@@ -78,9 +78,9 @@ public class CreateAppealForPatientIT extends ContextIT {
 
         when(personFeignClient.getCurrentPersonById(1L)).thenReturn(person);
 
-        DoctorShortDto doctorShortDto = new DoctorShortDto(1L, "DoctorFirstName",
-                "DoctorLastName", "Patronymic", null);
-        when(personFeignClient.getCurrentDoctorById(1L)).thenReturn(doctorShortDto);
+        PersonFullNameDto personFullNameDto = new PersonFullNameDto(1L, "DoctorFirstName",
+                "DoctorLastName", "Patronymic");
+        when(personFeignClient.getPersonFullNameDtoById(1L)).thenReturn(personFullNameDto);
 
         PositionDto positionDto = new PositionDto(1L, "DoctorPositionName");
         when(structureFeignClient.getPositionNameById(1L)).thenReturn(positionDto);
@@ -116,7 +116,7 @@ public class CreateAppealForPatientIT extends ContextIT {
 
         verify(auditMessageService, times(1)).sendAudit(anyString(), anyString(), anyString());
         verify(personFeignClient, times(1)).getCurrentPersonById(1);
-        verify(personFeignClient, times(1)).getCurrentDoctorById(1);
+        verify(personFeignClient, times(1)).getPersonFullNameDtoById(1);
         verify(structureFeignClient, times(1)).getPositionNameById(1);
     }
 

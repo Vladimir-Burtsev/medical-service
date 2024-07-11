@@ -25,12 +25,14 @@ public class DoctorConvertor {
                 .build();
     }
 
-    public DoctorShortDto entityToDoctorShortDtoWithPositionName(DoctorShortDto doctorShortDto, PositionDto positionDto) {
+    public DoctorShortDto entityToDoctorShortDtoWithPositionName(Long doctorId,
+                                                                 PersonFullNameDto personFullNameDto,
+                                                                 PositionDto positionDto) {
         return DoctorShortDto.builder()
-                .doctorId(doctorShortDto.doctorId())
-                .doctorFirstName(doctorShortDto.doctorFirstName())
-                .doctorLastName(doctorShortDto.doctorLastName())
-                .patronymic(doctorShortDto.patronymic())
+                .doctorId(doctorId)
+                .doctorFirstName(personFullNameDto.firstName())
+                .doctorLastName(personFullNameDto.lastName())
+                .patronymic(personFullNameDto.patronymic())
                 .doctorPositionName(positionDto.name())
                 .build();
     }
