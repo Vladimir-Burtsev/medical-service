@@ -9,19 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PatientConvertor {
-    public PatientShortDto entityToPatientShortDto(Patient patient) {
-        return PatientShortDto.builder()
-                .patientId(patient.getId())
-                .patientFirstName(null)
-                .patientLastname(null)
-                .patientPatronymic(null)
-                .birthday(null)
-                .build();
-    }
 
-    public PatientShortDto currentPatientToPatientShortDto(GetCurrentPatientInformation currentPatient) {
+    public PatientShortDto currentPatientToPatientShortDto(GetCurrentPatientInformation currentPatient, Long patientId) {
         return PatientShortDto.builder()
-                .patientId(currentPatient.id())
+                .patientId(patientId)
                 .patientFirstName(currentPatient.firstName())
                 .patientLastname(currentPatient.lastName())
                 .patientPatronymic(currentPatient.patronymic())

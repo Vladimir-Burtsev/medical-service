@@ -16,7 +16,12 @@ import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Patient;
 import academy.kata.mis.medicalservice.model.entity.Visit;
 import academy.kata.mis.medicalservice.model.enums.InsuranceType;
-import academy.kata.mis.medicalservice.service.*;
+import academy.kata.mis.medicalservice.service.AppealBusinessService;
+import academy.kata.mis.medicalservice.service.AppealService;
+import academy.kata.mis.medicalservice.service.DiseaseDepService;
+import academy.kata.mis.medicalservice.service.DiseaseService;
+import academy.kata.mis.medicalservice.service.PatientService;
+import academy.kata.mis.medicalservice.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,7 +58,8 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         GetCurrentPatientInformation currentPatient = personFeignClient.getCurrentPersonById(patient.getPersonId());
 
         DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
-                personFeignClient.getDoctorShortDtoByPersonIdAndDoctorId(doctor.getPersonId(), doctor.getId()),
+                doctor.getId(),
+                personFeignClient.getPersonFullNameDtoById(doctor.getPersonId()),
                 structureFeignClient.getPositionNameById(doctor.getPositionId()));
 
         DiseaseShortInfoDto diseaseDepInfo = DiseaseShortInfoDto.builder()
@@ -66,7 +72,7 @@ public class AppealBusinessServiceImpl implements AppealBusinessService {
         return GetAppealShortInfo.builder()
                 .appealId(appeal.getId())
                 .appealStatus(appeal.getStatus())
-                .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient))
+                .patient(patientConvertor.currentPatientToPatientShortDto(currentPatient, patientId))
                 .disease(diseaseDepInfo)
                 .visits(List.of(visitConvertor.entityToVisitShortDto(visit, doctorShortDto)))
                 .build();
