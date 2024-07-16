@@ -1,15 +1,13 @@
-package academy.kata.mis.medicalservice.model.dto.service;
+package academy.kata.mis.medicalservice.model.dto.service.convertor;
 
-import academy.kata.mis.medicalservice.model.dto.sample.DiseaseSampleDto;
+import academy.kata.mis.medicalservice.model.dto.service.MedicalServiceShortDto;
 import academy.kata.mis.medicalservice.model.entity.MedicalService;
-import academy.kata.mis.medicalservice.service.MedicalServiceService;
+import academy.kata.mis.medicalservice.model.entity.MedicalServiceDep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,5 +19,14 @@ public class MedicalServiceConverter {
                 .medicalServiceDepId(medicalServiceDepId)
                 .serviceName(medicalServiceWithServiceDepIdMap.get(medicalServiceDepId).getName())
                 .serviceIdentifier(medicalServiceWithServiceDepIdMap.get(medicalServiceDepId).getIdentifier()).build();
+    }
+    public List<MedicalServiceShortDto> convertMedicalServiceToMedicalServiceShortDto (List<MedicalServiceDep> medicalService) {
+        return medicalService.stream()
+                .map(service ->MedicalServiceShortDto.builder()
+                        .medicalServiceDepId(service.getId())
+                        .serviceIdentifier(service.getMedicalService().getIdentifier())
+                        .serviceName(service.getMedicalService().getName())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
