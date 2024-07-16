@@ -1,9 +1,8 @@
 package academy.kata.mis.medicalservice.model.dto.sample;
 
-import academy.kata.mis.medicalservice.model.dto.service.MedicalServiceConverter;
+import academy.kata.mis.medicalservice.model.dto.service.convertor.MedicalServiceConverter;
 import academy.kata.mis.medicalservice.model.dto.service.MedicalServiceShortDto;
 import academy.kata.mis.medicalservice.model.entity.MedicalService;
-import academy.kata.mis.medicalservice.service.DiseaseSampleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
