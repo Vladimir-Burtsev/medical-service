@@ -7,4 +7,5 @@ import academy.kata.mis.medicalservice.model.entity.Visit;
 public interface VisitService {
     Visit createPatientVisit(Doctor doctor, Appeal appeal);
     Visit save(Visit visit);
+    Visit findVisitById(long id);
 }

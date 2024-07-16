@@ -25,4 +25,6 @@ public interface DoctorService {
     long getPositionIdByDoctorId(long id);
 
     Long getPersonIdByDoctorId(Long doctorId);
+
+    Doctor findDoctorByUUID(UUID doctorUUID);
 }

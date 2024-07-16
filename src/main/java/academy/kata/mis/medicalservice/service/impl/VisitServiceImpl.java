@@ -30,4 +30,9 @@ public class VisitServiceImpl implements VisitService {
     public Visit save(Visit visit) {
         return visitRepository.save(visit);
     }
+
+    @Override
+    public Visit findVisitById(long id) {
+        return visitRepository.findById(id).orElse(null);
+    }
 }

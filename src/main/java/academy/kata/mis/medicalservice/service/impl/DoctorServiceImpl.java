@@ -53,6 +53,8 @@ public class DoctorServiceImpl implements DoctorService {
     public boolean existDoctorByUserIdAndDoctorId(UUID userId, long doctorId) {
         return doctorRepository.existsByUserIdAndId(userId, doctorId);
     }
+    @Override
+    public Doctor findDoctorByUUID(UUID userId) {return doctorRepository.findByUserId(userId);}
 
     @Override
     public List<Doctor> findAllByUserId(UUID userId) {
