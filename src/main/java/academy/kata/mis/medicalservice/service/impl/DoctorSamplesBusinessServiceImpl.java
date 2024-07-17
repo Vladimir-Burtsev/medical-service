@@ -3,7 +3,7 @@ package academy.kata.mis.medicalservice.service.impl;
 import academy.kata.mis.medicalservice.model.dto.GetDiseaseSamplesWithServicesResponse;
 import academy.kata.mis.medicalservice.model.dto.sample.DiseaseSampleConverter;
 import academy.kata.mis.medicalservice.model.dto.sample.DiseaseSampleDto;
-import academy.kata.mis.medicalservice.model.dto.service.convertor.MedicalServiceConverter;
+import academy.kata.mis.medicalservice.model.dto.service.convertor.MedicalServiceConvertor;
 import academy.kata.mis.medicalservice.model.entity.MedicalService;
 import academy.kata.mis.medicalservice.service.DiseaseSampleService;
 import academy.kata.mis.medicalservice.service.DoctorSamplesBusinessService;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class DoctorSamplesBusinessServiceImpl implements DoctorSamplesBusinessService {
     private final DiseaseSampleService diseaseSampleService;
     private final DiseaseSampleConverter diseaseSampleConverter;
-    private final MedicalServiceConverter medicalServiceConverter;
+    private final MedicalServiceConvertor medicalServiceConvertor;
     private final MedicalServiceService medicalServiceService;
 
     @Override

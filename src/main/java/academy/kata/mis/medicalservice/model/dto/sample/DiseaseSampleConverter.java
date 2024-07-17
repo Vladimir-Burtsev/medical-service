@@ -1,6 +1,6 @@
 package academy.kata.mis.medicalservice.model.dto.sample;
 
-import academy.kata.mis.medicalservice.model.dto.service.convertor.MedicalServiceConverter;
+import academy.kata.mis.medicalservice.model.dto.service.convertor.MedicalServiceConvertor;
 import academy.kata.mis.medicalservice.model.dto.service.MedicalServiceShortDto;
 import academy.kata.mis.medicalservice.model.entity.MedicalService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DiseaseSampleConverter {
 
-    private final MedicalServiceConverter medicalServiceConverter;
+    private final MedicalServiceConvertor medicalServiceConvertor;
 
     public DiseaseSampleDto servicesDepIdToDiseaseSampleDto(Set<Long> medicalServiceDepIdSet, Map<Long, MedicalService> medicalServiceWithServiceDepIdMap) {
         List<MedicalServiceShortDto> medicalServiceShortDtoList = new ArrayList<>();
         for(Long medicalServiceDepId: medicalServiceDepIdSet) {
-            medicalServiceShortDtoList.add(medicalServiceConverter.serviceDepIdToMedicalServiceShortDto(medicalServiceDepId, medicalServiceWithServiceDepIdMap));
+            medicalServiceShortDtoList.add(medicalServiceConvertor.serviceDepIdToMedicalServiceShortDto(medicalServiceDepId, medicalServiceWithServiceDepIdMap));
         }
         return new DiseaseSampleDto(medicalServiceShortDtoList);
     }
