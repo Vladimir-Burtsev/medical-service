@@ -21,8 +21,6 @@ import java.util.UUID;
 @RequestMapping("/api/medical/doctor/visit")
 public class DoctorVisitRestController {
     private final VisitService visitService;
-
-
     /**
      * страница 3.2.4
      */
@@ -32,15 +30,13 @@ public class DoctorVisitRestController {
         UUID doctorUUID = UUID.fromString(principal.getName());
 
         if(!visitService.validateGetVisitInfo(visitId, doctorUUID)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         VisitDto visitDto = visitService.getVisitInfo(visitId);
         return ResponseEntity.ok(visitDto);
         // ====
         // вторая задача - через фейгн клиенты собрать доп инфу из других микросервисов
     }
-
-    //
 
     /**
      * страница 3.2.4
