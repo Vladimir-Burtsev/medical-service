@@ -20,13 +20,17 @@ public class MedicalServiceConvertor {
                 .serviceName(medicalServiceWithServiceDepIdMap.get(medicalServiceDepId).getName())
                 .serviceIdentifier(medicalServiceWithServiceDepIdMap.get(medicalServiceDepId).getIdentifier()).build();
     }
+
+    private MedicalServiceShortDto convertMedicalServiceShortDtoToList (MedicalServiceDep medicalServiceDep) {
+        return MedicalServiceShortDto.builder()
+                .medicalServiceDepId(medicalServiceDep.getId())
+                .serviceIdentifier(medicalServiceDep.getMedicalService().getIdentifier())
+                .serviceName(medicalServiceDep.getMedicalService().getName())
+                .build();
+    }
     public List<MedicalServiceShortDto> convertMedicalServiceToMedicalServiceShortDto (List<MedicalServiceDep> medicalService) {
         return medicalService.stream()
-                .map(service ->MedicalServiceShortDto.builder()
-                        .medicalServiceDepId(service.getId())
-                        .serviceIdentifier(service.getMedicalService().getIdentifier())
-                        .serviceName(service.getMedicalService().getName())
-                        .build())
+                .map(this::convertMedicalServiceShortDtoToList)
                 .collect(Collectors.toList());
     }
 }
