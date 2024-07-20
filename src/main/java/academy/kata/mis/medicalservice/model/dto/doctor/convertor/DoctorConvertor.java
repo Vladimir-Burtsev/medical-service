@@ -88,10 +88,10 @@ public class DoctorConvertor {
          */
         return DoctorShortDto.builder()
                 .doctorId(doctor.getId())
-                .doctorFirstName("DoctorFirstName")
-                .doctorLastName("DoctorLastName")
-                .patronymic("Patronymic")
-                .doctorPositionName("DoctorPositionName")
+                .doctorFirstName("FAKEDoctorFirstName")
+                .doctorLastName("FAKEDoctorLastName")
+                .patronymic("FAKEPatronymic")
+                .doctorPositionName("FAKEDoctorPositionName")
                 .build();
     }
 }
