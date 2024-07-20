@@ -14,13 +14,14 @@ import academy.kata.mis.medicalservice.service.AppealService;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.VisitService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
@@ -66,10 +67,12 @@ public class VisitServiceImpl implements VisitService {
     public boolean validateGetVisitInfo(long visitId, UUID doctorId) {
         Appeal appeal = appealService.getAppealById(visitId);
         if (appeal == null) {
+            log.error("appeal not found");
             return false;
         }
         Doctor currentDoctor = doctorService.findDoctorByUUID(doctorId);
         if (currentDoctor == null) {
+            log.error("doctor not found");
             return false;
         }
         Visit visit = findVisitById(visitId);
