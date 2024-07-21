@@ -63,6 +63,18 @@ public class GetVisitInfoTest extends ContextIT {
     }
 
     @Test
+    public void getVisitInfoIT_VisitNotFound() throws Exception {
+        setupJwtTokenMock(user);
+
+        mockMvc.perform(
+                get("/api/medical/doctor/visit/info")
+                .param("visit_id", "1002")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", accessToken)
+        )
+                .andExpect(status().isNotFound());
+    }
+    @Test
     public void getVisitInfoIT_departmentsDoNotMatch () throws Exception {
         setupJwtTokenMock(user);
 

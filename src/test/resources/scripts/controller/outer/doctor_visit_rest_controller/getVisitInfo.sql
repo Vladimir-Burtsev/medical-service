@@ -1,3 +1,6 @@
+-- Отключаем проверку внешних ключей
+SET session_replication_role = replica;
+
 -- Добавляем запись в таблицу organizations
 INSERT INTO organizations (id)
 values (1001);
@@ -39,9 +42,16 @@ values (1001, 'OPEN', 1001, 1001);
 -- Вставка данных для визита
 INSERT INTO visits (id, visit_time, doctor_id, appeal_id)
 values (1001, '2023-07-01T12:00:00', 1001, 1001),
+      (1002, '2023-07-01 12:00:00', 1001, 999),
+      (1003, '2023-07-01 12:00:00', 999, 1001),
        (1004, '2023-07-01 12:00:00', 1002, 1001);
 
 -- Связь визита с медицинскими услугами
 INSERT INTO visit_medical_services_dep (visit_id, medical_service_dep_id)
 values (1001, 1001),
+      (1002, 1001),
+      (1003, 1001),
        (1004, 1001);
+
+-- Включаем проверку внешних ключей
+SET session_replication_role = DEFAULT;
