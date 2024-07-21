@@ -21,15 +21,27 @@ import java.util.UUID;
 @RequestMapping("/api/medical/doctor/visit")
 public class DoctorVisitRestController {
     private final VisitService visitService;
+    private final AppealService appealService;
+    private final DoctorBusinessService doctorBusinessService;
     /**
      * страница 3.2.4
      */
+
+    //проверить что appeal существует
+    //проверить что appeal и doctor из одного departament
+    //получить информацию об оказанных medicalServiceDep
+    //вернуть dto c информацией только из этого микросервиса
     @GetMapping("/info")
     public ResponseEntity<VisitDto> getVisitInfo(
             @RequestParam(name = "visit_id") long visitId, Principal principal) {
+        if (appealService.existsAppealByVisitId(visitId)) {
+            log.debug("Appeal with visit_id {} already exists", visitId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         UUID doctorUUID = UUID.fromString(principal.getName());
 
-        if(!visitService.validateGetVisitInfo(visitId, doctorUUID)) {
+        if(!doctorBusinessService.areDoctorsInSameDepartment(visitId, doctorUUID)) {
+            log.debug("Doctor with UUID {} and visit with ID {} are not in the same department.", doctorUUID, visitId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         VisitDto visitDto = visitService.getVisitInfo(visitId);
