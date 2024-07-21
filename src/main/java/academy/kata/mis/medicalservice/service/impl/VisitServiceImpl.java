@@ -10,7 +10,6 @@ import academy.kata.mis.medicalservice.model.entity.Appeal;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Visit;
 import academy.kata.mis.medicalservice.repository.VisitRepository;
-import academy.kata.mis.medicalservice.service.AppealService;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.VisitService;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
     private final VisitRepository visitRepository;
     private final DoctorService doctorService;
-    private final AppealService appealService;
     private final VisitConvertor visitConvertor;
     private final DoctorConvertor doctorConvertor;
     private final MedicalServiceConvertor medicalServiceConvertor;
@@ -61,22 +58,5 @@ public class VisitServiceImpl implements VisitService {
         List<MedicalServiceShortDto> medicalService = medicalServiceConvertor
                 .convertMedicalServiceToMedicalServiceShortDto(visit.getMedicalServicesDep());
         return visitConvertor.entityToVisitDto(visit, doctorShortDto, medicalService);
-    }
-
-    @Override
-    public boolean validateGetVisitInfo(long visitId, UUID doctorId) {
-        Appeal appeal = appealService.getAppealById(visitId);
-        if (appeal == null) {
-            log.error("appeal not found");
-            return false;
-        }
-        Doctor currentDoctor = doctorService.findDoctorByUUID(doctorId);
-        if (currentDoctor == null) {
-            log.error("doctor not found");
-            return false;
-        }
-        Visit visit = findVisitById(visitId);
-        Doctor visitDoctor = visit.getDoctor();
-        return currentDoctor.getDepartment().equals(visitDoctor.getDepartment());
     }
 }
