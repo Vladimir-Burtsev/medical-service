@@ -11,4 +11,6 @@ public interface AppealService {
     Appeal save(Appeal appeal);
 
     Appeal getAppealById(long appealId);
+
+    boolean existsAppealByVisitId(long visitId);
 }
