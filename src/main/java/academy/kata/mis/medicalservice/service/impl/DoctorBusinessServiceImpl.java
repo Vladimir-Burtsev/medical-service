@@ -18,17 +18,13 @@ import academy.kata.mis.medicalservice.model.dto.person.PersonFullNameDto;
 import academy.kata.mis.medicalservice.model.dto.positions.PositionsNameAndCabinetDto;
 import academy.kata.mis.medicalservice.model.dto.positions.RepPositionsDepartmentOrganizationDto;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
-import academy.kata.mis.medicalservice.model.entity.Visit;
 import academy.kata.mis.medicalservice.service.DoctorBusinessService;
 import academy.kata.mis.medicalservice.service.DoctorService;
-import academy.kata.mis.medicalservice.service.VisitService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -37,7 +33,6 @@ import java.util.UUID;
 public class DoctorBusinessServiceImpl implements DoctorBusinessService {
 
     private final DoctorService doctorService;
-    private final VisitService visitService;
     private final DepartmentConvertor departmentConvertor;
     private final OrganizationConvertor organizationConvertor;
     private final DoctorConvertor doctorConvertor;

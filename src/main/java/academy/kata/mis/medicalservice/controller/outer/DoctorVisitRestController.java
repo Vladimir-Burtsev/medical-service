@@ -23,7 +23,6 @@ public class DoctorVisitRestController {
     private final VisitBusinessService visitBusinessService;
     private final VisitService visitService;
     private final DoctorService doctorService;
-    private final DoctorBusinessService doctorBusinessService;
     /**
      * страница 3.2.4
      */
