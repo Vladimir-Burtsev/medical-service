@@ -8,7 +8,6 @@ import academy.kata.mis.medicalservice.model.dto.visit.VisitDto;
 import academy.kata.mis.medicalservice.model.dto.visit.convertor.VisitConvertor;
 import academy.kata.mis.medicalservice.model.entity.Doctor;
 import academy.kata.mis.medicalservice.model.entity.Visit;
-import academy.kata.mis.medicalservice.repository.VisitRepository;
 import academy.kata.mis.medicalservice.service.DoctorService;
 import academy.kata.mis.medicalservice.service.VisitBusinessService;
 import academy.kata.mis.medicalservice.service.VisitService;
