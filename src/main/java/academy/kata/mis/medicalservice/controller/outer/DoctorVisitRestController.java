@@ -20,8 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/medical/doctor/visit")
 public class DoctorVisitRestController {
+    private final VisitBusinessService visitBusinessService;
     private final VisitService visitService;
-    private final AppealService appealService;
     private final DoctorBusinessService doctorBusinessService;
     /**
      * страница 3.2.4
@@ -34,8 +34,8 @@ public class DoctorVisitRestController {
     @GetMapping("/info")
     public ResponseEntity<VisitDto> getVisitInfo(
             @RequestParam(name = "visit_id") long visitId, Principal principal) {
-        if (appealService.existsAppealByVisitId(visitId)) {
-            log.debug("Appeal with visit_id {} already exists", visitId);
+        if (visitService.existsVisitById(visitId)) {
+            log.debug("Visit with visit_id {} already exists", visitId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         UUID doctorUUID = UUID.fromString(principal.getName());
@@ -44,7 +44,7 @@ public class DoctorVisitRestController {
             log.debug("Doctor with UUID {} and visit with ID {} are not in the same department.", doctorUUID, visitId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        VisitDto visitDto = visitService.getVisitInfo(visitId);
+        VisitDto visitDto = visitBusinessService.getVisitInfo(visitId);
         return ResponseEntity.ok(visitDto);
         // ====
         // вторая задача - через фейгн клиенты собрать доп инфу из других микросервисов

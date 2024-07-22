@@ -24,11 +24,6 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public boolean existsAppealByVisitId(long visitId) {
-        return !appealRepository.existsAppealByVisitId(visitId);
-    }
-
-    @Override
     public Appeal createPatientAppeal(DiseaseDep diseaseDep, Patient patient, InsuranceType insuranceType) {
         return Appeal.builder()
                 .status(AppealStatus.OPEN)
