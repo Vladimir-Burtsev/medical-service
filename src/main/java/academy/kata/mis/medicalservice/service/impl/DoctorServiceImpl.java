@@ -57,6 +57,11 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor findDoctorByUUID(UUID userId) {return doctorRepository.findByUserId(userId);}
 
     @Override
+    public boolean areDoctorsInSameDepartment(long visitId, UUID doctorUUID) {
+        return doctorRepository.areDoctorsInSameDepartment(visitId, doctorUUID);
+    }
+
+    @Override
     public List<Doctor> findAllByUserId(UUID userId) {
         return doctorRepository.findAllByUserId(userId);
     }

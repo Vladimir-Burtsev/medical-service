@@ -21,5 +21,4 @@ public interface DoctorBusinessService {
     boolean isDoctorExistsById(Long id);
 
     GetCurrentDoctorPersonalInfoResponse getCurrentDoctorPersonalInfoById(long id);
-    boolean areDoctorsInSameDepartment(long visitId, UUID doctorUUID);
 }

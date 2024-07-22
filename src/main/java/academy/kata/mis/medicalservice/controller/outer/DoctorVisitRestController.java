@@ -22,6 +22,7 @@ import java.util.UUID;
 public class DoctorVisitRestController {
     private final VisitBusinessService visitBusinessService;
     private final VisitService visitService;
+    private final DoctorService doctorService;
     private final DoctorBusinessService doctorBusinessService;
     /**
      * страница 3.2.4
@@ -40,7 +41,7 @@ public class DoctorVisitRestController {
         }
         UUID doctorUUID = UUID.fromString(principal.getName());
 
-        if(!doctorBusinessService.areDoctorsInSameDepartment(visitId, doctorUUID)) {
+        if(!doctorService.areDoctorsInSameDepartment(visitId, doctorUUID)) {
             log.debug("Doctor with UUID {} and visit with ID {} are not in the same department.", doctorUUID, visitId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

@@ -144,14 +144,4 @@ public class DoctorBusinessServiceImpl implements DoctorBusinessService {
         return new GetCurrentDoctorPersonalInfoResponse(doctorShortDto, organizationShortDto,
                 departmentShortDto, cabinetNumber);
     }
-
-    @Override
-    public boolean areDoctorsInSameDepartment(long visitId, UUID doctorUUID) {
-        Doctor currentDoctor = Optional.ofNullable(doctorService.findDoctorByUUID(doctorUUID)).orElseThrow(
-                () -> new EntityNotFoundException("Doctor already exists"));
-        log.debug("Doctor with doctor_id {} already exists", doctorUUID);
-        Visit visit = visitService.findVisitById(visitId);
-        Doctor visitDoctor = visit.getDoctor();
-        return currentDoctor.getDepartment().equals(visitDoctor.getDepartment());
-    }
 }

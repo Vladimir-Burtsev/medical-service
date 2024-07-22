@@ -27,4 +27,6 @@ public interface DoctorService {
     Long getPersonIdByDoctorId(Long doctorId);
 
     Doctor findDoctorByUUID(UUID doctorUUID);
+
+    boolean areDoctorsInSameDepartment (long visitId, UUID doctorUUID);
 }
