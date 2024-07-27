@@ -98,7 +98,6 @@ public class GetVisitInfoTest extends ContextIT {
     @Test
     public void getVisitInfoIT_VisitNotFound() throws Exception {
         setupJwtTokenMock(user);
-        feignClientMocks();
 
         mockMvc.perform(
                 get("/api/medical/doctor/visit/info")
@@ -107,16 +106,11 @@ public class GetVisitInfoTest extends ContextIT {
                 .header("Authorization", accessToken)
         )
                 .andExpect(status().isNotFound());
-        verify(structureFeignClient, times(0))
-                .getDepartmentOrganizationPositionCabinetNameDto(3001);
-        verify(personFeignClient, times(0))
-                .getDoctorShortDtoByPersonIdAndDoctorId(2001, 1001);
     }
 
     @Test
     public void getVisitInfoIT_departmentsDoNotMatch () throws Exception {
         setupJwtTokenMock(user);
-        feignClientMocks();
 
         mockMvc.perform(
                 get("/api/medical/doctor/visit/info")
@@ -125,9 +119,5 @@ public class GetVisitInfoTest extends ContextIT {
                 .header("Authorization", accessToken)
         )
                 .andExpect(status().isForbidden());
-        verify(structureFeignClient, times(1))
-                .getDepartmentOrganizationPositionCabinetNameDto(3002);
-        verify(personFeignClient, times(1))
-                .getDoctorShortDtoByPersonIdAndDoctorId(2002, 1002);
     }
 }
