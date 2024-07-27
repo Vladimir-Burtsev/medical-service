@@ -17,7 +17,7 @@ values (1001, 2001, 3001, '123e4567-e89b-12d3-a456-426614174000', 1001),
 
 -- Вставка данных для пациента
 INSERT INTO patients(id, person_id, user_id, organization_id)
-values (1001, 1, 'cf29361a-c9ed-4644-a6dc-db639774850e', 1001);
+values (1001, 2001, 'cf29361a-c9ed-4644-a6dc-db639774850e', 1001);
 
 -- Вставка данных о списке заболеваний
 INSERT INTO diseases (id, identifier, name)
