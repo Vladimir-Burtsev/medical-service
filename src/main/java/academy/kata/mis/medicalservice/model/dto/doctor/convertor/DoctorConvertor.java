@@ -81,17 +81,4 @@ public class DoctorConvertor {
                 .department(departmentDto)
                 .build();
     }
-    public DoctorShortDto convertDoctorToDoctorShortDto(Doctor doctor) {
-        /**
-         * ToDo
-         * получить недостающие данные через feign client
-         */
-        return DoctorShortDto.builder()
-                .doctorId(doctor.getId())
-                .doctorFirstName("FAKEDoctorFirstName")
-                .doctorLastName("FAKEDoctorLastName")
-                .patronymic("FAKEPatronymic")
-                .doctorPositionName("FAKEDoctorPositionName")
-                .build();
-    }
 }
