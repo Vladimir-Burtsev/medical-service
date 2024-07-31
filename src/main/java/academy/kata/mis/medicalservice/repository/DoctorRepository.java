@@ -10,6 +10,11 @@ import java.util.UUID;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
+    @Query("""
+            SELECT d FROM Doctor d
+            WHERE d.userId = :doctorUUID
+            order by d.id limit 1
+            """)
     Doctor findByUserId(UUID doctorUUID);
 
     List<Doctor> findAllByUserId(UUID userId);
@@ -57,12 +62,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             SELECT d.personId FROM Doctor d WHERE d.id = :doctorId
             """)
     Long getPersonIdByDoctorId(Long doctorId);
+
     @Query("""
-            SELECT CASE WHEN (d1.department.id = d2.department.id) THEN true ELSE false END\s
-            FROM Visit v 
-            JOIN v.doctor d1 
-            JOIN Doctor d2 ON d2.userId = :doctorUUID 
-            WHERE v.id = :visitId
+            SELECT CASE WHEN EXISTS (
+                SELECT 1
+                FROM Visit v
+                JOIN Doctor d1 ON v.doctor.id = d1.id
+                JOIN Doctor d2 ON d1.department.id = d2.department.id
+                WHERE v.id = :visitId AND d2.userId = :doctorUUID
+            ) THEN true ELSE false END
             """)
     boolean areDoctorsInSameDepartment(@Param("visitId") long visitId, @Param("doctorUUID") UUID doctorUUID);
 }
