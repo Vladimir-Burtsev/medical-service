@@ -62,6 +62,11 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    public Doctor findDoctorById(Long id) {
+        return doctorRepository.findById(id).orElseThrow(() -> new LogicException("Доктор не найден"));
+    }
+
+    @Override
     public List<Doctor> findAllByUserId(UUID userId) {
         return doctorRepository.findAllByUserId(userId);
     }

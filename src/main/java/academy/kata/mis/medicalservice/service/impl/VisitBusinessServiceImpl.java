@@ -36,7 +36,7 @@ public class VisitBusinessServiceImpl implements VisitBusinessService {
     @Override
     public VisitDto getVisitInfo(long visitId) {
         Visit visit = visitService.findVisitById(visitId);
-        Doctor doctor = doctorService.findDoctorByUUID(visit.getDoctor().getUserId());
+        Doctor doctor = doctorService.findDoctorById(visit.getDoctor().getId());
         DepartmentOrganizationPositionCabinetNameDto departmentOrganizationPositionCabinetNameDto = structureFeignClient
                 .getDepartmentOrganizationPositionCabinetNameDto(doctor.getPositionId());
         DoctorShortDto doctorShortDto = doctorConvertor.entityToDoctorShortDtoWithPositionName(
